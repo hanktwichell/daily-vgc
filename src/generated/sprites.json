@@ -1,1507 +1,1206 @@
 {
 	"abomasnow": {
 		"front": "sprites/front/abomasnow.png",
-		"back": "sprites/back/abomasnow.png",
-		"src": "platinum"
+		"back": "sprites/back/abomasnow.png"
 	},
 	"abomasnowmega": {
 		"front": "sprites/front/abomasnowmega.png",
-		"back": "sprites/back/abomasnowmega.png",
-		"src": "bw"
+		"back": "sprites/back/abomasnowmega.png"
 	},
 	"absol": {
 		"front": "sprites/front/absol.png",
-		"back": "sprites/back/absol.png",
-		"src": "platinum"
+		"back": "sprites/back/absol.png"
 	},
 	"absolmega": {
 		"front": "sprites/front/absolmega.png",
-		"back": "sprites/back/absolmega.png",
-		"src": "bw"
+		"back": "sprites/back/absolmega.png"
 	},
 	"absolmegaz": {
 		"front": "sprites/front/absolmegaz.png",
-		"back": "sprites/back/absolmegaz.png",
-		"src": "bw"
+		"back": "sprites/back/absolmegaz.png"
 	},
 	"aegislash": {
 		"front": "sprites/front/aegislash.png",
-		"back": "sprites/back/aegislash.png",
-		"src": "bw"
+		"back": "sprites/back/aegislash.png"
 	},
 	"aegislashblade": {
 		"front": "sprites/front/aegislashblade.png",
-		"back": "sprites/back/aegislashblade.png",
-		"src": "bw"
+		"back": "sprites/back/aegislashblade.png"
 	},
 	"aerodactyl": {
 		"front": "sprites/front/aerodactyl.png",
-		"back": "sprites/back/aerodactyl.png",
-		"src": "platinum"
+		"back": "sprites/back/aerodactyl.png"
 	},
 	"aerodactylmega": {
 		"front": "sprites/front/aerodactylmega.png",
-		"back": "sprites/back/aerodactylmega.png",
-		"src": "bw"
+		"back": "sprites/back/aerodactylmega.png"
 	},
 	"aggron": {
 		"front": "sprites/front/aggron.png",
-		"back": "sprites/back/aggron.png",
-		"src": "platinum"
+		"back": "sprites/back/aggron.png"
 	},
 	"aggronmega": {
 		"front": "sprites/front/aggronmega.png",
-		"back": "sprites/back/aggronmega.png",
-		"src": "bw"
+		"back": "sprites/back/aggronmega.png"
 	},
 	"alakazam": {
 		"front": "sprites/front/alakazam.png",
-		"back": "sprites/back/alakazam.png",
-		"src": "platinum"
+		"back": "sprites/back/alakazam.png"
 	},
 	"alakazammega": {
 		"front": "sprites/front/alakazammega.png",
-		"back": "sprites/back/alakazammega.png",
-		"src": "bw"
+		"back": "sprites/back/alakazammega.png"
 	},
 	"alcremie": {
 		"front": "sprites/front/alcremie.png",
-		"back": "sprites/back/alcremie.png",
-		"src": "bw"
+		"back": "sprites/back/alcremie.png"
 	},
 	"altaria": {
 		"front": "sprites/front/altaria.png",
-		"back": "sprites/back/altaria.png",
-		"src": "platinum"
+		"back": "sprites/back/altaria.png"
 	},
 	"altariamega": {
 		"front": "sprites/front/altariamega.png",
-		"back": "sprites/back/altariamega.png",
-		"src": "bw"
+		"back": "sprites/back/altariamega.png"
 	},
 	"ampharos": {
 		"front": "sprites/front/ampharos.png",
-		"back": "sprites/back/ampharos.png",
-		"src": "platinum"
+		"back": "sprites/back/ampharos.png"
 	},
 	"ampharosmega": {
 		"front": "sprites/front/ampharosmega.png",
-		"back": "sprites/back/ampharosmega.png",
-		"src": "bw"
+		"back": "sprites/back/ampharosmega.png"
 	},
 	"annihilape": {
 		"front": "sprites/front/annihilape.png",
-		"back": "sprites/back/annihilape.png",
-		"src": "bw"
+		"back": "sprites/back/annihilape.png"
 	},
 	"appletun": {
 		"front": "sprites/front/appletun.png",
-		"back": "sprites/back/appletun.png",
-		"src": "bw"
+		"back": "sprites/back/appletun.png"
 	},
 	"araquanid": {
 		"front": "sprites/front/araquanid.png",
-		"back": "sprites/back/araquanid.png",
-		"src": "bw"
+		"back": "sprites/back/araquanid.png"
 	},
 	"arboliva": {
 		"front": "sprites/front/arboliva.png",
-		"back": "sprites/back/arboliva.png",
-		"src": "bw"
+		"back": "sprites/back/arboliva.png"
 	},
 	"arcanine": {
 		"front": "sprites/front/arcanine.png",
-		"back": "sprites/back/arcanine.png",
-		"src": "platinum"
+		"back": "sprites/back/arcanine.png"
 	},
 	"arcaninehisui": {
 		"front": "sprites/front/arcaninehisui.png",
-		"back": "sprites/back/arcaninehisui.png",
-		"src": "bw"
+		"back": "sprites/back/arcaninehisui.png"
 	},
 	"archaludon": {
 		"front": "sprites/front/archaludon.png",
-		"back": "sprites/back/archaludon.png",
-		"src": "bw"
+		"back": "sprites/back/archaludon.png"
 	},
 	"armarouge": {
 		"front": "sprites/front/armarouge.png",
-		"back": "sprites/back/armarouge.png",
-		"src": "bw"
+		"back": "sprites/back/armarouge.png"
 	},
 	"aromatisse": {
 		"front": "sprites/front/aromatisse.png",
-		"back": "sprites/back/aromatisse.png",
-		"src": "bw"
+		"back": "sprites/back/aromatisse.png"
 	},
 	"audino": {
 		"front": "sprites/front/audino.png",
-		"back": "sprites/back/audino.png",
-		"src": "bw"
+		"back": "sprites/back/audino.png"
 	},
 	"audinomega": {
 		"front": "sprites/front/audinomega.png",
-		"back": "sprites/back/audinomega.png",
-		"src": "bw"
+		"back": "sprites/back/audinomega.png"
 	},
 	"aurorus": {
 		"front": "sprites/front/aurorus.png",
-		"back": "sprites/back/aurorus.png",
-		"src": "bw"
+		"back": "sprites/back/aurorus.png"
 	},
 	"avalugghisui": {
 		"front": "sprites/front/avalugghisui.png",
-		"back": "sprites/back/avalugghisui.png",
-		"src": "bw"
+		"back": "sprites/back/avalugghisui.png"
 	},
 	"azumarill": {
 		"front": "sprites/front/azumarill.png",
-		"back": "sprites/back/azumarill.png",
-		"src": "platinum"
+		"back": "sprites/back/azumarill.png"
 	},
 	"banette": {
 		"front": "sprites/front/banette.png",
-		"back": "sprites/back/banette.png",
-		"src": "platinum"
+		"back": "sprites/back/banette.png"
 	},
 	"banettemega": {
 		"front": "sprites/front/banettemega.png",
-		"back": "sprites/back/banettemega.png",
-		"src": "bw"
+		"back": "sprites/back/banettemega.png"
 	},
 	"barbaracle": {
 		"front": "sprites/front/barbaracle.png",
-		"back": "sprites/back/barbaracle.png",
-		"src": "bw"
+		"back": "sprites/back/barbaracle.png"
 	},
 	"barbaraclemega": {
 		"front": "sprites/front/barbaraclemega.png",
-		"back": "sprites/back/barbaraclemega.png",
-		"src": "bw"
+		"back": "sprites/back/barbaraclemega.png"
 	},
 	"basculegion": {
 		"front": "sprites/front/basculegion.png",
-		"back": "sprites/back/basculegion.png",
-		"src": "bw"
+		"back": "sprites/back/basculegion.png"
 	},
 	"bastiodon": {
 		"front": "sprites/front/bastiodon.png",
-		"back": "sprites/back/bastiodon.png",
-		"src": "platinum"
+		"back": "sprites/back/bastiodon.png"
 	},
 	"baxcalibur": {
 		"front": "sprites/front/baxcalibur.png",
-		"back": "sprites/back/baxcalibur.png",
-		"src": "bw"
+		"back": "sprites/back/baxcalibur.png"
 	},
 	"baxcaliburmega": {
 		"front": "sprites/front/baxcaliburmega.png",
-		"back": "sprites/back/baxcaliburmega.png",
-		"src": "bw"
+		"back": "sprites/back/baxcaliburmega.png"
 	},
 	"beartic": {
 		"front": "sprites/front/beartic.png",
-		"back": "sprites/back/beartic.png",
-		"src": "bw"
+		"back": "sprites/back/beartic.png"
 	},
 	"beedrill": {
 		"front": "sprites/front/beedrill.png",
-		"back": "sprites/back/beedrill.png",
-		"src": "platinum"
+		"back": "sprites/back/beedrill.png"
 	},
 	"beedrillmega": {
 		"front": "sprites/front/beedrillmega.png",
-		"back": "sprites/back/beedrillmega.png",
-		"src": "bw"
+		"back": "sprites/back/beedrillmega.png"
 	},
 	"bellibolt": {
 		"front": "sprites/front/bellibolt.png",
-		"back": "sprites/back/bellibolt.png",
-		"src": "bw"
+		"back": "sprites/back/bellibolt.png"
 	},
 	"blastoise": {
 		"front": "sprites/front/blastoise.png",
-		"back": "sprites/back/blastoise.png",
-		"src": "platinum"
+		"back": "sprites/back/blastoise.png"
 	},
 	"blastoisemega": {
 		"front": "sprites/front/blastoisemega.png",
-		"back": "sprites/back/blastoisemega.png",
-		"src": "bw"
+		"back": "sprites/back/blastoisemega.png"
 	},
 	"blaziken": {
 		"front": "sprites/front/blaziken.png",
-		"back": "sprites/back/blaziken.png",
-		"src": "platinum"
+		"back": "sprites/back/blaziken.png"
 	},
 	"blazikenmega": {
 		"front": "sprites/front/blazikenmega.png",
-		"back": "sprites/back/blazikenmega.png",
-		"src": "bw"
+		"back": "sprites/back/blazikenmega.png"
 	},
 	"camerupt": {
 		"front": "sprites/front/camerupt.png",
-		"back": "sprites/back/camerupt.png",
-		"src": "platinum"
+		"back": "sprites/back/camerupt.png"
 	},
 	"cameruptmega": {
 		"front": "sprites/front/cameruptmega.png",
-		"back": "sprites/back/cameruptmega.png",
-		"src": "bw"
+		"back": "sprites/back/cameruptmega.png"
 	},
 	"castform": {
 		"front": "sprites/front/castform.png",
-		"back": "sprites/back/castform.png",
-		"src": "platinum"
+		"back": "sprites/back/castform.png"
 	},
 	"castformrainy": {
 		"front": "sprites/front/castformrainy.png",
-		"back": "sprites/back/castformrainy.png",
-		"src": "platinum"
+		"back": "sprites/back/castformrainy.png"
 	},
 	"castformsnowy": {
 		"front": "sprites/front/castformsnowy.png",
-		"back": "sprites/back/castformsnowy.png",
-		"src": "platinum"
+		"back": "sprites/back/castformsnowy.png"
 	},
 	"castformsunny": {
 		"front": "sprites/front/castformsunny.png",
-		"back": "sprites/back/castformsunny.png",
-		"src": "platinum"
+		"back": "sprites/back/castformsunny.png"
 	},
 	"ceruledge": {
 		"front": "sprites/front/ceruledge.png",
-		"back": "sprites/back/ceruledge.png",
-		"src": "bw"
+		"back": "sprites/back/ceruledge.png"
 	},
 	"chandelure": {
 		"front": "sprites/front/chandelure.png",
-		"back": "sprites/back/chandelure.png",
-		"src": "bw"
+		"back": "sprites/back/chandelure.png"
 	},
 	"chandeluremega": {
 		"front": "sprites/front/chandeluremega.png",
-		"back": "sprites/back/chandeluremega.png",
-		"src": "bw"
+		"back": "sprites/back/chandeluremega.png"
 	},
 	"charizard": {
 		"front": "sprites/front/charizard.png",
-		"back": "sprites/back/charizard.png",
-		"src": "platinum"
+		"back": "sprites/back/charizard.png"
 	},
 	"charizardmegax": {
 		"front": "sprites/front/charizardmegax.png",
-		"back": "sprites/back/charizardmegax.png",
-		"src": "bw"
+		"back": "sprites/back/charizardmegax.png"
 	},
 	"charizardmegay": {
 		"front": "sprites/front/charizardmegay.png",
-		"back": "sprites/back/charizardmegay.png",
-		"src": "bw"
+		"back": "sprites/back/charizardmegay.png"
 	},
 	"chesnaught": {
 		"front": "sprites/front/chesnaught.png",
-		"back": "sprites/back/chesnaught.png",
-		"src": "bw"
+		"back": "sprites/back/chesnaught.png"
 	},
 	"chesnaughtmega": {
 		"front": "sprites/front/chesnaughtmega.png",
-		"back": "sprites/back/chesnaughtmega.png",
-		"src": "bw"
+		"back": "sprites/back/chesnaughtmega.png"
 	},
 	"chimecho": {
 		"front": "sprites/front/chimecho.png",
-		"back": "sprites/back/chimecho.png",
-		"src": "platinum"
+		"back": "sprites/back/chimecho.png"
 	},
 	"chimechomega": {
 		"front": "sprites/front/chimechomega.png",
-		"back": "sprites/back/chimechomega.png",
-		"src": "bw"
+		"back": "sprites/back/chimechomega.png"
 	},
 	"clawitzer": {
 		"front": "sprites/front/clawitzer.png",
-		"back": "sprites/back/clawitzer.png",
-		"src": "bw"
+		"back": "sprites/back/clawitzer.png"
 	},
 	"clefable": {
 		"front": "sprites/front/clefable.png",
-		"back": "sprites/back/clefable.png",
-		"src": "platinum"
+		"back": "sprites/back/clefable.png"
 	},
 	"clefablemega": {
 		"front": "sprites/front/clefablemega.png",
-		"back": "sprites/back/clefablemega.png",
-		"src": "bw"
+		"back": "sprites/back/clefablemega.png"
 	},
 	"cofagrigus": {
 		"front": "sprites/front/cofagrigus.png",
-		"back": "sprites/back/cofagrigus.png",
-		"src": "bw"
+		"back": "sprites/back/cofagrigus.png"
 	},
 	"conkeldurr": {
 		"front": "sprites/front/conkeldurr.png",
-		"back": "sprites/back/conkeldurr.png",
-		"src": "bw"
+		"back": "sprites/back/conkeldurr.png"
 	},
 	"corviknight": {
 		"front": "sprites/front/corviknight.png",
-		"back": "sprites/back/corviknight.png",
-		"src": "bw"
+		"back": "sprites/back/corviknight.png"
 	},
 	"crabominable": {
 		"front": "sprites/front/crabominable.png",
-		"back": "sprites/back/crabominable.png",
-		"src": "bw"
+		"back": "sprites/back/crabominable.png"
 	},
 	"crabominablemega": {
 		"front": "sprites/front/crabominablemega.png",
-		"back": "sprites/back/crabominablemega.png",
-		"src": "bw"
+		"back": "sprites/back/crabominablemega.png"
 	},
 	"decidueyehisui": {
 		"front": "sprites/front/decidueyehisui.png",
-		"back": "sprites/back/decidueyehisui.png",
-		"src": "bw"
+		"back": "sprites/back/decidueyehisui.png"
 	},
 	"dedenne": {
 		"front": "sprites/front/dedenne.png",
-		"back": "sprites/back/dedenne.png",
-		"src": "bw"
+		"back": "sprites/back/dedenne.png"
 	},
 	"delphox": {
 		"front": "sprites/front/delphox.png",
-		"back": "sprites/back/delphox.png",
-		"src": "bw"
+		"back": "sprites/back/delphox.png"
 	},
 	"delphoxmega": {
 		"front": "sprites/front/delphoxmega.png",
-		"back": "sprites/back/delphoxmega.png",
-		"src": "bw"
+		"back": "sprites/back/delphoxmega.png"
 	},
 	"diggersby": {
 		"front": "sprites/front/diggersby.png",
-		"back": "sprites/back/diggersby.png",
-		"src": "bw"
+		"back": "sprites/back/diggersby.png"
 	},
 	"ditto": {
 		"front": "sprites/front/ditto.png",
-		"back": "sprites/back/ditto.png",
-		"src": "platinum"
+		"back": "sprites/back/ditto.png"
 	},
 	"dragalge": {
 		"front": "sprites/front/dragalge.png",
-		"back": "sprites/back/dragalge.png",
-		"src": "bw"
+		"back": "sprites/back/dragalge.png"
 	},
 	"dragalgemega": {
 		"front": "sprites/front/dragalgemega.png",
-		"back": "sprites/back/dragalgemega.png",
-		"src": "bw"
+		"back": "sprites/back/dragalgemega.png"
 	},
 	"dragapult": {
 		"front": "sprites/front/dragapult.png",
-		"back": "sprites/back/dragapult.png",
-		"src": "bw"
+		"back": "sprites/back/dragapult.png"
 	},
 	"dragonite": {
 		"front": "sprites/front/dragonite.png",
-		"back": "sprites/back/dragonite.png",
-		"src": "platinum"
+		"back": "sprites/back/dragonite.png"
 	},
 	"dragonitemega": {
 		"front": "sprites/front/dragonitemega.png",
-		"back": "sprites/back/dragonitemega.png",
-		"src": "bw"
+		"back": "sprites/back/dragonitemega.png"
 	},
 	"drampa": {
 		"front": "sprites/front/drampa.png",
-		"back": "sprites/back/drampa.png",
-		"src": "bw"
+		"back": "sprites/back/drampa.png"
 	},
 	"drampamega": {
 		"front": "sprites/front/drampamega.png",
-		"back": "sprites/back/drampamega.png",
-		"src": "bw"
+		"back": "sprites/back/drampamega.png"
 	},
 	"eelektross": {
 		"front": "sprites/front/eelektross.png",
-		"back": "sprites/back/eelektross.png",
-		"src": "bw"
+		"back": "sprites/back/eelektross.png"
 	},
 	"eelektrossmega": {
 		"front": "sprites/front/eelektrossmega.png",
-		"back": "sprites/back/eelektrossmega.png",
-		"src": "bw"
+		"back": "sprites/back/eelektrossmega.png"
 	},
 	"emboar": {
 		"front": "sprites/front/emboar.png",
-		"back": "sprites/back/emboar.png",
-		"src": "bw"
+		"back": "sprites/back/emboar.png"
 	},
 	"emboarmega": {
 		"front": "sprites/front/emboarmega.png",
-		"back": "sprites/back/emboarmega.png",
-		"src": "bw"
+		"back": "sprites/back/emboarmega.png"
 	},
 	"emolga": {
 		"front": "sprites/front/emolga.png",
-		"back": "sprites/back/emolga.png",
-		"src": "bw"
+		"back": "sprites/back/emolga.png"
 	},
 	"espathra": {
 		"front": "sprites/front/espathra.png",
-		"back": "sprites/back/espathra.png",
-		"src": "bw"
+		"back": "sprites/back/espathra.png"
 	},
 	"espeon": {
 		"front": "sprites/front/espeon.png",
-		"back": "sprites/back/espeon.png",
-		"src": "platinum"
+		"back": "sprites/back/espeon.png"
 	},
 	"excadrill": {
 		"front": "sprites/front/excadrill.png",
-		"back": "sprites/back/excadrill.png",
-		"src": "bw"
+		"back": "sprites/back/excadrill.png"
 	},
 	"excadrillmega": {
 		"front": "sprites/front/excadrillmega.png",
-		"back": "sprites/back/excadrillmega.png",
-		"src": "bw"
+		"back": "sprites/back/excadrillmega.png"
 	},
 	"falinks": {
 		"front": "sprites/front/falinks.png",
-		"back": "sprites/back/falinks.png",
-		"src": "bw"
+		"back": "sprites/back/falinks.png"
 	},
 	"falinksmega": {
 		"front": "sprites/front/falinksmega.png",
-		"back": "sprites/back/falinksmega.png",
-		"src": "bw"
+		"back": "sprites/back/falinksmega.png"
 	},
 	"farigiraf": {
 		"front": "sprites/front/farigiraf.png",
-		"back": "sprites/back/farigiraf.png",
-		"src": "bw"
+		"back": "sprites/back/farigiraf.png"
 	},
 	"feraligatr": {
 		"front": "sprites/front/feraligatr.png",
-		"back": "sprites/back/feraligatr.png",
-		"src": "platinum"
+		"back": "sprites/back/feraligatr.png"
 	},
 	"feraligatrmega": {
 		"front": "sprites/front/feraligatrmega.png",
-		"back": "sprites/back/feraligatrmega.png",
-		"src": "bw"
+		"back": "sprites/back/feraligatrmega.png"
 	},
 	"flapple": {
 		"front": "sprites/front/flapple.png",
-		"back": "sprites/back/flapple.png",
-		"src": "bw"
+		"back": "sprites/back/flapple.png"
 	},
 	"floetteeternal": {
 		"front": "sprites/front/floetteeternal.png",
-		"back": "sprites/back/floetteeternal.png",
-		"src": "bw"
+		"back": "sprites/back/floetteeternal.png"
 	},
 	"floettemega": {
 		"front": "sprites/front/floettemega.png",
-		"back": "sprites/back/floettemega.png",
-		"src": "bw"
+		"back": "sprites/back/floettemega.png"
 	},
 	"florges": {
 		"front": "sprites/front/florges.png",
-		"back": "sprites/back/florges.png",
-		"src": "bw"
+		"back": "sprites/back/florges.png"
 	},
 	"froslass": {
 		"front": "sprites/front/froslass.png",
-		"back": "sprites/back/froslass.png",
-		"src": "platinum"
+		"back": "sprites/back/froslass.png"
 	},
 	"froslassmega": {
 		"front": "sprites/front/froslassmega.png",
-		"back": "sprites/back/froslassmega.png",
-		"src": "bw"
+		"back": "sprites/back/froslassmega.png"
 	},
 	"furfrou": {
 		"front": "sprites/front/furfrou.png",
-		"back": "sprites/back/furfrou.png",
-		"src": "bw"
+		"back": "sprites/back/furfrou.png"
 	},
 	"gallade": {
 		"front": "sprites/front/gallade.png",
-		"back": "sprites/back/gallade.png",
-		"src": "platinum"
+		"back": "sprites/back/gallade.png"
 	},
 	"gallademega": {
 		"front": "sprites/front/gallademega.png",
-		"back": "sprites/back/gallademega.png",
-		"src": "bw"
+		"back": "sprites/back/gallademega.png"
 	},
 	"garchomp": {
 		"front": "sprites/front/garchomp.png",
-		"back": "sprites/back/garchomp.png",
-		"src": "platinum"
+		"back": "sprites/back/garchomp.png"
 	},
 	"garchompmega": {
 		"front": "sprites/front/garchompmega.png",
-		"back": "sprites/back/garchompmega.png",
-		"src": "bw"
+		"back": "sprites/back/garchompmega.png"
 	},
 	"garchompmegaz": {
 		"front": "sprites/front/garchompmegaz.png",
-		"back": "sprites/back/garchompmegaz.png",
-		"src": "bw"
+		"back": "sprites/back/garchompmegaz.png"
 	},
 	"gardevoir": {
 		"front": "sprites/front/gardevoir.png",
-		"back": "sprites/back/gardevoir.png",
-		"src": "platinum"
+		"back": "sprites/back/gardevoir.png"
 	},
 	"gardevoirmega": {
 		"front": "sprites/front/gardevoirmega.png",
-		"back": "sprites/back/gardevoirmega.png",
-		"src": "bw"
+		"back": "sprites/back/gardevoirmega.png"
 	},
 	"garganacl": {
 		"front": "sprites/front/garganacl.png",
-		"back": "sprites/back/garganacl.png",
-		"src": "bw"
+		"back": "sprites/back/garganacl.png"
 	},
 	"gengar": {
 		"front": "sprites/front/gengar.png",
-		"back": "sprites/back/gengar.png",
-		"src": "platinum"
+		"back": "sprites/back/gengar.png"
 	},
 	"gengarmega": {
 		"front": "sprites/front/gengarmega.png",
-		"back": "sprites/back/gengarmega.png",
-		"src": "bw"
+		"back": "sprites/back/gengarmega.png"
 	},
 	"gholdengo": {
 		"front": "sprites/front/gholdengo.png",
-		"back": "sprites/back/gholdengo.png",
-		"src": "bw"
+		"back": "sprites/back/gholdengo.png"
 	},
 	"glaceon": {
 		"front": "sprites/front/glaceon.png",
-		"back": "sprites/back/glaceon.png",
-		"src": "platinum"
+		"back": "sprites/back/glaceon.png"
 	},
 	"glalie": {
 		"front": "sprites/front/glalie.png",
-		"back": "sprites/back/glalie.png",
-		"src": "platinum"
+		"back": "sprites/back/glalie.png"
 	},
 	"glaliemega": {
 		"front": "sprites/front/glaliemega.png",
-		"back": "sprites/back/glaliemega.png",
-		"src": "bw"
+		"back": "sprites/back/glaliemega.png"
 	},
 	"glimmora": {
 		"front": "sprites/front/glimmora.png",
-		"back": "sprites/back/glimmora.png",
-		"src": "bw"
+		"back": "sprites/back/glimmora.png"
 	},
 	"glimmoramega": {
 		"front": "sprites/front/glimmoramega.png",
-		"back": "sprites/back/glimmoramega.png",
-		"src": "bw"
+		"back": "sprites/back/glimmoramega.png"
 	},
 	"gliscor": {
 		"front": "sprites/front/gliscor.png",
-		"back": "sprites/back/gliscor.png",
-		"src": "platinum"
+		"back": "sprites/back/gliscor.png"
 	},
 	"gogoat": {
 		"front": "sprites/front/gogoat.png",
-		"back": "sprites/back/gogoat.png",
-		"src": "bw"
+		"back": "sprites/back/gogoat.png"
 	},
 	"golisopod": {
 		"front": "sprites/front/golisopod.png",
-		"back": "sprites/back/golisopod.png",
-		"src": "bw"
+		"back": "sprites/back/golisopod.png"
 	},
 	"golisopodmega": {
 		"front": "sprites/front/golisopodmega.png",
-		"back": "sprites/back/golisopodmega.png",
-		"src": "bw"
+		"back": "sprites/back/golisopodmega.png"
 	},
 	"golurk": {
 		"front": "sprites/front/golurk.png",
-		"back": "sprites/back/golurk.png",
-		"src": "bw"
+		"back": "sprites/back/golurk.png"
 	},
 	"golurkmega": {
 		"front": "sprites/front/golurkmega.png",
-		"back": "sprites/back/golurkmega.png",
-		"src": "bw"
+		"back": "sprites/back/golurkmega.png"
 	},
 	"goodrahisui": {
 		"front": "sprites/front/goodrahisui.png",
-		"back": "sprites/back/goodrahisui.png",
-		"src": "bw"
+		"back": "sprites/back/goodrahisui.png"
 	},
 	"gourgeistsuper": {
 		"front": "sprites/front/gourgeistsuper.png",
-		"back": "sprites/back/gourgeistsuper.png",
-		"src": "bw"
+		"back": "sprites/back/gourgeistsuper.png"
 	},
 	"grapploct": {
 		"front": "sprites/front/grapploct.png",
-		"back": "sprites/back/grapploct.png",
-		"src": "bw"
+		"back": "sprites/back/grapploct.png"
 	},
 	"greninja": {
 		"front": "sprites/front/greninja.png",
-		"back": "sprites/back/greninja.png",
-		"src": "bw"
+		"back": "sprites/back/greninja.png"
 	},
 	"greninjamega": {
 		"front": "sprites/front/greninjamega.png",
-		"back": "sprites/back/greninjamega.png",
-		"src": "bw"
+		"back": "sprites/back/greninjamega.png"
 	},
 	"grimmsnarl": {
 		"front": "sprites/front/grimmsnarl.png",
-		"back": "sprites/back/grimmsnarl.png",
-		"src": "bw"
+		"back": "sprites/back/grimmsnarl.png"
 	},
 	"gyarados": {
 		"front": "sprites/front/gyarados.png",
-		"back": "sprites/back/gyarados.png",
-		"src": "platinum"
+		"back": "sprites/back/gyarados.png"
 	},
 	"gyaradosmega": {
 		"front": "sprites/front/gyaradosmega.png",
-		"back": "sprites/back/gyaradosmega.png",
-		"src": "bw"
+		"back": "sprites/back/gyaradosmega.png"
 	},
 	"hatterene": {
 		"front": "sprites/front/hatterene.png",
-		"back": "sprites/back/hatterene.png",
-		"src": "bw"
+		"back": "sprites/back/hatterene.png"
 	},
 	"hawlucha": {
 		"front": "sprites/front/hawlucha.png",
-		"back": "sprites/back/hawlucha.png",
-		"src": "bw"
+		"back": "sprites/back/hawlucha.png"
 	},
 	"hawluchamega": {
 		"front": "sprites/front/hawluchamega.png",
-		"back": "sprites/back/hawluchamega.png",
-		"src": "bw"
+		"back": "sprites/back/hawluchamega.png"
 	},
 	"heliolisk": {
 		"front": "sprites/front/heliolisk.png",
-		"back": "sprites/back/heliolisk.png",
-		"src": "bw"
+		"back": "sprites/back/heliolisk.png"
 	},
 	"heracross": {
 		"front": "sprites/front/heracross.png",
-		"back": "sprites/back/heracross.png",
-		"src": "platinum"
+		"back": "sprites/back/heracross.png"
 	},
 	"heracrossmega": {
 		"front": "sprites/front/heracrossmega.png",
-		"back": "sprites/back/heracrossmega.png",
-		"src": "bw"
+		"back": "sprites/back/heracrossmega.png"
 	},
 	"hippowdon": {
 		"front": "sprites/front/hippowdon.png",
-		"back": "sprites/back/hippowdon.png",
-		"src": "platinum"
+		"back": "sprites/back/hippowdon.png"
 	},
 	"houndoom": {
 		"front": "sprites/front/houndoom.png",
-		"back": "sprites/back/houndoom.png",
-		"src": "platinum"
+		"back": "sprites/back/houndoom.png"
 	},
 	"houndoommega": {
 		"front": "sprites/front/houndoommega.png",
-		"back": "sprites/back/houndoommega.png",
-		"src": "bw"
+		"back": "sprites/back/houndoommega.png"
 	},
 	"houndstone": {
 		"front": "sprites/front/houndstone.png",
-		"back": "sprites/back/houndstone.png",
-		"src": "bw"
+		"back": "sprites/back/houndstone.png"
 	},
 	"hydrapple": {
 		"front": "sprites/front/hydrapple.png",
-		"back": "sprites/back/hydrapple.png",
-		"src": "bw"
+		"back": "sprites/back/hydrapple.png"
 	},
 	"hydreigon": {
 		"front": "sprites/front/hydreigon.png",
-		"back": "sprites/back/hydreigon.png",
-		"src": "bw"
+		"back": "sprites/back/hydreigon.png"
 	},
 	"incineroar": {
 		"front": "sprites/front/incineroar.png",
-		"back": "sprites/back/incineroar.png",
-		"src": "bw"
+		"back": "sprites/back/incineroar.png"
 	},
 	"indeedeef": {
 		"front": "sprites/front/indeedeef.png",
-		"back": "sprites/back/indeedeef.png",
-		"src": "bw"
+		"back": "sprites/back/indeedeef.png"
 	},
 	"kangaskhan": {
 		"front": "sprites/front/kangaskhan.png",
-		"back": "sprites/back/kangaskhan.png",
-		"src": "platinum"
+		"back": "sprites/back/kangaskhan.png"
 	},
 	"kangaskhanmega": {
 		"front": "sprites/front/kangaskhanmega.png",
-		"back": "sprites/back/kangaskhanmega.png",
-		"src": "bw"
+		"back": "sprites/back/kangaskhanmega.png"
 	},
 	"kingambit": {
 		"front": "sprites/front/kingambit.png",
-		"back": "sprites/back/kingambit.png",
-		"src": "bw"
+		"back": "sprites/back/kingambit.png"
 	},
 	"kleavor": {
 		"front": "sprites/front/kleavor.png",
-		"back": "sprites/back/kleavor.png",
-		"src": "bw"
+		"back": "sprites/back/kleavor.png"
 	},
 	"klefki": {
 		"front": "sprites/front/klefki.png",
-		"back": "sprites/back/klefki.png",
-		"src": "bw"
+		"back": "sprites/back/klefki.png"
 	},
 	"kommoo": {
 		"front": "sprites/front/kommoo.png",
-		"back": "sprites/back/kommoo.png",
-		"src": "bw"
+		"back": "sprites/back/kommoo.png"
 	},
 	"krookodile": {
 		"front": "sprites/front/krookodile.png",
-		"back": "sprites/back/krookodile.png",
-		"src": "bw"
+		"back": "sprites/back/krookodile.png"
 	},
 	"lopunny": {
 		"front": "sprites/front/lopunny.png",
-		"back": "sprites/back/lopunny.png",
-		"src": "platinum"
+		"back": "sprites/back/lopunny.png"
 	},
 	"lopunnymega": {
 		"front": "sprites/front/lopunnymega.png",
-		"back": "sprites/back/lopunnymega.png",
-		"src": "bw"
+		"back": "sprites/back/lopunnymega.png"
 	},
 	"lucario": {
 		"front": "sprites/front/lucario.png",
-		"back": "sprites/back/lucario.png",
-		"src": "platinum"
+		"back": "sprites/back/lucario.png"
 	},
 	"lucariomega": {
 		"front": "sprites/front/lucariomega.png",
-		"back": "sprites/back/lucariomega.png",
-		"src": "bw"
+		"back": "sprites/back/lucariomega.png"
 	},
 	"lucariomegaz": {
 		"front": "sprites/front/lucariomegaz.png",
-		"back": "sprites/back/lucariomegaz.png",
-		"src": "bw"
+		"back": "sprites/back/lucariomegaz.png"
 	},
 	"luxray": {
 		"front": "sprites/front/luxray.png",
-		"back": "sprites/back/luxray.png",
-		"src": "platinum"
+		"back": "sprites/back/luxray.png"
 	},
 	"lycanrocdusk": {
 		"front": "sprites/front/lycanrocdusk.png",
-		"back": "sprites/back/lycanrocdusk.png",
-		"src": "bw"
+		"back": "sprites/back/lycanrocdusk.png"
 	},
 	"mabosstiff": {
 		"front": "sprites/front/mabosstiff.png",
-		"back": "sprites/back/mabosstiff.png",
-		"src": "bw"
+		"back": "sprites/back/mabosstiff.png"
 	},
 	"machamp": {
 		"front": "sprites/front/machamp.png",
-		"back": "sprites/back/machamp.png",
-		"src": "platinum"
+		"back": "sprites/back/machamp.png"
 	},
 	"malamar": {
 		"front": "sprites/front/malamar.png",
-		"back": "sprites/back/malamar.png",
-		"src": "bw"
+		"back": "sprites/back/malamar.png"
 	},
 	"malamarmega": {
 		"front": "sprites/front/malamarmega.png",
-		"back": "sprites/back/malamarmega.png",
-		"src": "bw"
+		"back": "sprites/back/malamarmega.png"
 	},
 	"mamoswine": {
 		"front": "sprites/front/mamoswine.png",
-		"back": "sprites/back/mamoswine.png",
-		"src": "platinum"
+		"back": "sprites/back/mamoswine.png"
 	},
 	"manectric": {
 		"front": "sprites/front/manectric.png",
-		"back": "sprites/back/manectric.png",
-		"src": "platinum"
+		"back": "sprites/back/manectric.png"
 	},
 	"manectricmega": {
 		"front": "sprites/front/manectricmega.png",
-		"back": "sprites/back/manectricmega.png",
-		"src": "bw"
+		"back": "sprites/back/manectricmega.png"
 	},
 	"maushold": {
 		"front": "sprites/front/maushold.png",
-		"back": "sprites/back/maushold.png",
-		"src": "bw"
+		"back": "sprites/back/maushold.png"
 	},
 	"mawile": {
 		"front": "sprites/front/mawile.png",
-		"back": "sprites/back/mawile.png",
-		"src": "platinum"
+		"back": "sprites/back/mawile.png"
 	},
 	"mawilemega": {
 		"front": "sprites/front/mawilemega.png",
-		"back": "sprites/back/mawilemega.png",
-		"src": "bw"
+		"back": "sprites/back/mawilemega.png"
 	},
 	"medicham": {
 		"front": "sprites/front/medicham.png",
-		"back": "sprites/back/medicham.png",
-		"src": "platinum"
+		"back": "sprites/back/medicham.png"
 	},
 	"medichammega": {
 		"front": "sprites/front/medichammega.png",
-		"back": "sprites/back/medichammega.png",
-		"src": "bw"
+		"back": "sprites/back/medichammega.png"
 	},
 	"meganium": {
 		"front": "sprites/front/meganium.png",
-		"back": "sprites/back/meganium.png",
-		"src": "platinum"
+		"back": "sprites/back/meganium.png"
 	},
 	"meganiummega": {
 		"front": "sprites/front/meganiummega.png",
-		"back": "sprites/back/meganiummega.png",
-		"src": "bw"
+		"back": "sprites/back/meganiummega.png"
 	},
 	"meowscarada": {
 		"front": "sprites/front/meowscarada.png",
-		"back": "sprites/back/meowscarada.png",
-		"src": "bw"
+		"back": "sprites/back/meowscarada.png"
 	},
 	"meowstic": {
 		"front": "sprites/front/meowstic.png",
-		"back": "sprites/back/meowstic.png",
-		"src": "bw"
+		"back": "sprites/back/meowstic.png"
 	},
 	"meowsticf": {
 		"front": "sprites/front/meowsticf.png",
-		"back": "sprites/back/meowsticf.png",
-		"src": "bw"
+		"back": "sprites/back/meowsticf.png"
 	},
 	"meowsticfmega": {
 		"front": "sprites/front/meowsticfmega.png",
-		"back": "sprites/back/meowsticfmega.png",
-		"src": "bw"
+		"back": "sprites/back/meowsticfmega.png"
 	},
 	"meowsticmmega": {
 		"front": "sprites/front/meowsticmmega.png",
-		"back": "sprites/back/meowsticmmega.png",
-		"src": "bw"
+		"back": "sprites/back/meowsticmmega.png"
 	},
 	"metagross": {
 		"front": "sprites/front/metagross.png",
-		"back": "sprites/back/metagross.png",
-		"src": "platinum"
+		"back": "sprites/back/metagross.png"
 	},
 	"metagrossmega": {
 		"front": "sprites/front/metagrossmega.png",
-		"back": "sprites/back/metagrossmega.png",
-		"src": "bw"
+		"back": "sprites/back/metagrossmega.png"
 	},
 	"milotic": {
 		"front": "sprites/front/milotic.png",
-		"back": "sprites/back/milotic.png",
-		"src": "platinum"
+		"back": "sprites/back/milotic.png"
 	},
 	"mimikyu": {
 		"front": "sprites/front/mimikyu.png",
-		"back": "sprites/back/mimikyu.png",
-		"src": "bw"
+		"back": "sprites/back/mimikyu.png"
 	},
 	"mimikyubusted": {
 		"front": "sprites/front/mimikyubusted.png",
-		"back": "sprites/back/mimikyubusted.png",
-		"src": "bw"
+		"back": "sprites/back/mimikyubusted.png"
 	},
 	"morpeko": {
 		"front": "sprites/front/morpeko.png",
-		"back": "sprites/back/morpeko.png",
-		"src": "bw"
+		"back": "sprites/back/morpeko.png"
 	},
 	"morpekohangry": {
 		"front": "sprites/front/morpekohangry.png",
-		"back": "sprites/back/morpekohangry.png",
-		"src": "bw"
+		"back": "sprites/back/morpekohangry.png"
 	},
 	"mrrime": {
 		"front": "sprites/front/mrrime.png",
-		"back": "sprites/back/mrrime.png",
-		"src": "bw"
+		"back": "sprites/back/mrrime.png"
 	},
 	"mudsdale": {
 		"front": "sprites/front/mudsdale.png",
-		"back": "sprites/back/mudsdale.png",
-		"src": "bw"
+		"back": "sprites/back/mudsdale.png"
 	},
 	"musharna": {
 		"front": "sprites/front/musharna.png",
-		"back": "sprites/back/musharna.png",
-		"src": "bw"
+		"back": "sprites/back/musharna.png"
 	},
 	"ninetales": {
 		"front": "sprites/front/ninetales.png",
-		"back": "sprites/back/ninetales.png",
-		"src": "platinum"
+		"back": "sprites/back/ninetales.png"
 	},
 	"ninetalesalola": {
 		"front": "sprites/front/ninetalesalola.png",
-		"back": "sprites/back/ninetalesalola.png",
-		"src": "bw"
+		"back": "sprites/back/ninetalesalola.png"
 	},
 	"noivern": {
 		"front": "sprites/front/noivern.png",
-		"back": "sprites/back/noivern.png",
-		"src": "bw"
+		"back": "sprites/back/noivern.png"
 	},
 	"oranguru": {
 		"front": "sprites/front/oranguru.png",
-		"back": "sprites/back/oranguru.png",
-		"src": "bw"
+		"back": "sprites/back/oranguru.png"
 	},
 	"orthworm": {
 		"front": "sprites/front/orthworm.png",
-		"back": "sprites/back/orthworm.png",
-		"src": "bw"
+		"back": "sprites/back/orthworm.png"
 	},
 	"overqwil": {
 		"front": "sprites/front/overqwil.png",
-		"back": "sprites/back/overqwil.png",
-		"src": "bw"
+		"back": "sprites/back/overqwil.png"
 	},
 	"palafin": {
 		"front": "sprites/front/palafin.png",
-		"back": "sprites/back/palafin.png",
-		"src": "bw"
+		"back": "sprites/back/palafin.png"
 	},
 	"palafinhero": {
 		"front": "sprites/front/palafinhero.png",
-		"back": "sprites/back/palafinhero.png",
-		"src": "bw"
+		"back": "sprites/back/palafinhero.png"
 	},
 	"passimian": {
 		"front": "sprites/front/passimian.png",
-		"back": "sprites/back/passimian.png",
-		"src": "bw"
+		"back": "sprites/back/passimian.png"
 	},
 	"pawmot": {
 		"front": "sprites/front/pawmot.png",
-		"back": "sprites/back/pawmot.png",
-		"src": "bw"
+		"back": "sprites/back/pawmot.png"
 	},
 	"pelipper": {
 		"front": "sprites/front/pelipper.png",
-		"back": "sprites/back/pelipper.png",
-		"src": "platinum"
+		"back": "sprites/back/pelipper.png"
 	},
 	"perrserker": {
 		"front": "sprites/front/perrserker.png",
-		"back": "sprites/back/perrserker.png",
-		"src": "bw"
+		"back": "sprites/back/perrserker.png"
 	},
 	"pidgeot": {
 		"front": "sprites/front/pidgeot.png",
-		"back": "sprites/back/pidgeot.png",
-		"src": "platinum"
+		"back": "sprites/back/pidgeot.png"
 	},
 	"pidgeotmega": {
 		"front": "sprites/front/pidgeotmega.png",
-		"back": "sprites/back/pidgeotmega.png",
-		"src": "bw"
+		"back": "sprites/back/pidgeotmega.png"
 	},
 	"pikachu": {
 		"front": "sprites/front/pikachu.png",
-		"back": "sprites/back/pikachu.png",
-		"src": "platinum"
+		"back": "sprites/back/pikachu.png"
 	},
 	"pinsir": {
 		"front": "sprites/front/pinsir.png",
-		"back": "sprites/back/pinsir.png",
-		"src": "platinum"
+		"back": "sprites/back/pinsir.png"
 	},
 	"pinsirmega": {
 		"front": "sprites/front/pinsirmega.png",
-		"back": "sprites/back/pinsirmega.png",
-		"src": "bw"
+		"back": "sprites/back/pinsirmega.png"
 	},
 	"politoed": {
 		"front": "sprites/front/politoed.png",
-		"back": "sprites/back/politoed.png",
-		"src": "platinum"
+		"back": "sprites/back/politoed.png"
 	},
 	"polteageist": {
 		"front": "sprites/front/polteageist.png",
-		"back": "sprites/back/polteageist.png",
-		"src": "bw"
+		"back": "sprites/back/polteageist.png"
 	},
 	"primarina": {
 		"front": "sprites/front/primarina.png",
-		"back": "sprites/back/primarina.png",
-		"src": "bw"
+		"back": "sprites/back/primarina.png"
 	},
 	"pyroar": {
 		"front": "sprites/front/pyroar.png",
-		"back": "sprites/back/pyroar.png",
-		"src": "bw"
+		"back": "sprites/back/pyroar.png"
 	},
 	"pyroarmega": {
 		"front": "sprites/front/pyroarmega.png",
-		"back": "sprites/back/pyroarmega.png",
-		"src": "bw"
+		"back": "sprites/back/pyroarmega.png"
 	},
 	"quaquaval": {
 		"front": "sprites/front/quaquaval.png",
-		"back": "sprites/back/quaquaval.png",
-		"src": "bw"
+		"back": "sprites/back/quaquaval.png"
 	},
 	"raichu": {
 		"front": "sprites/front/raichu.png",
-		"back": "sprites/back/raichu.png",
-		"src": "platinum"
+		"back": "sprites/back/raichu.png"
 	},
 	"raichualola": {
 		"front": "sprites/front/raichualola.png",
-		"back": "sprites/back/raichualola.png",
-		"src": "bw"
+		"back": "sprites/back/raichualola.png"
 	},
 	"raichumegax": {
 		"front": "sprites/front/raichumegax.png",
-		"back": "sprites/back/raichumegax.png",
-		"src": "bw"
+		"back": "sprites/back/raichumegax.png"
 	},
 	"raichumegay": {
 		"front": "sprites/front/raichumegay.png",
-		"back": "sprites/back/raichumegay.png",
-		"src": "bw"
+		"back": "sprites/back/raichumegay.png"
 	},
 	"rampardos": {
 		"front": "sprites/front/rampardos.png",
-		"back": "sprites/back/rampardos.png",
-		"src": "platinum"
+		"back": "sprites/back/rampardos.png"
 	},
 	"reuniclus": {
 		"front": "sprites/front/reuniclus.png",
-		"back": "sprites/back/reuniclus.png",
-		"src": "bw"
+		"back": "sprites/back/reuniclus.png"
 	},
 	"rhyperior": {
 		"front": "sprites/front/rhyperior.png",
-		"back": "sprites/back/rhyperior.png",
-		"src": "platinum"
+		"back": "sprites/back/rhyperior.png"
 	},
 	"rillaboom": {
 		"front": "sprites/front/rillaboom.png",
-		"back": "sprites/back/rillaboom.png",
-		"src": "bw"
+		"back": "sprites/back/rillaboom.png"
 	},
 	"roserade": {
 		"front": "sprites/front/roserade.png",
-		"back": "sprites/back/roserade.png",
-		"src": "platinum"
+		"back": "sprites/back/roserade.png"
 	},
 	"rotomfrost": {
 		"front": "sprites/front/rotomfrost.png",
-		"back": "sprites/back/rotomfrost.png",
-		"src": "platinum"
+		"back": "sprites/back/rotomfrost.png"
 	},
 	"rotomheat": {
 		"front": "sprites/front/rotomheat.png",
-		"back": "sprites/back/rotomheat.png",
-		"src": "platinum"
+		"back": "sprites/back/rotomheat.png"
 	},
 	"rotommow": {
 		"front": "sprites/front/rotommow.png",
-		"back": "sprites/back/rotommow.png",
-		"src": "platinum"
+		"back": "sprites/back/rotommow.png"
 	},
 	"rotomwash": {
 		"front": "sprites/front/rotomwash.png",
-		"back": "sprites/back/rotomwash.png",
-		"src": "platinum"
+		"back": "sprites/back/rotomwash.png"
 	},
 	"runerigus": {
 		"front": "sprites/front/runerigus.png",
-		"back": "sprites/back/runerigus.png",
-		"src": "bw"
+		"back": "sprites/back/runerigus.png"
 	},
 	"sableye": {
 		"front": "sprites/front/sableye.png",
-		"back": "sprites/back/sableye.png",
-		"src": "platinum"
+		"back": "sprites/back/sableye.png"
 	},
 	"sableyemega": {
 		"front": "sprites/front/sableyemega.png",
-		"back": "sprites/back/sableyemega.png",
-		"src": "bw"
+		"back": "sprites/back/sableyemega.png"
 	},
 	"salamence": {
 		"front": "sprites/front/salamence.png",
-		"back": "sprites/back/salamence.png",
-		"src": "platinum"
+		"back": "sprites/back/salamence.png"
 	},
 	"salamencemega": {
 		"front": "sprites/front/salamencemega.png",
-		"back": "sprites/back/salamencemega.png",
-		"src": "bw"
+		"back": "sprites/back/salamencemega.png"
 	},
 	"salazzle": {
 		"front": "sprites/front/salazzle.png",
-		"back": "sprites/back/salazzle.png",
-		"src": "bw"
+		"back": "sprites/back/salazzle.png"
 	},
 	"samurotthisui": {
 		"front": "sprites/front/samurotthisui.png",
-		"back": "sprites/back/samurotthisui.png",
-		"src": "bw"
+		"back": "sprites/back/samurotthisui.png"
 	},
 	"sandaconda": {
 		"front": "sprites/front/sandaconda.png",
-		"back": "sprites/back/sandaconda.png",
-		"src": "bw"
+		"back": "sprites/back/sandaconda.png"
 	},
 	"sceptile": {
 		"front": "sprites/front/sceptile.png",
-		"back": "sprites/back/sceptile.png",
-		"src": "platinum"
+		"back": "sprites/back/sceptile.png"
 	},
 	"sceptilemega": {
 		"front": "sprites/front/sceptilemega.png",
-		"back": "sprites/back/sceptilemega.png",
-		"src": "bw"
+		"back": "sprites/back/sceptilemega.png"
 	},
 	"scizor": {
 		"front": "sprites/front/scizor.png",
-		"back": "sprites/back/scizor.png",
-		"src": "platinum"
+		"back": "sprites/back/scizor.png"
 	},
 	"scizormega": {
 		"front": "sprites/front/scizormega.png",
-		"back": "sprites/back/scizormega.png",
-		"src": "bw"
+		"back": "sprites/back/scizormega.png"
 	},
 	"scolipede": {
 		"front": "sprites/front/scolipede.png",
-		"back": "sprites/back/scolipede.png",
-		"src": "bw"
+		"back": "sprites/back/scolipede.png"
 	},
 	"scolipedemega": {
 		"front": "sprites/front/scolipedemega.png",
-		"back": "sprites/back/scolipedemega.png",
-		"src": "bw"
+		"back": "sprites/back/scolipedemega.png"
 	},
 	"scovillain": {
 		"front": "sprites/front/scovillain.png",
-		"back": "sprites/back/scovillain.png",
-		"src": "bw"
+		"back": "sprites/back/scovillain.png"
 	},
 	"scovillainmega": {
 		"front": "sprites/front/scovillainmega.png",
-		"back": "sprites/back/scovillainmega.png",
-		"src": "bw"
+		"back": "sprites/back/scovillainmega.png"
 	},
 	"scrafty": {
 		"front": "sprites/front/scrafty.png",
-		"back": "sprites/back/scrafty.png",
-		"src": "bw"
+		"back": "sprites/back/scrafty.png"
 	},
 	"scraftymega": {
 		"front": "sprites/front/scraftymega.png",
-		"back": "sprites/back/scraftymega.png",
-		"src": "bw"
+		"back": "sprites/back/scraftymega.png"
 	},
 	"serperior": {
 		"front": "sprites/front/serperior.png",
-		"back": "sprites/back/serperior.png",
-		"src": "bw"
+		"back": "sprites/back/serperior.png"
 	},
 	"sharpedo": {
 		"front": "sprites/front/sharpedo.png",
-		"back": "sprites/back/sharpedo.png",
-		"src": "platinum"
+		"back": "sprites/back/sharpedo.png"
 	},
 	"sharpedomega": {
 		"front": "sprites/front/sharpedomega.png",
-		"back": "sprites/back/sharpedomega.png",
-		"src": "bw"
+		"back": "sprites/back/sharpedomega.png"
 	},
 	"sinistcha": {
 		"front": "sprites/front/sinistcha.png",
-		"back": "sprites/back/sinistcha.png",
-		"src": "bw"
+		"back": "sprites/back/sinistcha.png"
 	},
 	"sirfetchd": {
 		"front": "sprites/front/sirfetchd.png",
-		"back": "sprites/back/sirfetchd.png",
-		"src": "bw"
+		"back": "sprites/back/sirfetchd.png"
 	},
 	"skarmory": {
 		"front": "sprites/front/skarmory.png",
-		"back": "sprites/back/skarmory.png",
-		"src": "platinum"
+		"back": "sprites/back/skarmory.png"
 	},
 	"skarmorymega": {
 		"front": "sprites/front/skarmorymega.png",
-		"back": "sprites/back/skarmorymega.png",
-		"src": "bw"
+		"back": "sprites/back/skarmorymega.png"
 	},
 	"skeledirge": {
 		"front": "sprites/front/skeledirge.png",
-		"back": "sprites/back/skeledirge.png",
-		"src": "bw"
+		"back": "sprites/back/skeledirge.png"
 	},
 	"slowbro": {
 		"front": "sprites/front/slowbro.png",
-		"back": "sprites/back/slowbro.png",
-		"src": "platinum"
+		"back": "sprites/back/slowbro.png"
 	},
 	"slowbromega": {
 		"front": "sprites/front/slowbromega.png",
-		"back": "sprites/back/slowbromega.png",
-		"src": "bw"
+		"back": "sprites/back/slowbromega.png"
 	},
 	"slowkinggalar": {
 		"front": "sprites/front/slowkinggalar.png",
-		"back": "sprites/back/slowkinggalar.png",
-		"src": "bw"
+		"back": "sprites/back/slowkinggalar.png"
 	},
 	"slurpuff": {
 		"front": "sprites/front/slurpuff.png",
-		"back": "sprites/back/slurpuff.png",
-		"src": "bw"
+		"back": "sprites/back/slurpuff.png"
 	},
 	"sneasler": {
 		"front": "sprites/front/sneasler.png",
-		"back": "sprites/back/sneasler.png",
-		"src": "bw"
+		"back": "sprites/back/sneasler.png"
 	},
 	"snorlax": {
 		"front": "sprites/front/snorlax.png",
-		"back": "sprites/back/snorlax.png",
-		"src": "platinum"
+		"back": "sprites/back/snorlax.png"
 	},
 	"spiritomb": {
 		"front": "sprites/front/spiritomb.png",
-		"back": "sprites/back/spiritomb.png",
-		"src": "platinum"
+		"back": "sprites/back/spiritomb.png"
 	},
 	"squawkabilly": {
 		"front": "sprites/front/squawkabilly.png",
-		"back": "sprites/back/squawkabilly.png",
-		"src": "bw"
+		"back": "sprites/back/squawkabilly.png"
 	},
 	"staraptor": {
 		"front": "sprites/front/staraptor.png",
-		"back": "sprites/back/staraptor.png",
-		"src": "platinum"
+		"back": "sprites/back/staraptor.png"
 	},
 	"staraptormega": {
 		"front": "sprites/front/staraptormega.png",
-		"back": "sprites/back/staraptormega.png",
-		"src": "bw"
+		"back": "sprites/back/staraptormega.png"
 	},
 	"starmie": {
 		"front": "sprites/front/starmie.png",
-		"back": "sprites/back/starmie.png",
-		"src": "platinum"
+		"back": "sprites/back/starmie.png"
 	},
 	"starmiemega": {
 		"front": "sprites/front/starmiemega.png",
-		"back": "sprites/back/starmiemega.png",
-		"src": "bw"
+		"back": "sprites/back/starmiemega.png"
 	},
 	"steelix": {
 		"front": "sprites/front/steelix.png",
-		"back": "sprites/back/steelix.png",
-		"src": "platinum"
+		"back": "sprites/back/steelix.png"
 	},
 	"steelixmega": {
 		"front": "sprites/front/steelixmega.png",
-		"back": "sprites/back/steelixmega.png",
-		"src": "bw"
+		"back": "sprites/back/steelixmega.png"
 	},
 	"swampert": {
 		"front": "sprites/front/swampert.png",
-		"back": "sprites/back/swampert.png",
-		"src": "platinum"
+		"back": "sprites/back/swampert.png"
 	},
 	"swampertmega": {
 		"front": "sprites/front/swampertmega.png",
-		"back": "sprites/back/swampertmega.png",
-		"src": "bw"
+		"back": "sprites/back/swampertmega.png"
 	},
 	"sylveon": {
 		"front": "sprites/front/sylveon.png",
-		"back": "sprites/back/sylveon.png",
-		"src": "bw"
+		"back": "sprites/back/sylveon.png"
 	},
 	"talonflame": {
 		"front": "sprites/front/talonflame.png",
-		"back": "sprites/back/talonflame.png",
-		"src": "bw"
+		"back": "sprites/back/talonflame.png"
 	},
 	"taurospaldeaaqua": {
 		"front": "sprites/front/taurospaldeaaqua.png",
-		"back": "sprites/back/taurospaldeaaqua.png",
-		"src": "bw"
+		"back": "sprites/back/taurospaldeaaqua.png"
 	},
 	"taurospaldeablaze": {
 		"front": "sprites/front/taurospaldeablaze.png",
-		"back": "sprites/back/taurospaldeablaze.png",
-		"src": "bw"
+		"back": "sprites/back/taurospaldeablaze.png"
 	},
 	"thievul": {
 		"front": "sprites/front/thievul.png",
-		"back": "sprites/back/thievul.png",
-		"src": "bw"
+		"back": "sprites/back/thievul.png"
 	},
 	"tinkaton": {
 		"front": "sprites/front/tinkaton.png",
-		"back": "sprites/back/tinkaton.png",
-		"src": "bw"
+		"back": "sprites/back/tinkaton.png"
 	},
 	"torkoal": {
 		"front": "sprites/front/torkoal.png",
-		"back": "sprites/back/torkoal.png",
-		"src": "platinum"
+		"back": "sprites/back/torkoal.png"
 	},
 	"torterra": {
 		"front": "sprites/front/torterra.png",
-		"back": "sprites/back/torterra.png",
-		"src": "platinum"
+		"back": "sprites/back/torterra.png"
 	},
 	"toucannon": {
 		"front": "sprites/front/toucannon.png",
-		"back": "sprites/back/toucannon.png",
-		"src": "bw"
+		"back": "sprites/back/toucannon.png"
 	},
 	"toxicroak": {
 		"front": "sprites/front/toxicroak.png",
-		"back": "sprites/back/toxicroak.png",
-		"src": "platinum"
+		"back": "sprites/back/toxicroak.png"
 	},
 	"toxtricity": {
 		"front": "sprites/front/toxtricity.png",
-		"back": "sprites/back/toxtricity.png",
-		"src": "bw"
+		"back": "sprites/back/toxtricity.png"
 	},
 	"trevenant": {
 		"front": "sprites/front/trevenant.png",
-		"back": "sprites/back/trevenant.png",
-		"src": "bw"
+		"back": "sprites/back/trevenant.png"
 	},
 	"tsareena": {
 		"front": "sprites/front/tsareena.png",
-		"back": "sprites/back/tsareena.png",
-		"src": "bw"
+		"back": "sprites/back/tsareena.png"
 	},
 	"typhlosionhisui": {
 		"front": "sprites/front/typhlosionhisui.png",
-		"back": "sprites/back/typhlosionhisui.png",
-		"src": "bw"
+		"back": "sprites/back/typhlosionhisui.png"
 	},
 	"tyranitar": {
 		"front": "sprites/front/tyranitar.png",
-		"back": "sprites/back/tyranitar.png",
-		"src": "platinum"
+		"back": "sprites/back/tyranitar.png"
 	},
 	"tyranitarmega": {
 		"front": "sprites/front/tyranitarmega.png",
-		"back": "sprites/back/tyranitarmega.png",
-		"src": "bw"
+		"back": "sprites/back/tyranitarmega.png"
 	},
 	"tyrantrum": {
 		"front": "sprites/front/tyrantrum.png",
-		"back": "sprites/back/tyrantrum.png",
-		"src": "bw"
+		"back": "sprites/back/tyrantrum.png"
 	},
 	"umbreon": {
 		"front": "sprites/front/umbreon.png",
-		"back": "sprites/back/umbreon.png",
-		"src": "platinum"
+		"back": "sprites/back/umbreon.png"
 	},
 	"vanilluxe": {
 		"front": "sprites/front/vanilluxe.png",
-		"back": "sprites/back/vanilluxe.png",
-		"src": "bw"
+		"back": "sprites/back/vanilluxe.png"
 	},
 	"venusaur": {
 		"front": "sprites/front/venusaur.png",
-		"back": "sprites/back/venusaur.png",
-		"src": "platinum"
+		"back": "sprites/back/venusaur.png"
 	},
 	"venusaurmega": {
 		"front": "sprites/front/venusaurmega.png",
-		"back": "sprites/back/venusaurmega.png",
-		"src": "bw"
+		"back": "sprites/back/venusaurmega.png"
 	},
 	"victreebel": {
 		"front": "sprites/front/victreebel.png",
-		"back": "sprites/back/victreebel.png",
-		"src": "platinum"
+		"back": "sprites/back/victreebel.png"
 	},
 	"victreebelmega": {
 		"front": "sprites/front/victreebelmega.png",
-		"back": "sprites/back/victreebelmega.png",
-		"src": "bw"
+		"back": "sprites/back/victreebelmega.png"
 	},
 	"vileplume": {
 		"front": "sprites/front/vileplume.png",
-		"back": "sprites/back/vileplume.png",
-		"src": "platinum"
+		"back": "sprites/back/vileplume.png"
 	},
 	"vivillon": {
 		"front": "sprites/front/vivillon.png",
-		"back": "sprites/back/vivillon.png",
-		"src": "bw"
+		"back": "sprites/back/vivillon.png"
 	},
 	"volcarona": {
 		"front": "sprites/front/volcarona.png",
-		"back": "sprites/back/volcarona.png",
-		"src": "bw"
+		"back": "sprites/back/volcarona.png"
 	},
 	"weavile": {
 		"front": "sprites/front/weavile.png",
-		"back": "sprites/back/weavile.png",
-		"src": "platinum"
+		"back": "sprites/back/weavile.png"
 	},
 	"whimsicott": {
 		"front": "sprites/front/whimsicott.png",
-		"back": "sprites/back/whimsicott.png",
-		"src": "bw"
+		"back": "sprites/back/whimsicott.png"
 	},
 	"wigglytuff": {
 		"front": "sprites/front/wigglytuff.png",
-		"back": "sprites/back/wigglytuff.png",
-		"src": "platinum"
+		"back": "sprites/back/wigglytuff.png"
 	},
 	"zoroarkhisui": {
 		"front": "sprites/front/zoroarkhisui.png",
-		"back": "sprites/back/zoroarkhisui.png",
-		"src": "bw"
+		"back": "sprites/back/zoroarkhisui.png"
 	}
 }

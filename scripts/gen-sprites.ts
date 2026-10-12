@@ -1,5 +1,6 @@
-// Downloads Gen IV (Platinum) sprites from PokeAPI's sprite repository where they exist,
-// falling back to Gen V-style pixel sprites, for every species/forme the game can show.
+// Downloads Gen V-style (Black/White) pixel sprites from PokeAPI's sprite repository for every
+// species/forme the game can show. One style for everything: it is the only DS-era set in PokeAPI
+// that covers every Pokémon and Mega Evolution, front and back.
 // Writes public/sprites/{front,back}/<showdown id>.png and src/generated/sprites.json.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
@@ -33,12 +34,8 @@ function pokeapiId(speciesName: string): number | undefined {
 
 function bestPath(id: number, back: boolean): string | undefined {
 	const b = back ? 'back/' : '';
-	const candidates = [
-		`sprites/pokemon/versions/generation-iv/platinum/${b}${id}.png`,
-		`sprites/pokemon/versions/generation-v/black-white/${b}${id}.png`,
-		`sprites/pokemon/${b}${id}.png`,
-	];
-	return candidates.find(c => files.has(c));
+	const path = `sprites/pokemon/versions/generation-v/black-white/${b}${id}.png`;
+	return files.has(path) ? path : undefined;
 }
 
 // Every species a battle might display: library sets, their Megas, and in-battle formes.
@@ -54,7 +51,7 @@ for (const lib of LIBRARY) {
 	}
 }
 
-const out: Record<string, { front: string, back: string, src: string }> = {};
+const out: Record<string, { front: string, back: string }> = {};
 fs.mkdirSync('public/sprites/front', { recursive: true });
 fs.mkdirSync('public/sprites/back', { recursive: true });
 const missing: string[] = [];
@@ -64,11 +61,11 @@ for (const name of [...names].sort()) {
 	const id = pokeapiId(name);
 	if (!id) { missing.push(name); continue; }
 	const front = bestPath(id, false), back = bestPath(id, true);
-	if (!front) { missing.push(`${name} (no sprite ${id})`); continue; }
+	if (!front || !back) { missing.push(`${name} (no Gen V-style sprite for ${id})`); continue; }
 	const key = toID(name);
-	out[key] = { front: `sprites/front/${key}.png`, back: `sprites/back/${key}.png`, src: front.includes('platinum') ? 'platinum' : front.includes('black-white') ? 'bw' : 'default' };
+	out[key] = { front: `sprites/front/${key}.png`, back: `sprites/back/${key}.png` };
 	downloads.push([front, `public/sprites/front/${key}.png`]);
-	downloads.push([back ?? front, `public/sprites/back/${key}.png`]);
+	downloads.push([back, `public/sprites/back/${key}.png`]);
 }
 const todo = downloads.filter(([, to]) => !fs.existsSync(to));
 for (let i = 0; i < todo.length; i += 40) {
@@ -77,5 +74,8 @@ for (let i = 0; i < todo.length; i += 40) {
 	execFileSync('curl', args, { stdio: 'inherit' });
 }
 fs.writeFileSync('src/generated/sprites.json', JSON.stringify(out, null, '\t'));
-console.log(`${Object.keys(out).length} sprites`, Object.values(out).reduce((a, s) => ({ ...a, [s.src]: (a[s.src] || 0) + 1 }), {} as any));
-if (missing.length) console.log('MISSING', missing.join(', '));
+console.log(`${Object.keys(out).length} sprites`);
+if (missing.length) {
+	console.log('MISSING', missing.join(', '));
+	process.exitCode = 1;
+}

@@ -1,6 +1,6 @@
 import type { ComponentChildren } from 'preact';
 import type { MonView, MoveView } from '../shared/types';
-import { TYPE_COLORS, STAT_NAMES, spriteUrl, spriteSource, moveDesc, itemDesc, abilityDesc } from './dexinfo';
+import { TYPE_COLORS, STAT_NAMES, spriteUrl, moveDesc, itemDesc, abilityDesc } from './dexinfo';
 
 export function TypeBadge({ type, small }: { type: string; small?: boolean }) {
 	return <span class={`type-badge${small ? ' small' : ''}`} style={{ background: TYPE_COLORS[type] || '#888' }}>{type}</span>;
@@ -8,7 +8,7 @@ export function TypeBadge({ type, small }: { type: string; small?: boolean }) {
 
 export function Sprite({ speciesId, back, class: cls, alt }: { speciesId: string; back?: boolean; class?: string; alt?: string }) {
 	const src = spriteUrl(speciesId, back);
-	return <img class={`sprite src-${spriteSource(speciesId)} ${cls || ''}`} src={src} alt={alt || speciesId} draggable={false} loading="lazy" />;
+	return <img class={`sprite ${cls || ''}`} src={src} alt={alt || speciesId} draggable={false} loading="lazy" />;
 }
 
 export function MoveChip({ move }: { move: MoveView }) {

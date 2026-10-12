@@ -358,8 +358,6 @@ main { flex: 1; }
 .mon-pos.p1 { width: 36cqw; aspect-ratio: 1; bottom: 13cqw; }
 .mon-pos.p1.slot0 { left: -3cqw; bottom: 15cqw; }
 .mon-pos.p1.slot1 { left: 23cqw; }
-/* Platinum sprites are 80px vs 96px for Gen V-style ones: keep one pixel scale. */
-.mon-pos .sprite.src-platinum { width: 83.3%; height: 83.3%; margin: 8.35% auto 0; }
 .mon-pos.fainted { opacity: 0; }
 
 .anim-attack.p1 { animation: lunge-p1 0.45s ease; }

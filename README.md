@@ -17,9 +17,9 @@ daily-vgc.com
 - **Mechanics:** battles run on the [Pokémon Showdown](https://github.com/smogon/pokemon-showdown)
   simulator's `champions` mod, so damage, abilities, items and move interactions follow
   Pokémon Champions.
-- **Look:** a Diamond/Pearl/Platinum-style dual-screen UI with Gen IV sprites from
-  [PokéAPI](https://github.com/PokeAPI/sprites) (Gen V-style pixel sprites for Pokémon and
-  Megas that never appeared in Gen IV).
+- **Look:** a Diamond/Pearl/Platinum-style dual-screen UI with DS-era pixel sprites from
+  [PokéAPI](https://github.com/PokeAPI/sprites). Every Pokémon and Mega uses the same
+  Black/White-style set, the only one there that covers all of them, front and back.
 - **Hosting:** a static site with no server and no costs. Stats and in-progress battles are
   saved in the browser (`localStorage`).
 
