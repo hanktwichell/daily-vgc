@@ -340,9 +340,10 @@ function jointOptions(an: Analyzer, side: Side, perSlot: SlotOption[][], limit: 
 	const out: JointOption[] = [];
 	const [a, b] = [perSlot[0] || [], perSlot[1] || [{ choice: 'pass', kind: 'pass', score: 0 } as SlotOption]];
 	for (const x of a) {
-		for (const y of b) {
+		for (let y of b) {
 			if (x.kind === 'switch' && y.kind === 'switch' && x.switchTo === y.switchTo) continue;
-			if (x.choice.endsWith(' mega') && y.choice.endsWith(' mega')) continue;
+			// Only one Mega Evolution per battle: if both could, only the first slot does.
+			if (x.choice.endsWith(' mega') && y.choice.endsWith(' mega')) y = { ...y, choice: y.choice.slice(0, -5) };
 			let score = x.score + y.score;
 			// Don't pile into a target the partner already knocks out.
 			if (x.kind === 'move' && y.kind === 'move' && x.target && x.target === y.target && x.target > 0) {
@@ -355,6 +356,7 @@ function jointOptions(an: Analyzer, side: Side, perSlot: SlotOption[][], limit: 
 			out.push({ choice: `${x.choice}, ${y.choice}`, slots: [x, y], score });
 		}
 	}
+	if (!out.length) out.push({ choice: 'default', slots: [], score: 0 });
 	out.sort((p, q) => q.score - p.score);
 	// Keep the top options plus a couple of random ones for diversity.
 	const top = out.slice(0, limit);

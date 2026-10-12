@@ -126,6 +126,27 @@ await test('battle runner: save/restore mid-battle keeps the pending request', (
 	assert.ok(restored.battle.inputLog.some(l => l.startsWith('>p1 team')));
 });
 
+await test('AI: valid choices when both active Pokémon could Mega Evolve and none can switch in', async () => {
+	const { chooseGreedy } = await import('../src/engine/ai');
+	const { Battle, Teams, State } = await import('../src/engine/ps');
+	const { buildTeam } = await import('../src/data/team-builder');
+	// Two-Pokémon teams (custom doubles format), so both slots can Mega Evolve and nobody is on the bench.
+	const twoMegas = buildTeam(['garchomp-mega-z', 'raichu-mega-y']);
+	const foes = buildTeam(['incineroar', 'rillaboom']);
+	for (const pick of [chooseAction, chooseGreedy]) {
+		const b = new Battle({ formatid: 'gen9championsdoublescustomgame' as any });
+		b.setPlayer('p1', { name: 'You', team: Teams.pack(twoMegas) });
+		b.setPlayer('p2', { name: 'CPU', team: Teams.pack(foes) });
+		b.choose('p1', 'team 12');
+		b.choose('p2', 'team 12');
+		const req = b.sides[0].activeRequest as any;
+		assert.ok(req.active[0].canMegaEvo && req.active[1].canMegaEvo, 'both leads should be able to Mega Evolve');
+		const choice = pick(JSON.stringify(State.serializeBattle(b)), 0);
+		assert.ok(choice.split(',').filter(c => c.trim().endsWith(' mega')).length <= 1, `two Megas in ${choice}`);
+		assert.ok(b.choose('p1', choice), `rejected: ${choice}`);
+	}
+});
+
 await test('AI vs AI: a full battle finishes without invalid choices', () => {
 	const d = generateDaily(dateForPuzzleNumber(5));
 	const result = playGame(d.playerTeam, d.opponentTeam, {
