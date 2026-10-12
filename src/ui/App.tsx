@@ -204,8 +204,9 @@ function HowToPlay() {
 				<li><b>Win</b> by making all four of your opponent's Pokémon faint.</li>
 			</ol>
 			<p>Rules follow <b>Pokémon Champions, Regulation M-C</b>: Level 50, Stat Points, Item Clause, Species Clause, Open Team Sheets, and <b>one Mega Evolution per battle</b> (tap “Mega Evolve” on the Fight menu). Your opponent always brings a Mega.</p>
-			<p>Tips: tap the text box to speed through messages, tap any Pokémon or HP bar to see its details, and use ▶▶ for fast text.</p>
+			<p>Tips: tap the text box to speed through messages, tap any Pokémon or HP bar to see its details, and use the “Text ▶” button for faster text.</p>
 			<p>You get one battle per day. Progress is saved on this device, so you can close the page and come back.</p>
+			<p class="muted small">Pokémon Champions Reg M-C rules · Doubles · Level 50 · One Mega per battle</p>
 		</div>
 	);
 }
