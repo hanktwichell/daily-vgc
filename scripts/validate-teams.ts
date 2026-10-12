@@ -40,5 +40,19 @@ for (const team of OPPONENT_TEAMS) {
 	} catch (e: any) { console.log(`${team.id}: ${e.message}`); teamErrors++; }
 }
 console.log(`${OPPONENT_TEAMS.length} opponent teams, ${teamErrors} problems`);
+
+import { META_TEAMS } from '../src/data/meta-teams';
+let metaErrors = 0;
+for (const team of META_TEAMS) {
+	try {
+		const megas = team.sets.filter(id => getLibrarySet(id).isMega).length;
+		if (megas < 1 || megas > 2) { console.log(`${team.id}: ${megas} megas`); metaErrors++; }
+		if (team.sets.length !== 6) { console.log(`${team.id}: ${team.sets.length} sets`); metaErrors++; }
+		const probs = validator.validateTeam(buildTeam(team.sets));
+		if (probs?.length) { console.log(`${team.id}: ${probs.join(' | ')}`); metaErrors++; }
+	} catch (e: any) { console.log(`${team.id}: ${e.message}`); metaErrors++; }
+}
+console.log(`${META_TEAMS.length} hard-mode meta teams, ${metaErrors} problems`);
+teamErrors += metaErrors;
 console.log('Most reused opponent sets:', [...usage].sort((a, b) => b[1] - a[1]).slice(0, 10).map(([k, v]) => `${k}×${v}`).join(', '));
 if (process.argv.includes('--strict') && (errors || teamErrors)) process.exit(1);

@@ -56,11 +56,29 @@ await test('daily puzzles: deterministic, legal under Reg M-C, opponent always h
 	}
 });
 
+await test('hard mode: same meta team for everyone, legal, themed team vs a Mega-bearing meta team', async () => {
+	const { generateHard } = await import('../src/data/daily');
+	const { META_TEAMS } = await import('../src/data/meta-teams');
+	for (let n = 0; n <= 10; n++) {
+		const date = dateForPuzzleNumber(n);
+		const a = generateHard(date), b = generateHard(date);
+		assert.equal(a.opponent.id, b.opponent.id, `hard ${n} not deterministic`);
+		assert.ok(META_TEAMS.some(m => m.id === a.opponent.id));
+		assert.deepEqual(a.playerTeam.map(s => s.species), generateDaily(date).opponentTeam.map(s => s.species), 'player gets the themed team');
+		for (const team of [a.playerTeam, a.opponentTeam]) {
+			const problems = validator.validateTeam(JSON.parse(JSON.stringify(team)));
+			assert.ok(!problems?.length, `hard ${n}: ${problems?.join('; ')}`);
+		}
+	}
+});
+
 await test('share text format', async () => {
 	const { shareText } = await import('../src/ui/share');
 	(globalThis as any).location = { host: 'daily-vgc.com', pathname: '/' };
 	const text = shareText({ number: 1, won: true, alive: [true, true, false, true], turns: 16 }, 1);
 	assert.equal(text, 'Daily VGC #1\n🟩🟩🟥🟩 3/4 left · 16 turns\nStreak: 1 · #DailyVGC\ndaily-vgc.com');
+	const hard = shareText({ number: 2, won: false, alive: [false, false, false, false], turns: 9 }, 0, true);
+	assert.equal(hard.split('\n')[0], 'Daily VGC #2 (Hard Mode)');
 });
 
 await test('stats: streaks work starting from puzzle #0', async () => {

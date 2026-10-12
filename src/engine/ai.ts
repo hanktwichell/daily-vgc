@@ -35,7 +35,12 @@ export interface AIConfig {
 }
 
 export const DEFAULT_AI: AIConfig = {
-	ownJoint: 14, oppJoint: 9, refineTop: 4, refineSamples: 2, lambda: 0.85, temperature: 0.04, explore: 0.08, budgetMs: 2500,
+	ownJoint: 16, oppJoint: 10, refineTop: 5, refineSamples: 2, lambda: 0.85, temperature: 0.03, explore: 0.05, budgetMs: 3000,
+};
+
+/** A looser opponent: fewer options considered and more random among the good ones. */
+export const RELAXED_AI: AIConfig = {
+	ownJoint: 10, oppJoint: 6, refineTop: 2, refineSamples: 1, lambda: 0.85, temperature: 0.1, explore: 0.25, budgetMs: 2000,
 };
 
 /* ------------------------------------------------------------------------------------------ */

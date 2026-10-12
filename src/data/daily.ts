@@ -3,6 +3,7 @@
 import { Dex, FORMAT_ID, type PokemonSet } from '../engine/ps';
 import { LIBRARY, type LibrarySet } from './library';
 import { OPPONENT_TEAMS, type OpponentTeam } from './opponents';
+import { META_TEAMS } from './meta-teams';
 import { buildTeam } from './team-builder';
 import { SeededRNG } from './rng';
 import { matchupScore } from '../engine/matchup';
@@ -21,7 +22,10 @@ export const ARCHETYPE_NAMES: Record<Archetype, string> = {
 	tw: 'Tailwind Offense', tr: 'Trick Room', balance: 'Balance', sun: 'Sun', rain: 'Rain', sand: 'Sand', snow: 'Snow',
 };
 
+export type Mode = 'normal' | 'hard';
+
 export interface DailyPuzzle {
+	mode: Mode;
 	date: string;
 	number: number;
 	opponent: OpponentTeam;
@@ -29,6 +33,10 @@ export interface DailyPuzzle {
 	playerIds: string[];
 	playerTeam: PokemonSet[];
 	archetype: Archetype;
+	/** Short description of the player's team shown at team preview. */
+	label: string;
+	/** Use the looser AI (hard-mode days where even the best pairing is lopsided). */
+	relaxedAi?: boolean;
 }
 
 const speciesCache = new Map<string, ReturnType<typeof dex.species.get>>();
@@ -192,10 +200,10 @@ export function opponentForPuzzle(n: number): OpponentTeam {
 }
 
 /**
- * The player's team is slightly favoured on paper (the AI plays well, so this keeps the
- * puzzle winnable); teams without a Mega get a bigger edge.
+ * How much the player's team is favoured on paper. Small, so the battle is a real fight
+ * against a strong AI; teams without a Mega get a bigger edge.
  */
-const TARGET_EDGE = [1.5, 0.6, 0.4];
+const TARGET_EDGE = [0.9, 0.3, 0.1];
 const CANDIDATES = 16;
 
 export interface Candidate { ids: string[]; team: PokemonSet[]; diff: number; archetype: Archetype }
@@ -224,21 +232,66 @@ export function candidateTeams(date: string, opponentTeam: PokemonSet[], opponen
 }
 
 /** Teams chosen offline by simulation (scripts/calibrate.ts), keyed by date. */
-const calibrated = CALIBRATED as Record<string, { ids: string[]; archetype: Archetype }>;
+const calibrated = CALIBRATED as Record<string, { ids?: string[]; archetype?: Archetype; hard?: string; hardRelaxed?: boolean }>;
 
 export function generateDaily(date: string): DailyPuzzle {
 	const number = puzzleNumberFor(date);
 	const opponent = opponentForPuzzle(number);
 	const opponentTeam = buildTeam(opponent.sets);
 	const fixed = calibrated[date];
-	if (fixed && fixed.ids.every(id => LIBRARY.some(l => l.id === id))) {
-		return { date, number, opponent, opponentTeam, playerIds: fixed.ids, playerTeam: buildTeam(fixed.ids), archetype: fixed.archetype };
+	if (fixed?.ids && fixed.archetype && fixed.ids.every(id => LIBRARY.some(l => l.id === id))) {
+		return {
+			mode: 'normal', date, number, opponent, opponentTeam, playerIds: fixed.ids, playerTeam: buildTeam(fixed.ids),
+			archetype: fixed.archetype, label: ARCHETYPE_NAMES[fixed.archetype],
+		};
 	}
 	const best = candidateTeams(date, opponentTeam, opponent)[0];
 	return {
-		date, number, opponent, opponentTeam,
+		mode: 'normal', date, number, opponent, opponentTeam,
 		playerIds: best.ids,
 		playerTeam: best.team,
 		archetype: best.archetype,
+		label: ARCHETYPE_NAMES[best.archetype],
 	};
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* Hard mode: the day's themed team against a meta team                                         */
+/* ------------------------------------------------------------------------------------------ */
+
+/** On paper the meta team should be favoured, but not overwhelmingly. */
+const HARD_TARGET = -0.35;
+
+export interface HardCandidate { meta: OpponentTeam; team: PokemonSet[]; score: number; diff: number }
+
+/** Meta teams ordered by how close their matchup against the themed team is to the target. */
+export function hardCandidates(themedTeam: PokemonSet[]): HardCandidate[] {
+	return META_TEAMS.map(meta => {
+		const team = buildTeam(meta.sets);
+		const score = matchupScore(themedTeam, team);
+		return { meta, team, score, diff: Math.abs(score - HARD_TARGET) };
+	}).sort((a, b) => a.diff - b.diff);
+}
+
+export function generateHard(date: string): DailyPuzzle {
+	const number = puzzleNumberFor(date);
+	const themed = opponentForPuzzle(number);
+	const playerTeam = buildTeam(themed.sets);
+	const pinned = calibrated[date]?.hard;
+	let meta = pinned ? META_TEAMS.find(m => m.id === pinned) : undefined;
+	if (!meta) {
+		// Pick among the three closest so a themed team doesn't always meet the same opponent.
+		const top = hardCandidates(playerTeam).slice(0, 3);
+		meta = new SeededRNG(`daily-vgc:hard:${date}`).pick(top).meta;
+	}
+	return {
+		mode: 'hard', date, number, opponent: meta, opponentTeam: buildTeam(meta.sets),
+		playerIds: themed.sets, playerTeam, archetype: 'balance',
+		label: `${themed.name} (${themed.trainer}'s team)`,
+		relaxedAi: !!(pinned && meta.id === pinned && calibrated[date]?.hardRelaxed),
+	};
+}
+
+export function generatePuzzle(date: string, mode: Mode): DailyPuzzle {
+	return mode === 'hard' ? generateHard(date) : generateDaily(date);
 }

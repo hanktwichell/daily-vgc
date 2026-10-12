@@ -50,6 +50,15 @@ uses fresh randomness per player.
 
 Every set and team is checked against the Reg M-C validator (`npm run validate-teams`).
 
+## Hard Mode
+
+Winning the daily battle unlocks Hard Mode. You pilot the day's themed opponent team against
+one of 16 competitive teams built on the cores winning Regulation M-C (`src/data/meta-teams.ts`).
+Everyone gets the same meta team on a given day. It's chosen so it's favoured on paper but
+doesn't overwhelm the themed team, and the weekly calibration checks it by simulation too. If even
+the best pairing is lopsided, that day's AI plays a little looser so it stays winnable. Hard Mode
+has its own progress, stats and share text ("Daily VGC #N (Hard Mode)").
+
 ## The opponent AI
 
 `src/engine/ai.ts` plays by simultaneous-move search on copies of the real battle:

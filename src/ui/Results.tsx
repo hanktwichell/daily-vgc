@@ -6,8 +6,17 @@ import { Sprite, Countdown } from './components';
 import { StatsSummary } from './StatsSummary';
 import { msUntilNextPuzzle } from '../data/calendar';
 
-export function Results({ record, stats, streak, puzzle, order, onClose }: {
-	record: GameRecord; stats: Stats; streak: number; puzzle: PuzzleView | null; order: number[]; onClose?: () => void;
+export interface HardModeLink {
+	state: 'locked' | 'available' | 'in-progress' | 'done';
+	play: () => void;
+}
+
+export function Results({ record, stats, streak, puzzle, order, hard = false, hardMode }: {
+	record: GameRecord; stats: Stats; streak: number; puzzle: PuzzleView | null; order: number[];
+	/** This result is from hard mode. */
+	hard?: boolean;
+	/** On the daily results: the hard-mode call to action. */
+	hardMode?: HardModeLink;
 }) {
 	const [toast, setToast] = useState('');
 	const [ms, setMs] = useState(msUntilNextPuzzle());
@@ -19,7 +28,7 @@ export function Results({ record, stats, streak, puzzle, order, onClose }: {
 		if (ms <= 0) location.reload();
 	}, [ms <= 0]);
 
-	const text = shareText(record, streak);
+	const text = shareText(record, streak, hard);
 	const left = record.alive.filter(Boolean).length;
 
 	const onShare = async () => {
@@ -29,13 +38,13 @@ export function Results({ record, stats, streak, puzzle, order, onClose }: {
 	};
 
 	return (
-		<div class="results ds-frame">
-			{onClose && <button class="icon-btn close" onClick={onClose} aria-label="Close">✕</button>}
+		<div class={`results ds-frame${hard ? ' hard' : ''}`}>
+			{hard && <div class="hard-banner">HARD MODE</div>}
 			<div class={`result-banner ${record.won ? 'win' : 'loss'}`}>
 				{record.won ? 'VICTORY!' : 'DEFEATED'}
 			</div>
 			<p class="result-sub">
-				Daily VGC #{record.number} · {left}/4 left · {record.turns} turns
+				Daily VGC #{record.number}{hard ? ' (Hard)' : ''} · {left}/4 left · {record.turns} turns
 				{puzzle && <><br />vs {puzzle.opponent.trainer} ({puzzle.opponent.name})</>}
 			</p>
 			<div class="result-squares">
@@ -53,7 +62,27 @@ export function Results({ record, stats, streak, puzzle, order, onClose }: {
 			</div>
 			{toast && <div class="toast">{toast}</div>}
 			<pre class="share-preview">{text}</pre>
+			{hardMode && <HardModeCard link={hardMode} />}
 			<p class="next">Next battle in <Countdown ms={ms} /></p>
+		</div>
+	);
+}
+
+function HardModeCard({ link }: { link: HardModeLink }) {
+	if (link.state === 'locked') {
+		return (
+			<div class="hard-card locked">
+				<b>Hard Mode</b>
+				<p>Win today's battle to unlock it.</p>
+			</div>
+		);
+	}
+	const label = link.state === 'done' ? 'See Hard Mode result' : link.state === 'in-progress' ? 'Continue Hard Mode' : 'Play Hard Mode';
+	return (
+		<div class="hard-card">
+			<b>Hard Mode unlocked</b>
+			<p>Take over today's themed team and face a top competitive team.</p>
+			<button class="btn hard" onClick={link.play}>{label} →</button>
 		</div>
 	);
 }
