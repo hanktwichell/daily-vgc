@@ -32,7 +32,7 @@ registerPSData({
 			Moves: ChMoves, Rulesets: ChRulesets, Scripts: ChScripts,
 		},
 	},
-	aliases: { Aliases, CompoundWordNames },
+	aliases: { Aliases: Aliases as any, CompoundWordNames },
 	formats: Formats as any[],
 });
 

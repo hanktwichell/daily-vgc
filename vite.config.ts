@@ -5,6 +5,8 @@ import preact from '@preact/preset-vite';
 export default defineConfig({
 	base: process.env.BASE_PATH || './',
 	plugins: [preact()],
+	// Showdown's State (de)serializer relies on constructor names, so they must survive minification.
+	esbuild: { keepNames: true },
 	worker: { format: 'es' },
 	build: { target: 'es2022', chunkSizeWarningLimit: 4000 },
 });

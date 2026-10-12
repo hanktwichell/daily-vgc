@@ -1,0 +1,16 @@
+import { chromium, devices } from 'playwright';
+const b = await chromium.launch(); const ctx = await b.newContext({ ...devices['iPhone 13'] }); const page = await ctx.newPage();
+page.on('pageerror', e => console.log('pageerror', e.message));
+page.on('console', m => console.log('console', m.type(), m.text().slice(0, 300)));
+await page.goto('http://localhost:4173/');
+await page.waitForSelector('.modal'); await page.click('.modal .close');
+await page.waitForSelector('.mon-card');
+const cards = await page.$$('.mon-card'); for (const i of [0,1,2,3]) await cards[i].click();
+await page.click('.preview-footer .btn.primary');
+const t0 = Date.now();
+await page.waitForSelector('.fight-btn', { timeout: 60000 }).catch(() => console.log('no fight btn'));
+console.log('fight after', Date.now() - t0);
+await page.screenshot({ path: '/tmp/claude-0/-home-user-daily-vgc/3f390bcb-2968-51bc-85de-b435178424e4/scratchpad/shots3/m-battle.png' });
+await page.click('.fight-btn'); await page.waitForTimeout(300);
+await page.screenshot({ path: '/tmp/claude-0/-home-user-daily-vgc/3f390bcb-2968-51bc-85de-b435178424e4/scratchpad/shots3/m-moves.png' });
+await b.close();
