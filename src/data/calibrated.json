@@ -1,0 +1,145 @@
+{
+	"2026-10-12": {
+		"ids": [
+			"musharna",
+			"dragalge-mega",
+			"indeedee-f",
+			"perrserker",
+			"araquanid",
+			"bastiodon"
+		],
+		"archetype": "tr"
+	},
+	"2026-10-13": {
+		"ids": [
+			"staraptor",
+			"abomasnow-mega",
+			"gyarados",
+			"tauros-paldea-blaze",
+			"dragapult",
+			"dedenne"
+		],
+		"archetype": "tw"
+	},
+	"2026-10-14": {
+		"ids": [
+			"sandaconda",
+			"excadrill",
+			"sableye",
+			"rotom-frost",
+			"primarina",
+			"sneasler"
+		],
+		"archetype": "sand"
+	},
+	"2026-10-15": {
+		"ids": [
+			"aromatisse",
+			"drampa-mega",
+			"banette-mega",
+			"arcanine",
+			"perrserker",
+			"grapploct"
+		],
+		"archetype": "tr"
+	},
+	"2026-10-16": {
+		"ids": [
+			"pikachu",
+			"whimsicott",
+			"noivern",
+			"espeon",
+			"bastiodon",
+			"tauros-paldea-aqua"
+		],
+		"archetype": "balance"
+	},
+	"2026-10-17": {
+		"ids": [
+			"vanilluxe",
+			"glaceon",
+			"aurorus",
+			"tauros-paldea-blaze",
+			"noivern",
+			"garchomp"
+		],
+		"archetype": "snow"
+	},
+	"2026-10-18": {
+		"ids": [
+			"pelipper",
+			"medicham-mega",
+			"archaludon",
+			"primarina",
+			"barbaracle",
+			"volcarona"
+		],
+		"archetype": "rain"
+	},
+	"2026-10-19": {
+		"ids": [
+			"froslass-mega",
+			"beartic",
+			"glaceon",
+			"raichu-alola",
+			"corviknight",
+			"rotom-wash"
+		],
+		"archetype": "snow"
+	},
+	"2026-10-20": {
+		"ids": [
+			"ninetales",
+			"venusaur",
+			"tauros-paldea-blaze",
+			"squawkabilly",
+			"umbreon",
+			"primarina"
+		],
+		"archetype": "sun"
+	},
+	"2026-10-23": {
+		"ids": [
+			"tauros-paldea-blaze",
+			"staraptor",
+			"alcremie",
+			"thievul",
+			"rotom-wash",
+			"garchomp"
+		],
+		"archetype": "balance"
+	},
+	"2026-10-24": {
+		"ids": [
+			"runerigus",
+			"perrserker",
+			"clawitzer",
+			"mabosstiff",
+			"bellibolt",
+			"florges"
+		],
+		"archetype": "tr"
+	},
+	"2026-10-27": {
+		"ids": [
+			"charizard-mega-y",
+			"heliolisk",
+			"tauros-paldea-blaze",
+			"squawkabilly",
+			"garchomp",
+			"mabosstiff"
+		],
+		"archetype": "sun"
+	},
+	"2026-11-05": {
+		"ids": [
+			"sandaconda",
+			"scrafty-mega",
+			"excadrill",
+			"vivillon",
+			"espeon",
+			"manectric"
+		],
+		"archetype": "sand"
+	}
+}

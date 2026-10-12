@@ -1,0 +1,61 @@
+import type { GameRecord } from './storage';
+
+/** Public URL shown in the share text. Set VITE_SITE_URL at build time to override. */
+export function siteUrl(): string {
+	const configured = import.meta.env?.VITE_SITE_URL as string | undefined;
+	if (configured) return configured.replace(/^https?:\/\//, '').replace(/\/$/, '');
+	return (location.host + location.pathname).replace(/\/(index\.html)?$/, '');
+}
+
+export function shareText(record: GameRecord, streak: number): string {
+	const boxes = record.alive.map(a => (a ? '🟩' : '🟥')).join('');
+	const left = record.alive.filter(Boolean).length;
+	return [
+		`Daily VGC #${record.number}`,
+		`${boxes} ${left}/4 left · ${record.turns} turns`,
+		`Streak: ${streak} · #DailyVGC`,
+		siteUrl(),
+	].join('\n');
+}
+
+function isMobile() {
+	return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
+		(navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
+}
+
+/**
+ * On phones, open the native share sheet (Messages etc.); elsewhere, copy to the clipboard.
+ * Returns what happened so the UI can confirm it.
+ */
+export async function shareResult(text: string): Promise<'shared' | 'copied' | 'failed'> {
+	if (isMobile() && navigator.share) {
+		try {
+			await navigator.share({ text });
+			return 'shared';
+		} catch (e: any) {
+			if (e?.name === 'AbortError') return 'failed';
+		}
+	}
+	try {
+		await navigator.clipboard.writeText(text);
+		return 'copied';
+	} catch {
+		const ta = document.createElement('textarea');
+		ta.value = text;
+		ta.style.position = 'fixed';
+		ta.style.opacity = '0';
+		document.body.appendChild(ta);
+		ta.select();
+		const ok = document.execCommand('copy');
+		ta.remove();
+		return ok ? 'copied' : 'failed';
+	}
+}
+
+/** sms: link with the text prefilled, for a direct "Text a friend" button on phones. */
+export function smsLink(text: string): string {
+	const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+	return `sms:${ios ? '&' : '?'}body=${encodeURIComponent(text)}`;
+}
+
+export { isMobile };

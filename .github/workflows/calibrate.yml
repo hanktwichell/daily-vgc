@@ -1,0 +1,50 @@
+name: Calibrate upcoming puzzles
+
+# Once a week, simulate the next two weeks of puzzles and pin the best-balanced player
+# teams in src/data/calibrated.json. Today's and past puzzles are never changed.
+on:
+  schedule:
+    - cron: '17 9 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    strategy:
+      matrix:
+        shard: [0, 1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: cp src/data/calibrated.json shard.json
+      - run: npx tsx scripts/calibrate.ts --upcoming 14 shard.json --shard=${{ matrix.shard }}/4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: calibration-${{ matrix.shard }}
+          path: shard.json
+
+  commit:
+    needs: simulate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: shards
+      - run: node scripts/merge-calibration.mjs shards/*/shard.json
+      - name: Commit results
+        run: |
+          if git diff --quiet src/data/calibrated.json; then echo "Nothing new"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/calibrated.json
+          git commit -m "Calibrate upcoming Daily VGC puzzles"
+          git push
