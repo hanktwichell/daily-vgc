@@ -1,0 +1,82 @@
+# Deploys the community stats recorder (recorder/) to Cloudflare Workers, applies the D1
+# schema, and records the Worker's URL in recorder.json so the site build can find it.
+#
+# Needs repository secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID (skips without them).
+# Optional: RECORDER_ADMIN_TOKEN (enables /export, used by the daily archive).
+name: Deploy recorder
+
+on:
+  push:
+    branches: [main]
+    paths: ['recorder/**', 'src/shared/community.ts', 'src/data/calendar.ts']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: recorder
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - id: check
+        env:
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$TOKEN" ] && [ -n "$ACCOUNT" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Add the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID repository secrets to deploy the recorder."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy:
+    needs: check
+    if: needs.check.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      ADMIN_TOKEN: ${{ secrets.RECORDER_ADMIN_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install wrangler
+        working-directory: recorder
+        run: npm install --no-audit --no-fund
+      - name: Apply database schema
+        working-directory: recorder
+        run: npx wrangler d1 execute dailyvgc --remote --file=schema.sql
+      - name: Deploy Worker
+        id: deploy
+        working-directory: recorder
+        run: |
+          npx wrangler deploy | tee deploy.log
+          url=$(grep -oE 'https://[a-zA-Z0-9.-]+\.workers\.dev' deploy.log | head -n1)
+          if [ -z "$url" ]; then echo "Could not find the Worker URL in the deploy output." >&2; exit 1; fi
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+      - name: Set admin token
+        if: env.ADMIN_TOKEN != ''
+        working-directory: recorder
+        run: printf '%s' "$ADMIN_TOKEN" | npx wrangler secret put ADMIN_TOKEN
+      - name: Check the Worker responds
+        run: curl -fsS "${{ steps.deploy.outputs.url }}/"
+      - name: Save the URL for the site build
+        run: |
+          printf '{\n  "url": "%s"\n}\n' "${{ steps.deploy.outputs.url }}" > recorder.json
+          git add recorder.json
+          if git diff --cached --quiet; then echo "recorder.json unchanged"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Point the site at the community stats recorder"
+          git push

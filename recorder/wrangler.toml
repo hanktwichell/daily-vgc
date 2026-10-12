@@ -1,0 +1,14 @@
+# Daily VGC recorder: a Cloudflare Worker + D1 database (both free tier).
+# Deployed by .github/workflows/recorder.yml.
+name = "daily-vgc-recorder"
+main = "src/index.ts"
+compatibility_date = "2025-06-01"
+
+[vars]
+# Sites allowed to submit results (comma-separated). Localhost is always allowed for development.
+ALLOWED_ORIGINS = "https://dailyvgc.online,https://www.dailyvgc.online,https://hanktwichell.github.io"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "dailyvgc"
+database_id = "da1ec338-4efb-4ae5-9d7d-0a54febdfe05"

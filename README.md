@@ -70,6 +70,18 @@ and never touch the main stats or streak. In the calendar, gold with a crown mea
 green means won from the archive, white means not played yet, and grey marks the puzzle being
 played now.
 
+## Community stats
+
+Each battle played on its own day (daily and Hard Mode, not archive replays) is reported
+anonymously to a small recorder: a Cloudflare Worker + D1 database in `recorder/`. It stores the
+result, how many Pokémon survived, which four were brought, and no personal data. Before each
+new day's battle the site shows **Yesterday's battle**: the overall win rate, the
+Perfect/3/4/2/4/1/4/Loss chart, how often each Pokémon was picked, and the four with the best win
+rate (pick order doesn't matter). It's also under "Yesterday's results" in the stats screen.
+Stats for a puzzle only appear once its day is over, so they update once a day. A daily Action
+copies them into `community/`. Setup and deployment are covered in [recorder/README.md](recorder/README.md).
+The site works normally with no recorder configured.
+
 ## The opponent AI
 
 `src/engine/ai.ts` plays by simultaneous-move search on copies of the real battle:
@@ -119,6 +131,7 @@ npm run balance -- 1 20 2 [--greedy]   # AI vs AI on puzzles 1-20, 2 games each
 npm run calibrate -- --upcoming 14      # simulate and pin the next 14 puzzles' player teams
 node scripts/e2e.mjs http://localhost:4173/ [screenshotDir] [--mobile] [--reload]   # browser test (after `npm run preview`)
 node scripts/e2e-archive.mjs http://localhost:4173/ [screenshotDir] [--mobile]      # archive flow, with a faked clock
+node scripts/e2e-community.mjs http://localhost:4173/ [screenshotDir] [--mobile]    # community recap (needs a local recorder)
 ```
 
 ## Changing things

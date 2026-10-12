@@ -1,0 +1,13 @@
+{
+  "name": "daily-vgc-recorder",
+  "private": true,
+  "description": "Collects anonymous Daily VGC battle results and serves the daily community stats.",
+  "scripts": {
+    "dev": "wrangler dev --local",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261006.1",
+    "wrangler": "^4.149.0"
+  }
+}

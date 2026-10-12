@@ -7,7 +7,7 @@ on:
     branches: ["main"]
   # Pushes made by the calibration workflow do not trigger `push`, so redeploy after it runs.
   workflow_run:
-    workflows: ["Calibrate upcoming puzzles"]
+    workflows: ["Calibrate upcoming puzzles", "Deploy recorder"]
     types: [completed]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -48,6 +48,8 @@ jobs:
         env:
           # Public address used in share text and link previews (repository variable SITE_URL).
           VITE_SITE_URL: ${{ vars.SITE_URL || 'dailyvgc.online' }}
+          # Build id sent with community stats.
+          VITE_COMMIT: ${{ github.sha }}
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

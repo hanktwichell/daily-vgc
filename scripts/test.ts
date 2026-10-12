@@ -177,6 +177,33 @@ await test('AI: never Decorates a foe or sets Tailwind under Trick Room', async 
 	}
 });
 
+await test('community stats: submissions are validated and summarised', async () => {
+	const { validateSubmission, aggregate } = await import('../src/shared/community');
+	const team = ['Musharna', 'Dragalge', 'Indeedee-F', 'Perrserker', 'Araquanid', 'Bastiodon'];
+	const ok = { cid: 'abcdef12-3456', puzzle: 3, mode: 'normal', won: true, alive: 3, turns: 12, picks: [1, 0, 4, 5], team };
+	assert.equal(typeof validateSubmission(ok), 'object');
+	assert.equal(validateSubmission({ ...ok, won: false }), 'alive does not match the result');
+	assert.equal(validateSubmission({ ...ok, picks: [0, 0, 1, 2] }), 'bad picks');
+	assert.equal(validateSubmission({ ...ok, picks: [0, 1, 2, 6] }), 'bad picks');
+	assert.equal(validateSubmission({ ...ok, team: team.slice(0, 5) }), 'bad team');
+	assert.equal(validateSubmission({ ...ok, mode: 'archive' }), 'bad mode');
+
+	const row = (won: boolean, alive: number, picks: number[], t = team) => ({ won: won ? 1 : 0, alive, picks: picks.join(','), team: JSON.stringify(t) });
+	const rows = [
+		row(true, 4, [1, 0, 4, 5]), row(true, 2, [0, 1, 5, 4]), row(true, 1, [4, 5, 0, 1]), row(false, 0, [0, 1, 4, 5]),
+		row(false, 0, [0, 1, 2, 3]), row(false, 0, [3, 2, 1, 0]), row(false, 0, [0, 1, 2, 3]), row(true, 3, [0, 1, 2, 3]),
+		row(true, 4, [0, 1, 2, 3], ['A', 'B', 'C', 'D', 'E', 'F']), // wrong team: ignored
+	];
+	const m = aggregate(rows)!;
+	assert.equal(m.played, 8);
+	assert.equal(m.won, 4);
+	assert.deepEqual(m.results, [1, 1, 1, 1, 4]);
+	assert.deepEqual(m.picks, [8, 8, 4, 4, 4, 4]);
+	// Order doesn't matter: [1,0,4,5], [0,1,5,4], [4,5,0,1] and [0,1,4,5] are the same four (3 of 4 won).
+	assert.deepEqual(m.best, { picks: [0, 1, 4, 5], played: 4, won: 3 });
+	assert.equal(aggregate([]), null);
+});
+
 await test('AI vs AI: a full battle finishes without invalid choices', () => {
 	const d = generateDaily(dateForPuzzleNumber(5));
 	const result = playGame(d.playerTeam, d.opponentTeam, {
