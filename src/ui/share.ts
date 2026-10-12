@@ -9,13 +9,14 @@ export function siteUrl(): string {
 	return (configured || SITE_URL).replace(/^https?:\/\//, '').replace(/\/$/, '');
 }
 
-export function shareText(record: GameRecord, streak: number, hard = false): string {
+export function shareText(record: GameRecord, streak: number, hard = false, archive = false): string {
 	const boxes = record.alive.map(a => (a ? '🟩' : '🟥')).join('');
 	const left = record.alive.filter(Boolean).length;
+	const tags = [hard && 'Hard Mode', archive && 'Archive'].filter(Boolean).join(', ');
 	return [
-		`Daily VGC #${record.number}${hard ? ' (Hard Mode)' : ''}`,
+		`Daily VGC #${record.number}${tags ? ` (${tags})` : ''}`,
 		`${boxes} ${left}/4 left · ${record.turns} turns`,
-		`Streak: ${streak} · #DailyVGC`,
+		archive ? '#DailyVGC' : `Streak: ${streak} · #DailyVGC`,
 		siteUrl(),
 	].join('\n');
 }

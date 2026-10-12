@@ -82,13 +82,45 @@ export function recordResult(record: GameRecord, mode: Mode = 'normal'): Stats {
 	return stats;
 }
 
-export function loadProgress(number: number, mode: Mode = 'normal'): Progress | null {
-	const p = read<Progress>(key(PROGRESS_KEY, mode));
+const archiveKey = (number: number, mode: Mode) => `dailyvgc:archive-progress:${number}${mode === 'hard' ? '-hard' : ''}`;
+
+/** Saved progress for a puzzle: today's battle, or a past one played from the archive. */
+export function loadProgress(number: number, mode: Mode = 'normal', archive = false): Progress | null {
+	const p = read<Progress>(archive ? archiveKey(number, mode) : key(PROGRESS_KEY, mode));
 	return p && p.number === number ? p : null;
 }
 
-export function saveProgress(p: Progress, mode: Mode = 'normal') {
-	write(key(PROGRESS_KEY, mode), p);
+export function saveProgress(p: Progress, mode: Mode = 'normal', archive = false) {
+	write(archive ? archiveKey(p.number, mode) : key(PROGRESS_KEY, mode), p);
+}
+
+export function clearArchiveProgress(number: number, mode: Mode) {
+	try { localStorage.removeItem(archiveKey(number, mode)); } catch { /* ignore */ }
+}
+
+/* Archive results: kept apart from the main stats. A win is never overwritten by a later loss. */
+const ARCHIVE_RESULTS_KEY = 'dailyvgc:archive';
+export type ArchiveResults = Record<string, GameRecord>;
+const resultKey = (number: number, mode: Mode) => `${number}${mode === 'hard' ? '-hard' : ''}`;
+
+export function loadArchiveResults(): ArchiveResults {
+	return read<ArchiveResults>(ARCHIVE_RESULTS_KEY) ?? {};
+}
+
+export function archiveResult(results: ArchiveResults, number: number, mode: Mode): GameRecord | undefined {
+	return results[resultKey(number, mode)];
+}
+
+export function recordArchiveResult(record: GameRecord, mode: Mode) {
+	const results = loadArchiveResults();
+	const k = resultKey(record.number, mode);
+	if (!results[k]?.won || record.won) results[k] = record;
+	write(ARCHIVE_RESULTS_KEY, results);
+}
+
+/** Hard mode for a puzzle unlocks once its daily battle is won, on the day or in the archive. */
+export function dailyWon(number: number): boolean {
+	return !!loadStats('normal').history[number]?.won || !!archiveResult(loadArchiveResults(), number, 'normal')?.won;
 }
 
 const SETTINGS_KEY = 'dailyvgc:settings';

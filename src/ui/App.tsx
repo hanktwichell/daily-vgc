@@ -1,25 +1,50 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { FromWorker, Mode, PuzzleView, ToWorker } from '../shared/types';
-import { puzzleDateFor, puzzleNumberFor, msUntilNextPuzzle } from '../data/calendar';
+import { puzzleDateFor, puzzleNumberFor, msUntilNextPuzzle, dateForPuzzleNumber } from '../data/calendar';
 import { TeamPreview } from './TeamPreview';
 import { BattleScreen, type BattleUpdate } from './Battle';
 import { Results, type HardModeLink } from './Results';
 import { Modal, Countdown } from './components';
 import { StatsSummary } from './StatsSummary';
+import { ArchiveCalendar, CalendarIcon, type ArchiveSelection } from './Archive';
 import {
 	loadProgress, saveProgress, loadStats, recordResult, currentStreak, loadSettings, saveSettings,
+	recordArchiveResult, clearArchiveProgress, dailyWon,
 	type Progress, type GameRecord, type Stats, type Settings,
 } from './storage';
 
 type Phase = 'loading' | 'preview' | 'battle' | 'results';
 
+const VIEW_KEY = 'dailyvgc:view';
+
+/** An archive puzzle being played survives a reload (per tab). */
+function savedArchive(today: number): ArchiveSelection | null {
+	try {
+		const v = JSON.parse(sessionStorage.getItem(VIEW_KEY) || 'null');
+		return v && Number.isInteger(v.number) && v.number >= 0 && v.number < today && (v.mode === 'normal' || v.mode === 'hard') ? v : null;
+	} catch {
+		return null;
+	}
+}
+
 export function App() {
 	const [date] = useState(() => puzzleDateFor());
 	const number = puzzleNumberFor(date);
 	// Resume an unfinished hard-mode battle; otherwise start on the daily battle.
-	const [mode, setMode] = useState<Mode>(() => (loadProgress(number, 'hard')?.phase === 'battle' ? 'hard' : 'normal'));
+	const [mode, setMode] = useState<Mode>(() => savedArchive(number)?.mode ?? (loadProgress(number, 'hard')?.phase === 'battle' ? 'hard' : 'normal'));
+	// A past puzzle from the archive, or null for today's.
+	const [archive, setArchive] = useState<number | null>(() => savedArchive(number)?.number ?? null);
+	const [replay, setReplay] = useState(0);
 	const [settings, setSettings] = useState(loadSettings);
-	const [modal, setModal] = useState<'help' | 'stats' | null>(() => (loadSettings().seenHelp ? null : 'help'));
+	const [modal, setModal] = useState<'help' | 'stats' | 'calendar' | null>(() => (loadSettings().seenHelp ? null : 'help'));
+	const archiveRef = useRef(archive);
+	archiveRef.current = archive;
+	useEffect(() => {
+		try {
+			if (archive === null) sessionStorage.removeItem(VIEW_KEY);
+			else sessionStorage.setItem(VIEW_KEY, JSON.stringify({ number: archive, mode }));
+		} catch { /* ignore */ }
+	}, [archive, mode]);
 	// Bumped whenever a result is recorded, so the stats modal re-reads storage.
 	const [statsVersion, setStatsVersion] = useState(0);
 	const phaseRef = useRef<Phase>('loading');
@@ -28,7 +53,7 @@ export function App() {
 	// unless a battle is in progress (it can be finished and counts for its own day).
 	useEffect(() => {
 		const check = () => {
-			if (puzzleNumberFor(puzzleDateFor()) !== number && phaseRef.current !== 'battle') location.reload();
+			if (puzzleNumberFor(puzzleDateFor()) !== number && phaseRef.current !== 'battle' && archiveRef.current === null) location.reload();
 		};
 		const t = setTimeout(check, msUntilNextPuzzle() + 1500);
 		const i = setInterval(check, 60_000);
@@ -36,6 +61,11 @@ export function App() {
 	}, []);
 
 	const updateSettings = (s: Settings) => { setSettings(s); saveSettings(s); };
+	const playArchive = (sel: ArchiveSelection) => {
+		setArchive(sel.number); setMode(sel.mode); setReplay(r => r + 1); setModal(null); window.scrollTo(0, 0);
+	};
+	const backToToday = () => { setArchive(null); setMode('normal'); window.scrollTo(0, 0); };
+	const shown = archive ?? number;
 
 	return (
 		<div class="app">
@@ -43,19 +73,29 @@ export function App() {
 				<button class="icon-btn" onClick={() => setModal('help')} aria-label="How to play">?</button>
 				<div class="title">
 					<h1>Daily VGC</h1>
-					<span class="puzzle-no">#{number}</span>
+					<span class="puzzle-no">#{shown}</span>
+					{archive !== null && <span class="archive-tag">ARCHIVE</span>}
 					{mode === 'hard' && <span class="hard-tag">HARD</span>}
 				</div>
-				<button class="icon-btn" onClick={() => setModal('stats')} aria-label="Statistics">
-					<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M2 9h3v5H2zM6.5 5h3v9h-3zM11 2h3v12h-3z" /></svg>
-				</button>
+				{archive !== null ? (
+					<button class="icon-btn" onClick={() => setModal('calendar')} aria-label="Archive calendar"><CalendarIcon /></button>
+				) : (
+					<button class="icon-btn" onClick={() => setModal('stats')} aria-label="Statistics">
+						<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M2 9h3v5H2zM6.5 5h3v9h-3zM11 2h3v12h-3z" /></svg>
+					</button>
+				)}
 			</header>
 
 			<main>
-				<Game key={mode} mode={mode} date={date} number={number} settings={settings} onSettings={updateSettings}
+				{archive !== null && <button class="back-link" onClick={backToToday}>← Back to today's battle</button>}
+				<Game key={`${archive ?? 'today'}-${mode}-${replay}`} mode={mode} archive={archive !== null}
+					date={archive !== null ? dateForPuzzleNumber(archive) : date} number={shown}
+					settings={settings} onSettings={updateSettings}
 					onPhase={p => { phaseRef.current = p; }}
 					onRecorded={() => setStatsVersion(v => v + 1)}
-					onSwitchMode={m => { setMode(m); window.scrollTo(0, 0); }} />
+					onSwitchMode={m => { setMode(m); window.scrollTo(0, 0); }}
+					onCalendar={() => setModal('calendar')}
+					onReplay={() => { if (archive !== null) clearArchiveProgress(archive, mode); setReplay(r => r + 1); window.scrollTo(0, 0); }} />
 			</main>
 
 			<footer class="site-footer">
@@ -72,7 +112,12 @@ export function App() {
 			)}
 			{modal === 'stats' && (
 				<Modal onClose={() => setModal(null)}>
-					<StatsSheet key={statsVersion} number={number} initialMode={mode} />
+					<StatsSheet key={statsVersion} number={number} initialMode={mode} onArchive={() => setModal('calendar')} />
+				</Modal>
+			)}
+			{modal === 'calendar' && (
+				<Modal onClose={() => setModal(null)}>
+					<ArchiveCalendar key={statsVersion} current={archive !== null ? { number: archive, mode } : null} onPlay={playArchive} />
 				</Modal>
 			)}
 		</div>
@@ -81,6 +126,10 @@ export function App() {
 
 interface GameProps {
 	mode: Mode;
+	/** A past puzzle played from the archive: separate progress and results, no stats. */
+	archive: boolean;
+	onCalendar: () => void;
+	onReplay: () => void;
 	date: string;
 	number: number;
 	settings: Settings;
@@ -91,7 +140,7 @@ interface GameProps {
 }
 
 /** One playthrough (the daily battle or hard mode), with its own battle worker and saved progress. */
-function Game({ mode, date, number, settings, onSettings, onPhase, onRecorded, onSwitchMode }: GameProps) {
+function Game({ mode, archive, date, number, settings, onSettings, onPhase, onRecorded, onSwitchMode, onCalendar, onReplay }: GameProps) {
 	const [phase, setPhase] = useState<Phase>('loading');
 	const [puzzle, setPuzzle] = useState<PuzzleView | null>(null);
 	const [updates, setUpdates] = useState<BattleUpdate[]>([]);
@@ -113,7 +162,7 @@ function Game({ mode, date, number, settings, onSettings, onPhase, onRecorded, o
 		w.onmessage = (e: MessageEvent<FromWorker>) => handle(e.data);
 		w.onerror = e => setError(`Something went wrong loading the battle engine (${e.message}). Try reloading.`);
 
-		const saved = loadProgress(number, mode);
+		const saved = loadProgress(number, mode, archive);
 		progress.current = saved;
 		if (saved?.phase === 'done' && saved.result) {
 			setRecord(saved.result);
@@ -151,12 +200,13 @@ function Game({ mode, date, number, settings, onSettings, onPhase, onRecorded, o
 				next.phase = 'done';
 				next.result = result;
 				delete next.battle;
-				setStats(recordResult(result, mode));
+				if (archive) recordArchiveResult(result, mode);
+				else setStats(recordResult(result, mode));
 				setRecord(result);
 				onRecorded();
 			}
 			progress.current = next;
-			saveProgress(next, mode);
+			saveProgress(next, mode, archive);
 			setUpdates(u => [...u, { lines: msg.lines, request: msg.request, ended: msg.ended, alive: msg.alive, turn: msg.turn, winner: msg.winner }]);
 			break;
 		}
@@ -171,7 +221,7 @@ function Game({ mode, date, number, settings, onSettings, onPhase, onRecorded, o
 
 	const start = (order: number[]) => {
 		progress.current = { number, date, phase: 'battle', order, lines: [] };
-		saveProgress(progress.current, mode);
+		saveProgress(progress.current, mode, archive);
 		setPhase('battle');
 		send({ type: 'start', order });
 	};
@@ -189,7 +239,7 @@ function Game({ mode, date, number, settings, onSettings, onPhase, onRecorded, o
 			)}
 			{phase === 'preview' && puzzle && (
 				<>
-					{mode === 'hard' && <BackLink onClick={() => onSwitchMode('normal')} />}
+					{mode === 'hard' && <BackLink archive={archive} onClick={() => onSwitchMode('normal')} />}
 					<TeamPreview puzzle={puzzle} onStart={start} />
 				</>
 			)}
@@ -202,28 +252,30 @@ function Game({ mode, date, number, settings, onSettings, onPhase, onRecorded, o
 			)}
 			{phase === 'results' && record && (
 				<>
-					{mode === 'hard' && <BackLink onClick={() => onSwitchMode('normal')} />}
+					{mode === 'hard' && <BackLink archive={archive} onClick={() => onSwitchMode('normal')} />}
 					<Results record={record} stats={stats} streak={streak} puzzle={puzzle} order={order} hard={mode === 'hard'}
-						hardMode={mode === 'normal' ? hardModeLink(number, record, () => onSwitchMode('hard')) : undefined} />
+						archive={archive ? { onReplay, onCalendar } : undefined}
+						onArchive={!archive && number > 0 ? onCalendar : undefined}
+						hardMode={mode === 'normal' ? hardModeLink(number, record, archive, () => onSwitchMode('hard')) : undefined} />
 				</>
 			)}
 		</>
 	);
 }
 
-function BackLink({ onClick }: { onClick: () => void }) {
-	return <button class="back-link" onClick={onClick}>← Today's battle</button>;
+function BackLink({ onClick, archive }: { onClick: () => void; archive: boolean }) {
+	return <button class="back-link" onClick={onClick}>{archive ? '← This day\'s battle' : '← Today\'s battle'}</button>;
 }
 
 /** What the daily results screen offers for hard mode. */
-function hardModeLink(number: number, record: GameRecord, play: () => void): HardModeLink {
-	if (!record.won) return { state: 'locked', play };
-	const hard = loadProgress(number, 'hard');
+function hardModeLink(number: number, record: GameRecord, archive: boolean, play: () => void): HardModeLink {
+	if (!record.won && !(archive && dailyWon(number))) return { state: 'locked', play };
+	const hard = loadProgress(number, 'hard', archive);
 	return { state: hard?.phase === 'done' ? 'done' : hard?.phase === 'battle' ? 'in-progress' : 'available', play };
 }
 
 /** Stats modal: separate daily and hard-mode trackers behind a toggle, read fresh from storage. */
-function StatsSheet({ number, initialMode }: { number: number; initialMode: Mode }) {
+function StatsSheet({ number, initialMode, onArchive }: { number: number; initialMode: Mode; onArchive: () => void }) {
 	const [view, setView] = useState<Mode>(initialMode);
 	const [ms, setMs] = useState(msUntilNextPuzzle());
 	useEffect(() => { const t = setInterval(() => setMs(msUntilNextPuzzle()), 1000); return () => clearInterval(t); }, []);
@@ -242,6 +294,7 @@ function StatsSheet({ number, initialMode }: { number: number; initialMode: Mode
 			<StatsSummary stats={stats} streak={currentStreak(stats, number)} today={today} />
 			{view === 'hard' && stats.played === 0 && <p class="muted">Win a daily battle to unlock Hard Mode.</p>}
 			<p class="next">Next battle in <Countdown ms={ms} /></p>
+			<button class="btn archive-btn" onClick={onArchive}><CalendarIcon /> Archive</button>
 		</div>
 	);
 }
@@ -257,7 +310,7 @@ function HowToPlay() {
 			<p>Battles use <b>Pokémon Champions, Regulation M-C</b> rules with open team sheets, so you can see the opponent's full team before you pick. You can Mega Evolve once per battle from the Fight menu. The opponent always brings a Mega.</p>
 			<p><b>Hard Mode:</b> win the daily battle to unlock it. You take over the day's themed team and face a top competitive team.</p>
 			<p>Tap any Pokémon or HP bar for details, and tap the text box to skip ahead.</p>
-			<p>One battle per day. Your progress is saved, so you can leave and come back.</p>
+			<p>One battle per day. Your progress is saved, so you can leave and come back. Past battles stay playable in the <b>Archive</b> (from the stats screen); those don't count toward your stats.</p>
 		</div>
 	);
 }
