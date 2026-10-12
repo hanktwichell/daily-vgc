@@ -9,5 +9,176 @@
 			"bastiodon"
 		],
 		"archetype": "tr"
+	},
+	"2026-10-13": {
+		"ids": [
+			"skarmory-mega",
+			"krookodile",
+			"wigglytuff",
+			"vanilluxe",
+			"palafin",
+			"espeon"
+		],
+		"archetype": "tw",
+		"hard": "chomp-z-raichu"
+	},
+	"2026-10-14": {
+		"ids": [
+			"politoed",
+			"tauros-paldea-aqua",
+			"primarina",
+			"gengar",
+			"umbreon",
+			"perrserker"
+		],
+		"archetype": "rain",
+		"hard": "kangaskhan-fakeout",
+		"hardRelaxed": true
+	},
+	"2026-10-15": {
+		"ids": [
+			"skarmory-mega",
+			"alakazam-mega",
+			"arcanine",
+			"gliscor",
+			"pikachu",
+			"polteageist"
+		],
+		"archetype": "tw",
+		"hard": "dragonite-balance"
+	},
+	"2026-10-16": {
+		"ids": [
+			"trevenant",
+			"goodra-hisui",
+			"garganacl",
+			"indeedee-f",
+			"conkeldurr",
+			"aromatisse"
+		],
+		"archetype": "tr",
+		"hard": "zard-y-sun"
+	},
+	"2026-10-17": {
+		"ids": [
+			"talonflame",
+			"pawmot",
+			"archaludon",
+			"aegislash",
+			"krookodile",
+			"zoroark-hisui"
+		],
+		"archetype": "tw",
+		"hard": "tyranitar-sand",
+		"hardRelaxed": true
+	},
+	"2026-10-18": {
+		"ids": [
+			"pelipper",
+			"sableye-mega",
+			"archaludon",
+			"castform",
+			"tauros-paldea-aqua",
+			"gengar"
+		],
+		"archetype": "rain",
+		"hard": "zard-y-sun"
+	},
+	"2026-10-19": {
+		"ids": [
+			"froslass-mega",
+			"glaceon",
+			"vanilluxe",
+			"gyarados",
+			"corviknight",
+			"gengar"
+		],
+		"archetype": "snow",
+		"hard": "hatterene-tr"
+	},
+	"2026-10-20": {
+		"ids": [
+			"ninetales",
+			"vileplume",
+			"tauros-paldea-blaze",
+			"staraptor",
+			"umbreon",
+			"luxray"
+		],
+		"archetype": "sun",
+		"hard": "lucario-z",
+		"hardRelaxed": true
+	},
+	"2026-10-21": {
+		"ids": [
+			"skarmory-mega",
+			"arcanine-hisui",
+			"sirfetchd",
+			"armarouge",
+			"clefable",
+			"maushold"
+		],
+		"archetype": "tw",
+		"hard": "blastoise-rillaboom"
+	},
+	"2026-10-22": {
+		"ids": [
+			"politoed",
+			"raichu-mega-x",
+			"tauros-paldea-aqua",
+			"golisopod",
+			"gengar",
+			"florges"
+		],
+		"archetype": "rain",
+		"hard": "salamence-sand"
+	},
+	"2026-10-23": {
+		"ids": [
+			"mabosstiff",
+			"staraptor",
+			"serperior",
+			"basculegion",
+			"grimmsnarl",
+			"volcarona"
+		],
+		"archetype": "balance",
+		"hard": "tyranitar-sand"
+	},
+	"2026-10-24": {
+		"ids": [
+			"pikachu",
+			"noivern",
+			"skeledirge",
+			"rotom-wash",
+			"scizor",
+			"umbreon"
+		],
+		"archetype": "balance",
+		"hard": "kangaskhan-fakeout"
+	},
+	"2026-10-25": {
+		"ids": [
+			"pikachu",
+			"staraptor",
+			"venusaur",
+			"meowstic-m",
+			"houndstone",
+			"barbaracle"
+		],
+		"archetype": "balance",
+		"hard": "blastoise-rillaboom"
+	},
+	"2026-10-26": {
+		"ids": [
+			"abomasnow-mega",
+			"scizor-mega",
+			"beartic",
+			"aurorus",
+			"toxicroak",
+			"emolga"
+		],
+		"archetype": "snow",
+		"hard": "salamence-tailwind"
 	}
 }
