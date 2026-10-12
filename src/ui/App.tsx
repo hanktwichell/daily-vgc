@@ -5,6 +5,7 @@ import { TeamPreview } from './TeamPreview';
 import { BattleScreen, type BattleUpdate } from './Battle';
 import { Results } from './Results';
 import { Modal, Countdown } from './components';
+import { StatsSummary } from './StatsSummary';
 import {
 	loadProgress, saveProgress, loadStats, recordResult, currentStreak, loadSettings, saveSettings,
 	type Progress, type GameRecord, type Stats,
@@ -179,16 +180,9 @@ export function App() {
 function StatsOnly({ stats, streak }: { stats: Stats; streak: number }) {
 	const [ms, setMs] = useState(msUntilNextPuzzle());
 	useEffect(() => { const t = setInterval(() => setMs(msUntilNextPuzzle()), 1000); return () => clearInterval(t); }, []);
-	const pct = stats.played ? Math.round(stats.won / stats.played * 100) : 0;
 	return (
 		<div>
-			<div class="stat-row">
-				<div><b>{stats.played}</b><span>Battles</span></div>
-				<div><b>{stats.won}</b><span>Wins</span></div>
-				<div><b>{pct}%</b><span>Win rate</span></div>
-				<div><b>{streak}</b><span>Win streak</span></div>
-				<div><b>{stats.maxStreak}</b><span>Best streak</span></div>
-			</div>
+			<StatsSummary stats={stats} streak={streak} />
 			<p class="next">Finish today's battle to share your result. Next battle in <Countdown ms={ms} /></p>
 		</div>
 	);
@@ -197,16 +191,14 @@ function StatsOnly({ stats, streak }: { stats: Stats; streak: number }) {
 function HowToPlay() {
 	return (
 		<div class="help">
-			<p>Every day at <b>midnight Eastern</b> a new double battle appears. Everyone gets the same teams, but the dice rolls and your opponent's decisions are different for every player.</p>
+			<p>A new double battle every day. You get a team of six and a trainer to beat.</p>
 			<ol>
-				<li><b>Pick 4 of your 6 Pokémon.</b> Your first two picks lead; the other two wait in the back.</li>
-				<li><b>Battle.</b> Two Pokémon per side are on the field. Each turn, choose a move (and a target) or switch for both of them.</li>
-				<li><b>Win</b> by making all four of your opponent's Pokémon faint.</li>
+				<li><b>Bring four.</b> Your first two picks lead; the other two start in the back.</li>
+				<li><b>Win the battle.</b> Faint all four of the opponent's Pokémon.</li>
 			</ol>
-			<p>Rules follow <b>Pokémon Champions, Regulation M-C</b>: Level 50, Stat Points, Item Clause, Species Clause, Open Team Sheets, and <b>one Mega Evolution per battle</b> (tap “Mega Evolve” on the Fight menu). Your opponent always brings a Mega.</p>
-			<p>Tips: tap the text box to speed through messages, tap any Pokémon or HP bar to see its details, and use the “Text ▶” button for faster text.</p>
-			<p>You get one battle per day. Progress is saved on this device, so you can close the page and come back.</p>
-			<p class="muted small">Pokémon Champions Reg M-C rules · Doubles · Level 50 · One Mega per battle</p>
+			<p>Battles use <b>Pokémon Champions, Regulation M-C</b> rules with open team sheets, so you can see the opponent's full team before you pick. You can Mega Evolve once per battle from the Fight menu. The opponent always brings a Mega.</p>
+			<p>Tap any Pokémon or HP bar for details, and tap the text box to skip ahead.</p>
+			<p>One battle per day. Your progress is saved, so you can leave and come back.</p>
 		</div>
 	);
 }

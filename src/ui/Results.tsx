@@ -3,6 +3,7 @@ import type { PuzzleView } from '../shared/types';
 import type { GameRecord, Stats } from './storage';
 import { shareText, shareResult, smsLink, isMobile } from './share';
 import { Sprite, Countdown } from './components';
+import { StatsSummary } from './StatsSummary';
 import { msUntilNextPuzzle } from '../data/calendar';
 
 export function Results({ record, stats, streak, puzzle, order, onClose }: {
@@ -20,7 +21,6 @@ export function Results({ record, stats, streak, puzzle, order, onClose }: {
 
 	const text = shareText(record, streak);
 	const left = record.alive.filter(Boolean).length;
-	const winPct = stats.played ? Math.round((stats.won / stats.played) * 100) : 0;
 
 	const onShare = async () => {
 		const r = await shareResult(text);
@@ -45,13 +45,7 @@ export function Results({ record, stats, streak, puzzle, order, onClose }: {
 					</div>
 				))}
 			</div>
-			<div class="stat-row">
-				<div><b>{stats.played}</b><span>Battles</span></div>
-				<div><b>{stats.won}</b><span>Wins</span></div>
-				<div><b>{winPct}%</b><span>Win rate</span></div>
-				<div><b>{streak}</b><span>Win streak</span></div>
-				<div><b>{stats.maxStreak}</b><span>Best streak</span></div>
-			</div>
+			<StatsSummary stats={stats} streak={streak} today={record} />
 			<p class="share-prompt">Challenge your friends to today's battle!</p>
 			<div class="share-actions">
 				<button class="btn primary" onClick={onShare}>Share result</button>
