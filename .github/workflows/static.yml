@@ -46,9 +46,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          # Public address used in share text and link previews. Defaults to the GitHub Pages URL;
-          # set a repository variable SITE_URL (e.g. daily-vgc.com) when using a custom domain.
-          VITE_SITE_URL: ${{ vars.SITE_URL || format('{0}.github.io/{1}', github.repository_owner, github.event.repository.name) }}
+          # Public address used in share text and link previews (repository variable SITE_URL).
+          VITE_SITE_URL: ${{ vars.SITE_URL || 'dailyvgc.online' }}
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

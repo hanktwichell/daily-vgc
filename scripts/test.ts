@@ -74,9 +74,8 @@ await test('hard mode: same meta team for everyone, legal, themed team vs a Mega
 
 await test('share text format', async () => {
 	const { shareText } = await import('../src/ui/share');
-	(globalThis as any).location = { host: 'daily-vgc.com', pathname: '/' };
 	const text = shareText({ number: 1, won: true, alive: [true, true, false, true], turns: 16 }, 1);
-	assert.equal(text, 'Daily VGC #1\n🟩🟩🟥🟩 3/4 left · 16 turns\nStreak: 1 · #DailyVGC\ndaily-vgc.com');
+	assert.equal(text, 'Daily VGC #1\n🟩🟩🟥🟩 3/4 left · 16 turns\nStreak: 1 · #DailyVGC\ndailyvgc.online');
 	const hard = shareText({ number: 2, won: false, alive: [false, false, false, false], turns: 9 }, 0, true);
 	assert.equal(hard.split('\n')[0], 'Daily VGC #2 (Hard Mode)');
 });

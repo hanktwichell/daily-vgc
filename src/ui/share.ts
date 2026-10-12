@@ -1,10 +1,12 @@
 import type { GameRecord } from './storage';
 
-/** Public URL shown in the share text. Set VITE_SITE_URL at build time to override. */
+/** The site's public address. */
+export const SITE_URL = 'dailyvgc.online';
+
+/** Address shown in the share text. Set VITE_SITE_URL at build time to override. */
 export function siteUrl(): string {
 	const configured = import.meta.env?.VITE_SITE_URL as string | undefined;
-	if (configured) return configured.replace(/^https?:\/\//, '').replace(/\/$/, '');
-	return (location.host + location.pathname).replace(/\/(index\.html)?$/, '');
+	return (configured || SITE_URL).replace(/^https?:\/\//, '').replace(/\/$/, '');
 }
 
 export function shareText(record: GameRecord, streak: number, hard = false): string {

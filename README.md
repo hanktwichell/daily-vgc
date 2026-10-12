@@ -1,5 +1,7 @@
 # Daily VGC
 
+**Play at [dailyvgc.online](https://dailyvgc.online)**
+
 A daily Pokémon double-battle puzzle, in the spirit of Wordle and Travle. Every day at
 midnight Eastern a new battle appears: you get six Pokémon, pick four, and take on a
 computer trainer whose team always includes a Mega Evolution. Win or lose, share your
@@ -9,7 +11,7 @@ result with friends:
 Daily VGC #1
 🟩🟩🟥🟩 3/4 left · 16 turns
 Streak: 1 · #DailyVGC
-daily-vgc.com
+dailyvgc.online
 ```
 
 - **Rules:** Pokémon Champions, VGC 2026 Regulation M-C (doubles, Level 50, Stat Points,
