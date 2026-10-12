@@ -1,0 +1,30 @@
+{
+  "name": "daily-vgc",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A daily Pokémon Champions VGC double-battle puzzle",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx scripts/test.ts",
+    "validate-teams": "tsx scripts/validate-teams.ts",
+    "balance": "tsx scripts/balance.ts",
+    "gen:text": "tsx scripts/gen-text.ts",
+    "gen:sprites": "tsx scripts/gen-sprites.ts"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.6",
+    "playwright": "^1.56.1",
+    "tsx": "^4.23.15",
+    "typescript": "5.8",
+    "vite": "^6.4.4"
+  },
+  "dependencies": {
+    "preact": "^10.29.8",
+    "ts-chacha20": "^1.2.0"
+  }
+}
