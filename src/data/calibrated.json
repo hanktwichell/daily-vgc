@@ -1,1 +1,35 @@
-{}
+{
+	"2026-10-12": {
+		"ids": [
+			"musharna",
+			"dragalge-mega",
+			"indeedee-f",
+			"perrserker",
+			"araquanid",
+			"bastiodon"
+		],
+		"archetype": "tr"
+	},
+	"2026-10-20": {
+		"ids": [
+			"ninetales",
+			"venusaur",
+			"tauros-paldea-blaze",
+			"squawkabilly",
+			"umbreon",
+			"primarina"
+		],
+		"archetype": "sun"
+	},
+	"2026-11-05": {
+		"ids": [
+			"sandaconda",
+			"scrafty-mega",
+			"excadrill",
+			"vivillon",
+			"espeon",
+			"manectric"
+		],
+		"archetype": "sand"
+	}
+}

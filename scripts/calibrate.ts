@@ -28,9 +28,9 @@ if (process.argv.includes('--upcoming')) {
 	outFile = args[2] || 'src/data/calibrated.json';
 }
 const fast: AIConfig = { ...DEFAULT_AI, ownJoint: 7, oppJoint: 5, refineTop: 0 };
-const CANDIDATES = 3, AI_GAMES = 2, GREEDY_GAMES = 2;
-// Targets: a search-AI player should win a bit more than half; a greedy player about a third.
-const AI_TARGET = 0.6, GREEDY_TARGET = 0.3;
+const MAX_CANDIDATES = 6, GREEDY_GAMES = 3, AI_GAMES = 1;
+// Targets: a greedy "casual" player should win about 40% (1-2 of 3); a search-AI player about 60%.
+const GREEDY_TARGET = 0.4, AI_TARGET = 0.6;
 
 const out: Record<string, any> = fs.existsSync(outFile) ? JSON.parse(fs.readFileSync(outFile, 'utf8')) : {};
 for (let n = from; n <= to; n++) {
@@ -39,17 +39,26 @@ for (let n = from; n <= to; n++) {
 	if (n % shards !== shard) continue;
 	const opponent = opponentForPuzzle(n);
 	const oppTeam = buildTeam(opponent.sets);
-	const cands = candidateTeams(date, oppTeam, opponent).slice(0, CANDIDATES);
+	// Best by quick score first, but alternate archetypes so a bad plan doesn't fill every slot.
+	const all = candidateTeams(date, oppTeam, opponent, true);
+	const byArch = new Map<string, typeof all>();
+	for (const c of all) byArch.set(c.archetype, [...(byArch.get(c.archetype) ?? []), c]);
+	const cands: typeof all = [];
+	for (let i = 0; cands.length < MAX_CANDIDATES && i < 20; i++) {
+		for (const list of byArch.values()) if (list[i] && cands.length < MAX_CANDIDATES) cands.push(list[i]);
+	}
 	let best: { score: number; ids: string[]; archetype: string; ai: number; greedy: number } | null = null;
 	for (const c of cands) {
 		let ai = 0, greedy = 0;
-		for (let g = 0; g < AI_GAMES; g++) if (playGame(c.team, oppTeam, { p1Config: fast, p2Config: fast }).winner === 'Player') ai++;
 		for (let g = 0; g < GREEDY_GAMES; g++) if (playGame(c.team, oppTeam, { p1Greedy: true, p2Config: fast }).winner === 'Player') greedy++;
-		const score = Math.abs(ai / AI_GAMES - AI_TARGET) + 0.6 * Math.abs(greedy / GREEDY_GAMES - GREEDY_TARGET) + 0.15 * c.diff;
-		console.log(`#${n} ${opponent.id} ${c.archetype} ai ${ai}/${AI_GAMES} greedy ${greedy}/${GREEDY_GAMES} diff ${c.diff.toFixed(2)} :: ${c.ids.join(',')}`);
+		for (let g = 0; g < AI_GAMES; g++) if (playGame(c.team, oppTeam, { p1Config: fast, p2Config: fast }).winner === 'Player') ai++;
+		const score = Math.abs(greedy / GREEDY_GAMES - GREEDY_TARGET) + 0.5 * Math.abs(ai / AI_GAMES - AI_TARGET) + 0.15 * c.diff;
+		console.log(`#${n} ${opponent.id} ${c.archetype} greedy ${greedy}/${GREEDY_GAMES} ai ${ai}/${AI_GAMES} diff ${c.diff.toFixed(2)} :: ${c.ids.join(',')}`);
 		if (!best || score < best.score) best = { score, ids: c.ids, archetype: c.archetype, ai, greedy };
+		// Good enough: winnable for a casual player but not a walkover, and the AI player won.
+		if (greedy >= 1 && greedy < GREEDY_GAMES && ai >= 1) break;
 	}
 	out[date] = { ids: best!.ids, archetype: best!.archetype };
-	console.log(`=> #${n} ${date}: ai ${best!.ai}/${AI_GAMES} greedy ${best!.greedy}/${GREEDY_GAMES}`);
+	console.log(`=> #${n} ${date}: greedy ${best!.greedy}/${GREEDY_GAMES} ai ${best!.ai}/${AI_GAMES}`);
 	fs.writeFileSync(outFile, JSON.stringify(out, null, '\t') + '\n');
 }

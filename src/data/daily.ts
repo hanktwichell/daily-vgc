@@ -204,14 +204,14 @@ export interface Candidate { ids: string[]; team: PokemonSet[]; diff: number; ar
  * Candidate player teams for a date, best (closest to the target matchup) first.
  * Deterministic for the date.
  */
-export function candidateTeams(date: string, opponentTeam: PokemonSet[], opponent: OpponentTeam): Candidate[] {
+export function candidateTeams(date: string, opponentTeam: PokemonSet[], opponent: OpponentTeam, exhaustive = false): Candidate[] {
 	const rng = new SeededRNG(`daily-vgc:${date}`);
 	const exclude = new Set(opponent.sets.map(id => natNum(LIBRARY.find(l => l.id === id)!)));
 	const megaRoll = rng.next();
 	const megaTarget = megaRoll < 0.25 ? 0 : megaRoll < 0.8 ? 1 : 2;
 	const all: Candidate[] = [];
 	// Up to three archetypes; stop early once a team is close to the target edge.
-	for (let attempt = 0; attempt < 3 && !all.some(c => c.diff < 0.25); attempt++) {
+	for (let attempt = 0; attempt < 3 && (exhaustive || !all.some(c => c.diff < 0.25)); attempt++) {
 		const archetype = rng.weighted(ARCHETYPE_WEIGHTS, ([, w]) => w)![0];
 		for (let i = 0; i < CANDIDATES; i++) {
 			const { ids } = generatePlayerTeam(rng, exclude, archetype, megaTarget);
