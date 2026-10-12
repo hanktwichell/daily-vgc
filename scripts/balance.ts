@@ -1,5 +1,6 @@
 // Balance check: AI vs AI on a range of daily puzzles.
-// Usage: tsx scripts/balance.ts <fromPuzzle> <toPuzzle> [gamesPerPuzzle] [--full]
+// Usage: tsx scripts/balance.ts <fromPuzzle> <toPuzzle> [gamesPerPuzzle] [--full] [--greedy]
+// --greedy makes the player side a simple greedy bot (a stand-in for a casual player).
 import '../src/engine/ps-node';
 import { generateDaily, dateForPuzzleNumber } from '../src/data/daily';
 import { DEFAULT_AI, type AIConfig } from '../src/engine/ai';
@@ -15,7 +16,7 @@ for (let n = from; n <= to; n++) {
 	let w = 0; const res: string[] = [];
 	for (let g = 0; g < games; g++) {
 		try {
-			const r = playGame(d.playerTeam, d.opponentTeam, { p1Config: cfg, p2Config: cfg });
+			const r = playGame(d.playerTeam, d.opponentTeam, { p1Config: cfg, p2Config: cfg, p1Greedy: process.argv.includes('--greedy') });
 			if (r.winner === 'Player') w++;
 			res.push(`${r.winner === 'Player' ? 'W' : 'L'}${r.p1Left}-${r.p2Left}/${r.turns}t`);
 		} catch (e: any) { res.push(`ERR ${e.message}`); }

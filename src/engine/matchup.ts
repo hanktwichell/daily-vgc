@@ -17,7 +17,8 @@ function asBattleForms(team: PokemonSet[]): PokemonSet[] {
 }
 
 export function matchupMatrix(a: PokemonSet[], b: PokemonSet[]): number[][] {
-	const battle = new Battle({ formatid: FORMAT_ID as any });
+	// Fixed seed: the daily generator must give every player the same result.
+	const battle = new Battle({ formatid: FORMAT_ID as any, seed: 'sodium,00000000000000000000000000000001' as any });
 	battle.setPlayer('p1', { name: 'A', team: Teams.pack(asBattleForms(a)) });
 	battle.setPlayer('p2', { name: 'B', team: Teams.pack(asBattleForms(b)) });
 	const an = new Analyzer(battle);

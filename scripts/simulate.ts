@@ -2,9 +2,9 @@
 import '../src/engine/ps-node';
 import { generateDaily, dateForPuzzleNumber } from '../src/data/daily';
 import { BattleRunner } from '../src/engine/runner';
-import { chooseAction, DEFAULT_AI, type AIConfig } from '../src/engine/ai';
+import { chooseAction, chooseGreedy, DEFAULT_AI, type AIConfig } from '../src/engine/ai';
 
-export function playGame(p1Team: any[], p2Team: any[], opts: { log?: boolean, p1Config?: AIConfig, p2Config?: AIConfig } = {}) {
+export function playGame(p1Team: any[], p2Team: any[], opts: { log?: boolean, p1Config?: AIConfig, p2Config?: AIConfig, p1Greedy?: boolean } = {}) {
 	const runner = new BattleRunner({ name: 'Player', team: p1Team }, { name: 'CPU', team: p2Team });
 	let decisions = 0, thinkMs = 0;
 	for (let guard = 0; guard < 400 && !runner.ended; guard++) {
@@ -13,7 +13,8 @@ export function playGame(p1Team: any[], p2Team: any[], opts: { log?: boolean, p1
 		for (const side of [0, 1] as const) {
 			if (!runner.needsChoice(side)) continue;
 			const t = Date.now();
-			const choice = chooseAction(json, side, Math.random, side === 0 ? opts.p1Config : opts.p2Config);
+			const choice = side === 0 && opts.p1Greedy ? chooseGreedy(json, side) :
+				chooseAction(json, side, Math.random, side === 0 ? opts.p1Config : opts.p2Config);
 			thinkMs += Date.now() - t; decisions++;
 			choices.push([side, choice]);
 		}

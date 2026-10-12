@@ -30,10 +30,12 @@ export interface AIConfig {
 	temperature: number;
 	/** Probability of picking from a slightly wider band (keeps games varied). */
 	explore: number;
+	/** Skip refinement once this much time (ms) has been spent, so slow phones stay responsive. */
+	budgetMs: number;
 }
 
 export const DEFAULT_AI: AIConfig = {
-	ownJoint: 14, oppJoint: 9, refineTop: 4, refineSamples: 2, lambda: 0.85, temperature: 0.04, explore: 0.08,
+	ownJoint: 14, oppJoint: 9, refineTop: 4, refineSamples: 2, lambda: 0.85, temperature: 0.04, explore: 0.08, budgetMs: 2500,
 };
 
 /* ------------------------------------------------------------------------------------------ */
@@ -541,6 +543,7 @@ export function chooseAction(json: string, sideIndex: number, rng: RNG = Math.ra
 		theirs = [{ choice: 'default', slots: [], score: 0 }];
 	}
 
+	const started = Date.now();
 	const base = evaluate(battle, sideIndex) + positional(new Analyzer(json).battle, sideIndex);
 	const matrix: number[][] = mine.map(() => theirs.map(() => 0));
 	const counts: number[][] = mine.map(() => theirs.map(() => 0));
@@ -595,6 +598,7 @@ export function chooseAction(json: string, sideIndex: number, rng: RNG = Math.ra
 	let scores = scoreAll();
 	const order = scores.map((s, i) => [s, i] as const).sort((a, b) => b[0] - a[0]).map(x => x[1]);
 	for (const i of order.slice(0, config.refineTop)) {
+		if (Date.now() - started > config.budgetMs) break;
 		for (let k = 0; k < config.refineSamples; k++) for (let j = 0; j < theirs.length; j++) sample(i, j);
 	}
 	scores = scoreAll();
@@ -617,8 +621,11 @@ function chooseForcedSwitch(an: Analyzer, side: Side, request: any, rng: RNG): s
 	for (let slot = 0; slot < side.active.length; slot++) {
 		if (!request.forceSwitch[slot]) { choices.push('pass'); continue; }
 		const candidates: number[] = [];
+		// Revival Blessing asks for a fainted Pokémon instead.
+		const reviving = !!request.side.pokemon[slot]?.reviving;
 		request.side.pokemon.forEach((p: any, i: number) => {
-			if (!p.active && !p.condition.endsWith(' fnt') && !taken.has(i + 1)) candidates.push(i + 1);
+			const fainted = p.condition.endsWith(' fnt');
+			if (!p.active && fainted === reviving && !taken.has(i + 1)) candidates.push(i + 1);
 		});
 		if (!candidates.length) { choices.push('pass'); continue; }
 		const scored = candidates.map(c => {
@@ -715,3 +722,15 @@ export function chooseTeamPreview(battle: Battle, sideIndex: number, rng: RNG = 
 }
 
 export { toID };
+
+/** A simple greedy policy (best-looking move each turn, no lookahead). Used to model a casual player in balance tests. */
+export function chooseGreedy(json: string, sideIndex: number, rng: RNG = Math.random): string {
+	const an = new Analyzer(json);
+	const side = an.battle.sides[sideIndex];
+	const request = side.activeRequest as any;
+	if (!request || request.wait) return 'default';
+	if (request.teamPreview) return chooseTeamPreview(an.battle, sideIndex, rng);
+	if (request.forceSwitch) return chooseForcedSwitch(an, side, request, rng);
+	const joint = jointOptions(an, side, slotOptionsFor(an, side, request, false, 5, false), 6, rng);
+	return joint[0].choice;
+}

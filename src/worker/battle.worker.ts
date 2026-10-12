@@ -62,12 +62,11 @@ function puzzleView(p: DailyPuzzle): PuzzleView {
 }
 
 function aliveFlags(): boolean[] {
-	if (!runner) return [];
-	// side.pokemon is reordered by switches; map back to the player's chosen order by original position.
+	if (!runner || !puzzle) return [];
 	const side = runner.battle.sides[0];
-	return playerOrder.map((teamIndex) => {
-		const mon = side.pokemon.find(p => p.set === puzzle!.playerTeam[teamIndex] || p.position === -1 && false) ??
-			side.pokemon.find(p => p.name === puzzle!.playerTeam[teamIndex].name);
+	return playerOrder.map(teamIndex => {
+		const species = puzzle!.playerTeam[teamIndex]?.species;
+		const mon = side.pokemon.find(p => p.set.species === species);
 		return !!mon && !mon.fainted;
 	});
 }
@@ -174,7 +173,9 @@ function advanceForcedOnly() {
 function restoreOrder(r: BattleRunner): number[] {
 	const line = r.battle.inputLog.find(l => l.startsWith('>p1 team '));
 	if (!line) return [0, 1, 2, 3];
-	return line.slice('>p1 team '.length).split('').slice(0, 4).map(c => Number(c) - 1);
+	const nums = line.slice('>p1 team '.length).match(/\d+/g) ?? [];
+	const digits = nums.length === 1 ? nums[0].split('') : nums;
+	return digits.slice(0, 4).map(c => Number(c) - 1);
 }
 
 export { toID };

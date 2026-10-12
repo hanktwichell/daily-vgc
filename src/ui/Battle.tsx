@@ -175,14 +175,17 @@ export function BattleScreen(props: Props) {
 		<div class="battle">
 			<div class="ds-screen top-screen">
 				<Scene scene={s} anims={anims} onInspect={setInfoMon} />
-				<div class="turn-chip">Turn {s.turn || 1}</div>
-				<button class="icon-btn speed-btn" onClick={props.onToggleSpeed} aria-label="Toggle text speed" title="Text speed">
-					{props.speed === 'fast' ? '▶▶' : '▶'}
-				</button>
 				<div class="textbox" onClick={() => skip.current?.()}>
 					<p>{message || (showControls ? promptFor(request, s) : waiting ? (props.thinking ? `${puzzle.opponent.trainer} is thinking...` : 'Waiting...') : '')}</p>
 					{playing && <span class="more">▼</span>}
 				</div>
+			</div>
+			<div class="hinge">
+				<span class="turn-chip">Turn {s.turn || 1}</span>
+				<FieldTags scene={s} />
+				<button class="speed-btn" onClick={props.onToggleSpeed} aria-label="Toggle text speed" title="Text speed">
+					{props.speed === 'fast' ? 'Fast ▶▶' : 'Text ▶'}
+				</button>
 			</div>
 			<div class="ds-screen bottom-screen">
 				{showControls ? (
@@ -265,14 +268,19 @@ function Scene({ scene, anims, onInspect }: { scene: SceneState; anims: Record<s
 				{scene.active.p1.map((m, i) => m && !m.fainted && <HPBox key={i} mon={m} onClick={() => onInspect(m)} />)}
 			</div>
 			<div class="party-balls foe">{balls(scene, 'p2')}</div>
-			<div class="field-tags">
-				{scene.weather && <span>{weatherName(scene.weather)}</span>}
-				{scene.terrain && <span>{scene.terrain}</span>}
-				{scene.pseudo.map(p => <span key={p}>{p}</span>)}
-				{scene.sideConditions.p2.map(c => <span key={`p2${c}`} class="foe-tag">Foe {c}</span>)}
-				{scene.sideConditions.p1.map(c => <span key={`p1${c}`} class="ally-tag">{c}</span>)}
-			</div>
 		</div>
+	);
+}
+
+function FieldTags({ scene }: { scene: SceneState }) {
+	return (
+		<span class="field-tags">
+			{scene.weather && <span>{weatherName(scene.weather)}</span>}
+			{scene.terrain && <span>{scene.terrain}</span>}
+			{scene.pseudo.map(p => <span key={p}>{p}</span>)}
+			{scene.sideConditions.p2.map(c => <span key={`p2${c}`} class="foe-tag">Foe {c}</span>)}
+			{scene.sideConditions.p1.map(c => <span key={`p1${c}`} class="ally-tag">Your {c}</span>)}
+		</span>
 	);
 }
 
@@ -393,8 +401,10 @@ function Controls({ request, scene, puzzle, onSubmit }: ControlsProps) {
 	const name = me ? me.ident.replace(/^p1: /, '') : '';
 	const canGoBack = (() => { let p = slot - 1; while (p >= 0 && !slotIsLive(p)) p--; return p >= 0; })();
 
+	// Revival Blessing: the "switch" prompt picks a fainted Pokémon to revive.
+	const reviving = !!(forced && team[slot]?.reviving);
 	const switchTargets = team.map((p: any, i: number) => ({ p, i }))
-		.filter(({ p, i }) => !p.active && !p.condition.endsWith(' fnt') && !choices.includes(`switch ${i + 1}`));
+		.filter(({ p, i }) => !p.active && p.condition.endsWith(' fnt') === reviving && !choices.includes(`switch ${i + 1}`));
 
 	if (slot >= slots) return null;
 
@@ -402,17 +412,17 @@ function Controls({ request, scene, puzzle, onSubmit }: ControlsProps) {
 		return (
 			<div class="controls">
 				<div class="controls-head">
-					{forced ? `Send out a Pokémon${slots > 1 ? ` (slot ${slot + 1})` : ''}` : `Switch ${name} with...`}
+					{reviving ? 'Choose a Pokémon to revive' : forced ? `Send out a Pokémon${slots > 1 ? ` (slot ${slot + 1})` : ''}` : `Switch ${name} with...`}
 				</div>
 				<div class="switch-grid">
 					{switchTargets.map(({ p, i }) => {
 						const [hp, status] = p.condition.split(' ');
-						const [cur, max] = hp.split('/').map(Number);
+						const [cur, max = 1] = hp.split('/').map(Number);
 						return (
 							<button key={i} class="switch-btn" onClick={() => commit(`switch ${i + 1}`)}>
 								<Sprite speciesId={toID(p.details.split(',')[0])} />
 								<span class="sw-name">{p.ident.replace(/^p1: /, '')}</span>
-								<span class="sw-hp"><span class="mini-hp"><span style={{ width: `${cur / max * 100}%` }} /></span>{cur}/{max}{status ? ` ${STATUS_LABEL[status] || status}` : ''}</span>
+								<span class="sw-hp"><span class="mini-hp"><span style={{ width: `${cur / max * 100}%` }} /></span>{status === 'fnt' ? 'Fainted' : `${cur}/${max}${status ? ` ${STATUS_LABEL[status] || status}` : ''}`}</span>
 							</button>
 						);
 					})}

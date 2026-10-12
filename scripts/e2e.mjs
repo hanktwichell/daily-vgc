@@ -42,6 +42,14 @@ for (let step = 0; step < 300; step++) {
 	}
 	if (fight) {
 		turns++;
+		if (turns === 5 && process.argv.includes('--reload')) {
+			await page.reload();
+			await page.waitForSelector('.top-screen', { timeout: 20000 });
+			console.log('reloaded mid-battle');
+			await page.waitForSelector('.fight-btn, .switch-btn', { timeout: 60000 });
+			await shot('05b-after-reload');
+			continue;
+		}
 		if (turns === 1) await shot('04-battle-menu');
 		if (turns === 3) await shot('06-turn3');
 		await fight.click();

@@ -30,8 +30,17 @@ export interface DailyPuzzle {
 	archetype: Archetype;
 }
 
+const speciesCache = new Map<string, ReturnType<typeof dex.species.get>>();
+const weaknessCache = new Map<string, string[]>();
+
 /** Species after Mega Evolution (for typing), else the base species. */
 function battleSpecies(lib: LibrarySet) {
+	let cached = speciesCache.get(lib.id);
+	if (!cached) speciesCache.set(lib.id, cached = computeBattleSpecies(lib));
+	return cached;
+}
+
+function computeBattleSpecies(lib: LibrarySet) {
 	const item = dex.items.get(lib.items[0]);
 	if (lib.isMega && item.megaStone) {
 		const mega = Object.values(item.megaStone)[0];
@@ -41,6 +50,12 @@ function battleSpecies(lib: LibrarySet) {
 }
 
 function weaknesses(lib: LibrarySet): string[] {
+	let cached = weaknessCache.get(lib.id);
+	if (!cached) weaknessCache.set(lib.id, cached = computeWeaknesses(lib));
+	return cached;
+}
+
+function computeWeaknesses(lib: LibrarySet): string[] {
 	const species = battleSpecies(lib);
 	const out: string[] = [];
 	for (const type of dex.types.names()) {
@@ -53,7 +68,7 @@ function weaknesses(lib: LibrarySet): string[] {
 }
 
 function natNum(lib: LibrarySet) {
-	return dex.species.get(lib.set.species).num;
+	return battleSpecies(lib).num;
 }
 
 function fitsArchetype(lib: LibrarySet, arch: Archetype) {
@@ -179,7 +194,7 @@ export function opponentForPuzzle(n: number): OpponentTeam {
  * The player's team is slightly favoured on paper (the AI plays well, so this keeps the
  * puzzle winnable); teams without a Mega get a bigger edge.
  */
-const TARGET_EDGE = [1.1, 0.6, 0.4];
+const TARGET_EDGE = [1.5, 0.6, 0.4];
 const CANDIDATES = 16;
 
 export function generateDaily(date: string): DailyPuzzle {

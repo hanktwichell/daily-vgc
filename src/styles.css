@@ -317,7 +317,7 @@ main { flex: 1; }
 	box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.12);
 	z-index: 1;
 }
-.platform.foe { width: 58%; height: 12%; right: 1%; top: 37%; }
+.platform.foe { width: 58%; height: 12%; right: 1%; top: 33%; }
 .platform.ally { width: 66%; height: 13%; left: -6%; bottom: 17%; }
 
 .weather-sunnyday .bg-sky { background: linear-gradient(#ffd888, #fff4d0); }
@@ -352,8 +352,8 @@ main { flex: 1; }
 
 .mon-pos { position: absolute; z-index: 3; cursor: pointer; transition: opacity 0.3s; }
 .mon-pos .sprite { width: 100%; height: 100%; object-fit: contain; }
-.mon-pos.p2 { width: 27cqw; aspect-ratio: 1; top: 13cqw; }
-.mon-pos.p2.slot0 { right: 30cqw; top: 11cqw; }
+.mon-pos.p2 { width: 27cqw; aspect-ratio: 1; top: 9cqw; }
+.mon-pos.p2.slot0 { right: 30cqw; top: 7cqw; }
 .mon-pos.p2.slot1 { right: 4cqw; }
 .mon-pos.p1 { width: 36cqw; aspect-ratio: 1; bottom: 13cqw; }
 .mon-pos.p1.slot0 { left: -3cqw; bottom: 15cqw; }
@@ -431,13 +431,22 @@ main { flex: 1; }
 .ball.fainted { background: #606060; opacity: 0.6; }
 .ball.status { background: linear-gradient(#a050b0 0 45%, #202020 45% 55%, #f8f8f8 55%); }
 
-.field-tags { position: absolute; left: 1.5cqw; top: 27cqw; display: flex; flex-direction: column; gap: 0.6cqw; z-index: 5; align-items: flex-start; }
-.field-tags span { font-size: 2.6cqw; background: rgba(32, 40, 56, 0.75); color: #fff; padding: 0.2cqw 1cqw; border-radius: 1cqw; }
+.hinge {
+	display: flex; align-items: center; gap: 8px;
+	margin: -4px 4px; padding: 6px 10px;
+	background: linear-gradient(#5a6578, #3d4656);
+	border-radius: 6px;
+	box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.15), 0 2px 0 #1b212b;
+	font-size: 13px; color: #fff;
+	min-height: 38px;
+}
+.field-tags { display: flex; flex-wrap: wrap; gap: 4px; flex: 1; }
+.field-tags span { background: rgba(20, 26, 36, 0.6); padding: 1px 7px; border-radius: 8px; white-space: nowrap; }
 .field-tags .foe-tag { background: rgba(160, 40, 40, 0.8); }
 .field-tags .ally-tag { background: rgba(40, 100, 180, 0.85); }
 
-.turn-chip { position: absolute; top: 21cqw; left: 1.5cqw; background: rgba(20, 24, 32, 0.6); color: #fff; font-size: 3cqw; padding: 0.3cqw 1.6cqw; border-radius: 2cqw; z-index: 6; }
-.speed-btn { position: absolute; right: 1.5cqw; top: 6.5cqw; z-index: 7; width: 9cqw; height: 6cqw; min-width: 36px; min-height: 26px; font-size: 12px; opacity: 0.85; }
+.turn-chip { font-weight: 700; white-space: nowrap; }
+.speed-btn { margin-left: auto; border: 2px solid #8fa6b8; background: #2d3b50; color: #fff; border-radius: 8px; padding: 3px 10px; font-size: 13px; white-space: nowrap; min-height: 30px; }
 
 .textbox {
 	position: absolute; left: 1cqw; right: 1cqw; bottom: 1cqw;

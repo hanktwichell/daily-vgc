@@ -2,7 +2,7 @@ import type { GameRecord } from './storage';
 
 /** Public URL shown in the share text. Set VITE_SITE_URL at build time to override. */
 export function siteUrl(): string {
-	const configured = import.meta.env.VITE_SITE_URL as string | undefined;
+	const configured = import.meta.env?.VITE_SITE_URL as string | undefined;
 	if (configured) return configured.replace(/^https?:\/\//, '').replace(/\/$/, '');
 	return (location.host + location.pathname).replace(/\/(index\.html)?$/, '');
 }
