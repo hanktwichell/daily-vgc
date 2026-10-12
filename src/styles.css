@@ -429,9 +429,8 @@ main { flex: 1; }
 .party-balls { position: absolute; display: flex; gap: 0.8cqw; z-index: 5; }
 .party-balls.foe { right: 2cqw; top: 2cqw; }
 .ball { width: 3cqw; height: 3cqw; border-radius: 50%; border: 0.4cqw solid #202020; background: linear-gradient(#e83838 0 45%, #202020 45% 55%, #f8f8f8 55%); }
-.ball.unknown { background: #a0a8b0; opacity: 0.7; }
-.ball.fainted { background: #606060; opacity: 0.6; }
-.ball.status { background: linear-gradient(#a050b0 0 45%, #202020 45% 55%, #f8f8f8 55%); }
+.ball.fainted { background: linear-gradient(#8a8f96 0 45%, #505458 45% 55%, #b4b8bd 55%); border-color: #505458; }
+.ball.status { background: linear-gradient(#f8d030 0 45%, #202020 45% 55%, #f8f8f8 55%); }
 
 .hinge {
 	display: flex; align-items: center; gap: 8px;
@@ -756,3 +755,17 @@ main { flex: 1; }
 .cal-swatch.new { background: #fff; border-color: #485868; }
 .cal-swatch.lost { border-color: #c4a0a6; }
 .cal-swatch.current { background: #9aa1ab; border-color: #4c535d; }
+
+/* ---------- Battle info ---------- */
+.field-tags-btn { background: none; border: none; padding: 0; color: inherit; font: inherit; flex: 1; text-align: left; display: flex; min-width: 0; }
+.info-tabs button { font-size: 14px; }
+.battle-log { max-height: 60vh; overflow-y: auto; }
+.log-turn { margin: 12px 0 4px; padding-top: 6px; border-top: 2px solid #d8dcd0; font-family: var(--font-display); font-weight: 400; letter-spacing: 1px; color: #485868; }
+.battle-log .log-turn:first-child { margin-top: 0; border-top: none; }
+.field-panel section { margin: 10px 0; }
+.field-panel h4 { margin: 0 0 4px; font-family: var(--font-display); font-weight: 400; letter-spacing: 1px; color: #485868; }
+.field-panel ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.field-panel li { display: flex; justify-content: space-between; gap: 10px; padding: 6px 10px; background: #eef2f6; border-radius: 8px; border: 2px solid #c8d2dc; }
+.field-count { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+.field-count span { display: flex; flex-direction: column; align-items: center; padding: 6px; border-radius: 8px; background: #eef2f6; font-size: 13px; text-align: center; }
+.field-count b { font-family: var(--font-display); font-weight: 400; font-size: 22px; }

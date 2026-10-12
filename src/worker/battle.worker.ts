@@ -5,7 +5,7 @@ import { generatePuzzle, type DailyPuzzle } from '../data/daily';
 import { BattleRunner } from '../engine/runner';
 import { chooseAction, chooseTeamPreview, DEFAULT_AI, RELAXED_AI, type AIConfig } from '../engine/ai';
 import { moveEffects, moveHints } from '../engine/move-info';
-import type { ToWorker, FromWorker, MonView, MoveView, PuzzleView, Stats } from '../shared/types';
+import type { ToWorker, FromWorker, MonView, MoveView, PuzzleView, Stats, FieldEffect } from '../shared/types';
 
 const ctx = self as unknown as DedicatedWorkerGlobalScope;
 const dex = Dex.forFormat(FORMAT_ID);
@@ -78,6 +78,22 @@ function aliveFlags(): boolean[] {
 	});
 }
 
+/** Field effects and how many turns they have left, read from the real battle state. */
+function fieldState(): FieldEffect[] {
+	if (!runner) return [];
+	const b = runner.battle;
+	const out: FieldEffect[] = [];
+	const add = (id: string, state: any, side: FieldEffect['side']) => {
+		if (!id) return;
+		out.push({ id, name: dex.conditions.get(id).name || id, side, turns: state?.duration ?? null, layers: state?.layers });
+	};
+	add(b.field.weather, b.field.weatherState, null);
+	add(b.field.terrain, b.field.terrainState, null);
+	for (const id in b.field.pseudoWeather) add(id, b.field.pseudoWeather[id], null);
+	b.sides.forEach((side, i) => { for (const id in side.sideConditions) add(id, side.sideConditions[id], i ? 'p2' : 'p1'); });
+	return out;
+}
+
 function sendUpdate() {
 	if (!runner) return;
 	const lines = runner.readLog('p1');
@@ -93,7 +109,7 @@ function sendUpdate() {
 	}
 	post({
 		type: 'update', lines, request: req, battle, ended: runner.ended,
-		winner: runner.winner || undefined, turn: runner.turn, alive: aliveFlags(),
+		winner: runner.winner || undefined, turn: runner.turn, alive: aliveFlags(), field: fieldState(),
 	});
 }
 
