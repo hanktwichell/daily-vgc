@@ -40,6 +40,14 @@ uses fresh randomness per player.
    whose matchup score (`src/engine/matchup.ts`) is closest to a small edge for the player.
    Teams without a Mega get a bigger edge so they stay winnable.
 
+4. **Calibration.** The quick matchup score can't see everything (Trick Room, weather and
+   setup are hard to score), so upcoming puzzles are also checked by simulation.
+   `npm run calibrate` plays the top four candidates against the opponent: AI vs AI, plus a
+   greedy "casual player" bot. It pins the best-balanced team for each date in
+   `src/data/calibrated.json`. A weekly GitHub Action (`calibrate.yml`) does this for the
+   next three weeks and commits the result. Today's and past puzzles are never changed.
+   Dates without an entry fall back to step 3.
+
 Every set and team is checked against the Reg M-C validator (`npm run validate-teams`).
 
 ## The opponent AI
@@ -88,6 +96,7 @@ npm run typecheck
 npm run validate-teams   # every set and opponent team vs. Reg M-C
 npm run build            # static site in dist/
 npm run balance -- 1 20 2 [--greedy]   # AI vs AI on puzzles 1-20, 2 games each
+npm run calibrate -- --upcoming 14      # simulate and pin the next 14 puzzles' player teams
 node scripts/e2e.mjs http://localhost:4173/ [screenshotDir] [--mobile] [--reload]   # browser test (after `npm run preview`)
 ```
 

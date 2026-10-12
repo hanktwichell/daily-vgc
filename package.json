@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "A daily Pokémon Champions VGC double-battle puzzle",
+  "description": "A daily Pok\u00e9mon Champions VGC double-battle puzzle",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -13,7 +13,8 @@
     "validate-teams": "tsx scripts/validate-teams.ts",
     "balance": "tsx scripts/balance.ts",
     "gen:text": "tsx scripts/gen-text.ts",
-    "gen:sprites": "tsx scripts/gen-sprites.ts"
+    "gen:sprites": "tsx scripts/gen-sprites.ts",
+    "calibrate": "tsx scripts/calibrate.ts"
   },
   "license": "MIT",
   "devDependencies": {

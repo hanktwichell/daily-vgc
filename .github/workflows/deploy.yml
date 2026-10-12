@@ -3,6 +3,10 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # Pushes made by the calibration workflow do not trigger `push`, so redeploy after it runs.
+  workflow_run:
+    workflows: ["Calibrate upcoming puzzles"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:

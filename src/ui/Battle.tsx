@@ -130,12 +130,19 @@ export function BattleScreen(props: Props) {
 					case 'status': flash(effect.target, 'anim-status', 500); break;
 					case 'boost': flash(effect.target, effect.up ? 'anim-boost' : 'anim-drop', 500); break;
 					}
+					let shown = 0;
 					for (const t of texts) {
+						// Parenthesized lines ("(X was hurt!)", "(Rain continues to fall.)") are minor: log only.
+						if (t.startsWith('(') && t.endsWith(')')) {
+							log.current.push(t.slice(1, -1));
+							continue;
+						}
+						shown++;
 						log.current.push(t);
 						setMessage(t);
 						await wait(Math.min(1800, 750 + t.length * 12));
 					}
-					if (!texts.length && ['damage', 'heal', 'faint', 'switch'].includes(effect.kind)) await wait(450);
+					if (!shown && ['damage', 'heal', 'faint', 'switch'].includes(effect.kind)) await wait(500);
 				}
 				if (update.ended) setEnded(true);
 				if (update.request && consumed.current === updatesRef.current.length) setRequest(update.request);

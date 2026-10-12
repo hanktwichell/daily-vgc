@@ -6,6 +6,7 @@ import { OPPONENT_TEAMS, type OpponentTeam } from './opponents';
 import { buildTeam } from './team-builder';
 import { SeededRNG } from './rng';
 import { matchupScore } from '../engine/matchup';
+import CALIBRATED from './calibrated.json';
 
 export { LAUNCH_DATE, PUZZLE_TIME_ZONE, puzzleDateFor, puzzleNumberFor, dateForPuzzleNumber, msUntilNextPuzzle } from './calendar';
 import { puzzleNumberFor } from './calendar';
@@ -197,30 +198,47 @@ export function opponentForPuzzle(n: number): OpponentTeam {
 const TARGET_EDGE = [1.5, 0.6, 0.4];
 const CANDIDATES = 16;
 
-export function generateDaily(date: string): DailyPuzzle {
-	const number = puzzleNumberFor(date);
-	const opponent = opponentForPuzzle(number);
-	const opponentTeam = buildTeam(opponent.sets);
+export interface Candidate { ids: string[]; team: PokemonSet[]; diff: number; archetype: Archetype }
+
+/**
+ * Candidate player teams for a date, best (closest to the target matchup) first.
+ * Deterministic for the date.
+ */
+export function candidateTeams(date: string, opponentTeam: PokemonSet[], opponent: OpponentTeam): Candidate[] {
 	const rng = new SeededRNG(`daily-vgc:${date}`);
 	const exclude = new Set(opponent.sets.map(id => natNum(LIBRARY.find(l => l.id === id)!)));
 	const megaRoll = rng.next();
 	const megaTarget = megaRoll < 0.25 ? 0 : megaRoll < 0.8 ? 1 : 2;
-
-	let best: { ids: string[], team: PokemonSet[], diff: number, archetype: Archetype } | null = null;
+	const all: Candidate[] = [];
 	// Up to three archetypes; stop early once a team is close to the target edge.
-	for (let attempt = 0; attempt < 3 && !(best && best.diff < 0.25); attempt++) {
+	for (let attempt = 0; attempt < 3 && !all.some(c => c.diff < 0.25); attempt++) {
 		const archetype = rng.weighted(ARCHETYPE_WEIGHTS, ([, w]) => w)![0];
 		for (let i = 0; i < CANDIDATES; i++) {
 			const { ids } = generatePlayerTeam(rng, exclude, archetype, megaTarget);
 			const team = buildTeam(ids);
 			const diff = Math.abs(matchupScore(team, opponentTeam) - TARGET_EDGE[megaTarget]);
-			if (!best || diff < best.diff) best = { ids, team, diff, archetype };
+			all.push({ ids, team, diff, archetype });
 		}
 	}
+	return all.sort((a, b) => a.diff - b.diff);
+}
+
+/** Teams chosen offline by simulation (scripts/calibrate.ts), keyed by date. */
+const calibrated = CALIBRATED as Record<string, { ids: string[]; archetype: Archetype }>;
+
+export function generateDaily(date: string): DailyPuzzle {
+	const number = puzzleNumberFor(date);
+	const opponent = opponentForPuzzle(number);
+	const opponentTeam = buildTeam(opponent.sets);
+	const fixed = calibrated[date];
+	if (fixed && fixed.ids.every(id => LIBRARY.some(l => l.id === id))) {
+		return { date, number, opponent, opponentTeam, playerIds: fixed.ids, playerTeam: buildTeam(fixed.ids), archetype: fixed.archetype };
+	}
+	const best = candidateTeams(date, opponentTeam, opponent)[0];
 	return {
 		date, number, opponent, opponentTeam,
-		playerIds: best!.ids,
-		playerTeam: best!.team,
-		archetype: best!.archetype,
+		playerIds: best.ids,
+		playerTeam: best.team,
+		archetype: best.archetype,
 	};
 }
