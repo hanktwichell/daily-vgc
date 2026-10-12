@@ -48,6 +48,7 @@ export function BattleScreen(props: Props) {
 	const [waiting, setWaiting] = useState(false);
 	const [infoMon, setInfoMon] = useState<FieldMon | null>(null);
 	const [showLog, setShowLog] = useState(false);
+	const [prompt, setPrompt] = useState('');
 	const log = useRef<string[]>([]);
 	const consumed = useRef(0);
 	const skip = useRef<(() => void) | null>(null);
@@ -176,7 +177,7 @@ export function BattleScreen(props: Props) {
 			<div class="ds-screen top-screen">
 				<Scene scene={s} anims={anims} onInspect={setInfoMon} />
 				<div class="textbox" onClick={() => skip.current?.()}>
-					<p>{message || (showControls ? promptFor(request, s) : waiting ? (props.thinking ? `${puzzle.opponent.trainer} is thinking...` : 'Waiting...') : '')}</p>
+					<p>{message || (showControls ? (prompt || promptFor(request, s)) : waiting ? (props.thinking ? `${puzzle.opponent.trainer} is thinking...` : 'Waiting...') : '')}</p>
 					{playing && <span class="more">▼</span>}
 				</div>
 			</div>
@@ -190,7 +191,7 @@ export function BattleScreen(props: Props) {
 			<div class="ds-screen bottom-screen">
 				{showControls ? (
 					<Controls key={JSON.stringify(request.side?.pokemon?.map((p: any) => p.condition)) + s.turn + (request.forceSwitch ? 'f' : '')}
-						request={request} scene={s} puzzle={puzzle} onSubmit={submit} viewFor={viewFor} />
+						request={request} scene={s} puzzle={puzzle} onSubmit={submit} viewFor={viewFor} onPrompt={setPrompt} />
 				) : (
 					<div class="idle-panel">
 						<FieldInfo scene={s} />
@@ -339,9 +340,10 @@ interface ControlsProps {
 	puzzle: PuzzleView;
 	onSubmit: (choice: string) => void;
 	viewFor: (m: FieldMon) => MonView | undefined;
+	onPrompt: (text: string) => void;
 }
 
-function Controls({ request, scene, puzzle, onSubmit }: ControlsProps) {
+function Controls({ request, scene, puzzle, onSubmit, onPrompt }: ControlsProps) {
 	const moveInfo = useMemo(() => Object.fromEntries(puzzle.player.flatMap(m => m.moves.map(mv => [mv.id, mv]))), [puzzle]);
 	const forced: boolean[] | undefined = request.forceSwitch;
 	const slots = forced ? forced.length : (request.active?.length ?? 0);
@@ -399,6 +401,10 @@ function Controls({ request, scene, puzzle, onSubmit }: ControlsProps) {
 	const active = request.active?.[slot];
 	const me = team[slot];
 	const name = me ? me.ident.replace(/^p1: /, '') : '';
+	useEffect(() => {
+		if (forced) onPrompt(team[slot]?.reviving ? 'Choose a Pokémon to revive.' : 'Choose a Pokémon to send out.');
+		else onPrompt(name ? `What will ${name} do?` : '');
+	}, [slot, name]);
 	const canGoBack = (() => { let p = slot - 1; while (p >= 0 && !slotIsLive(p)) p--; return p >= 0; })();
 
 	// Revival Blessing: the "switch" prompt picks a fainted Pokémon to revive.

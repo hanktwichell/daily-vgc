@@ -32,7 +32,7 @@ for (let step = 0; step < 300; step++) {
 	const sw = await page.$('.switch-btn');
 	const move = await page.$('.move-btn:not([disabled])');
 	const target = await page.$('.target-btn.p2:not([disabled])');
-	if (target) { await target.click(); continue; }
+	if (target) { if (!globalThis.tShot) { globalThis.tShot = 1; await shot('05c-target'); } await target.click(); continue; }
 	if (move) {
 		const mega = await page.$('.mega-toggle:not(.on)');
 		if (mega) await mega.click();
@@ -55,7 +55,7 @@ for (let step = 0; step < 300; step++) {
 		await fight.click();
 		continue;
 	}
-	if (sw) { await sw.click(); continue; }
+	if (sw) { if (!globalThis.sShot) { globalThis.sShot = 1; await shot('06b-switch'); } await sw.click(); continue; }
 	// Speed through text.
 	const box = await page.$('.textbox');
 	if (box) await box.click().catch(() => {});

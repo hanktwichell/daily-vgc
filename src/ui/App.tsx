@@ -51,10 +51,17 @@ export function App() {
 		return () => w.terminate();
 	}, []);
 
-	// Reload at midnight Eastern so the next puzzle appears without a manual refresh.
+	// Reload at midnight Eastern so the next puzzle appears without a manual refresh,
+	// unless a battle is in progress (it can be finished and counts for its own day).
+	const phaseRef = useRef<Phase>('loading');
+	phaseRef.current = phase;
 	useEffect(() => {
-		const t = setTimeout(() => location.reload(), msUntilNextPuzzle() + 1500);
-		return () => clearTimeout(t);
+		const check = () => {
+			if (puzzleNumberFor(puzzleDateFor()) !== number && phaseRef.current !== 'battle') location.reload();
+		};
+		const t = setTimeout(function tick() { check(); }, msUntilNextPuzzle() + 1500);
+		const i = setInterval(check, 60_000);
+		return () => { clearTimeout(t); clearInterval(i); };
 	}, []);
 
 	function handle(msg: FromWorker) {
