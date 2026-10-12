@@ -102,13 +102,14 @@ node scripts/e2e.mjs http://localhost:4173/ [screenshotDir] [--mobile] [--reload
 
 ## Deploying for free (GitHub Pages)
 
-The repository includes `.github/workflows/deploy.yml`, which tests, builds and publishes
-the site on every push to `main`.
+The repository includes `.github/workflows/deploy.yml`. On every push to `main` it type-checks,
+validates the teams, builds, and publishes the site to the `gh-pages` branch. GitHub Pages serves
+that branch at `https://hanktwichell.github.io/daily-vgc/`. You can also run it by hand from
+**Actions → Deploy to GitHub Pages → Run workflow**.
 
-1. Merge this work into `main`.
-2. On GitHub, open **Settings → Pages** and set **Source** to **GitHub Actions**.
-3. The next push to `main`, or **Actions → Deploy to GitHub Pages → Run workflow**,
-   publishes to `https://hanktwichell.github.io/daily-vgc/`.
+GitHub turns Pages on automatically the first time a `gh-pages` branch appears. If the site
+doesn't show up, open **Settings → Pages**, set **Source** to **Deploy from a branch**, and pick
+branch `gh-pages`, folder `/ (root)`.
 
 The share message uses the address the player is on. To show a different one (for example a
 custom domain), add a repository variable `SITE_URL` under
