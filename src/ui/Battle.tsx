@@ -49,6 +49,7 @@ export function BattleScreen(props: Props) {
 	const [infoMon, setInfoMon] = useState<FieldMon | null>(null);
 	const [showLog, setShowLog] = useState(false);
 	const [prompt, setPrompt] = useState('');
+	const [showSheets, setShowSheets] = useState(false);
 	const log = useRef<string[]>([]);
 	const consumed = useRef(0);
 	const skip = useRef<(() => void) | null>(null);
@@ -184,6 +185,7 @@ export function BattleScreen(props: Props) {
 			<div class="hinge">
 				<span class="turn-chip">Turn {s.turn || 1}</span>
 				<FieldTags scene={s} />
+				<button class="speed-btn" onClick={() => setShowSheets(true)} title="Open team sheets">Teams</button>
 				<button class="speed-btn" onClick={props.onToggleSpeed} aria-label="Toggle text speed" title="Text speed">
 					{props.speed === 'fast' ? 'Fast ▶▶' : 'Text ▶'}
 				</button>
@@ -205,11 +207,37 @@ export function BattleScreen(props: Props) {
 					<LiveInfo mon={infoMon} view={viewFor(infoMon)} />
 				</Modal>
 			)}
+			{showSheets && (
+				<Modal title="Team sheets" onClose={() => setShowSheets(false)}>
+					<TeamSheets puzzle={puzzle} />
+				</Modal>
+			)}
 			{showLog && (
 				<Modal title="Battle log" onClose={() => setShowLog(false)}>
 					<div class="battle-log">{log.current.map((l, i) => <p key={i}>{l}</p>)}</div>
 				</Modal>
 			)}
+		</div>
+	);
+}
+
+function TeamSheets({ puzzle }: { puzzle: PuzzleView }) {
+	const [open, setOpen] = useState<string | null>(null);
+	const row = (mon: MonView, key: string) => (
+		<div key={key} class="sheet-row">
+			<button class="sheet-head" onClick={() => setOpen(open === key ? null : key)} aria-expanded={open === key}>
+				<Sprite speciesId={mon.speciesId} />
+				<span><b>{mon.species}</b> @ {mon.item}<br /><span class="muted small">{mon.moves.map(m => m.name).join(' · ')}</span></span>
+			</button>
+			{open === key && <MonDetails mon={mon} />}
+		</div>
+	);
+	return (
+		<div class="sheets">
+			<h3>{puzzle.opponent.trainer}</h3>
+			{puzzle.foe.map((m, i) => row(m, `f${i}`))}
+			<h3>Your team</h3>
+			{puzzle.player.map((m, i) => row(m, `p${i}`))}
 		</div>
 	);
 }
