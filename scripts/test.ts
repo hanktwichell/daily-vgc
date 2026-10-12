@@ -147,6 +147,36 @@ await test('AI: valid choices when both active Pokémon could Mega Evolve and no
 	}
 });
 
+await test('AI: never Decorates a foe or sets Tailwind under Trick Room', async () => {
+	const { Battle, Teams, State } = await import('../src/engine/ps');
+	const { buildTeam } = await import('../src/data/team-builder');
+	const fast = { ownJoint: 8, oppJoint: 6, refineTop: 2, refineSamples: 1, lambda: 0.85, temperature: 0.1, explore: 0.25, budgetMs: 1000 };
+	const setup = (cpu: string[], you: string[], tr: boolean, faintPartner: boolean) => {
+		const b = new Battle({ formatid: 'gen9championsdoublescustomgame' as any });
+		b.setPlayer('p1', { name: 'You', team: Teams.pack(buildTeam(you)) });
+		b.setPlayer('p2', { name: 'CPU', team: Teams.pack(buildTeam(cpu)) });
+		b.choose('p1', 'team 12');
+		b.choose('p2', 'team 12');
+		if (tr) b.field.addPseudoWeather('trickroom', b.sides[0].active[0]);
+		if (faintPartner) {
+			b.sides[1].active[1].faint();
+			b.faintMessages();
+			b.makeRequest('move');
+		}
+		return JSON.stringify(State.serializeBattle(b));
+	};
+	// Alcremie's move 1 is Decorate; with its partner gone it has no one to use it on.
+	const alone = setup(['alcremie', 'tinkaton'], ['incineroar', 'rillaboom'], false, true);
+	// Whimsicott's move 1 is Tailwind; the room has 5 turns left.
+	const room = setup(['whimsicott', 'alcremie'], ['sneasler', 'garchomp'], true, false);
+	for (let i = 0; i < 6; i++) {
+		const a = chooseAction(alone, 1, Math.random, fast).split(',')[0].trim();
+		assert.ok(!/^move 1 [12]/.test(a), `Decorate on a foe: ${a}`);
+		const t = chooseAction(room, 1, Math.random, fast).split(',')[0].trim();
+		assert.ok(!t.startsWith('move 1'), `Tailwind under Trick Room: ${t}`);
+	}
+});
+
 await test('AI vs AI: a full battle finishes without invalid choices', () => {
 	const d = generateDaily(dateForPuzzleNumber(5));
 	const result = playGame(d.playerTeam, d.opponentTeam, {
