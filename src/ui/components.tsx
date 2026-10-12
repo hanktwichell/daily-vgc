@@ -70,6 +70,8 @@ export function MonDetails({ mon, showStats = true }: { mon: MonView; showStats?
 						<TypeBadge type={m.type} small /> <span class={`cat cat-${m.category.toLowerCase()}`}>{m.category}</span>
 						<span class="muted"> {moveLine(m)}</span>
 						<div class="muted small">{moveDesc(m.id)}</div>
+						{m.effects.length > 0 && <div class="muted small">{m.effects.join(' · ')}</div>}
+						{m.tags.length > 0 && <div class="small">{m.tags.map(t => <span key={t} class="tag">{t}</span>)}</div>}
 					</li>
 				))}
 			</ul>
