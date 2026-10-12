@@ -1,0 +1,40 @@
+# Once a day, just after the new puzzle unlocks, copies the finished puzzles' community stats
+# (and, with RECORDER_ADMIN_TOKEN, the anonymous per-battle results) into community/.
+name: Archive community stats
+
+on:
+  schedule:
+    # Shortly after midnight Eastern in both EDT (04:xx UTC) and EST (05:xx UTC), plus a later
+    # pass once the 3-hour window for late results has closed.
+    - cron: '20 4 * * *'
+    - cron: '20 5 * * *'
+    - cron: '20 8 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Fetch stats
+        env:
+          RECORDER_ADMIN_TOKEN: ${{ secrets.RECORDER_ADMIN_TOKEN }}
+        run: npx tsx scripts/archive-community.ts
+      - name: Commit
+        run: |
+          git add community
+          if git diff --cached --quiet; then echo "Nothing new"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Archive community stats"
+          git push

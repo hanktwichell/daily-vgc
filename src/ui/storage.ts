@@ -124,7 +124,12 @@ export function dailyWon(number: number): boolean {
 }
 
 const SETTINGS_KEY = 'dailyvgc:settings';
-export interface Settings { speed: 'normal' | 'fast'; seenHelp: boolean }
+export interface Settings {
+	speed: 'normal' | 'fast';
+	seenHelp: boolean;
+	/** Last puzzle whose community recap was shown before the next day's battle. */
+	recapSeen?: number;
+}
 export function loadSettings(): Settings {
 	return { speed: 'normal', seenHelp: false, ...(read<Settings>(SETTINGS_KEY) ?? {}) };
 }

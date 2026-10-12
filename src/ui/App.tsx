@@ -7,6 +7,8 @@ import { Results, type HardModeLink } from './Results';
 import { Modal, Countdown } from './components';
 import { StatsSummary } from './StatsSummary';
 import { ArchiveCalendar, CalendarIcon, type ArchiveSelection } from './Archive';
+import { CommunityRecap } from './Community';
+import { recorderEnabled, fetchCommunityStats, hasData, submitResult } from './community';
 import {
 	loadProgress, saveProgress, loadStats, recordResult, currentStreak, loadSettings, saveSettings,
 	recordArchiveResult, clearArchiveProgress, dailyWon,
@@ -36,7 +38,7 @@ export function App() {
 	const [archive, setArchive] = useState<number | null>(() => savedArchive(number)?.number ?? null);
 	const [replay, setReplay] = useState(0);
 	const [settings, setSettings] = useState(loadSettings);
-	const [modal, setModal] = useState<'help' | 'stats' | 'calendar' | null>(() => (loadSettings().seenHelp ? null : 'help'));
+	const [modal, setModal] = useState<'help' | 'stats' | 'calendar' | 'recap' | null>(() => (loadSettings().seenHelp ? null : 'help'));
 	const archiveRef = useRef(archive);
 	archiveRef.current = archive;
 	useEffect(() => {
@@ -61,6 +63,17 @@ export function App() {
 	}, []);
 
 	const updateSettings = (s: Settings) => { setSettings(s); saveSettings(s); };
+
+	// Before a new day's battle, show how everyone did on yesterday's (once per day).
+	useEffect(() => {
+		const s = loadSettings();
+		if (!recorderEnabled() || number < 1 || archive !== null || !s.seenHelp || s.recapSeen === number - 1) return;
+		if (loadProgress(number, 'normal')) return;
+		fetchCommunityStats(number - 1).then(stats => {
+			if (hasData(stats)) setModal(m => m ?? 'recap');
+		});
+	}, []);
+	const closeRecap = () => { setModal(null); updateSettings({ ...loadSettings(), recapSeen: number - 1 }); };
 	const playArchive = (sel: ArchiveSelection) => {
 		setArchive(sel.number); setMode(sel.mode); setReplay(r => r + 1); setModal(null); window.scrollTo(0, 0);
 	};
@@ -112,7 +125,13 @@ export function App() {
 			)}
 			{modal === 'stats' && (
 				<Modal onClose={() => setModal(null)}>
-					<StatsSheet key={statsVersion} number={number} initialMode={mode} onArchive={() => setModal('calendar')} />
+					<StatsSheet key={statsVersion} number={number} initialMode={mode} onArchive={() => setModal('calendar')}
+						onRecap={recorderEnabled() && number > 0 ? () => setModal('recap') : undefined} />
+				</Modal>
+			)}
+			{modal === 'recap' && (
+				<Modal onClose={closeRecap}>
+					<CommunityRecap puzzle={number - 1} title="Yesterday's battle" onPlay={archive === null ? closeRecap : undefined} />
 				</Modal>
 			)}
 			{modal === 'calendar' && (
@@ -150,6 +169,7 @@ function Game({ mode, archive, date, number, settings, onSettings, onPhase, onRe
 	const [stats, setStats] = useState<Stats>(() => loadStats(mode));
 	const [record, setRecord] = useState<GameRecord | null>(null);
 	const worker = useRef<Worker | null>(null);
+	const puzzleRef = useRef<PuzzleView | null>(null);
 	const progress = useRef<Progress | null>(null);
 
 	useEffect(() => { onPhase(phase); }, [phase]);
@@ -180,6 +200,7 @@ function Game({ mode, archive, date, number, settings, onSettings, onPhase, onRe
 		switch (msg.type) {
 		case 'puzzle':
 			setPuzzle(msg.puzzle);
+			puzzleRef.current = msg.puzzle;
 			setPhase(p => {
 				if (p !== 'loading') return p;
 				const saved = progress.current;
@@ -201,7 +222,17 @@ function Game({ mode, archive, date, number, settings, onSettings, onPhase, onRe
 				next.result = result;
 				delete next.battle;
 				if (archive) recordArchiveResult(result, mode);
-				else setStats(recordResult(result, mode));
+				else {
+					setStats(recordResult(result, mode));
+					// Day-of battles feed the community stats (archive replays don't).
+					const view = puzzleRef.current;
+					if (view && prev?.order?.length === 4) {
+						submitResult({
+							puzzle: number, mode, won: result.won, alive: result.won ? result.alive.filter(Boolean).length : 0,
+							turns: result.turns, picks: prev.order, team: view.player.map(p => p.species),
+						});
+					}
+				}
 				setRecord(result);
 				onRecorded();
 			}
@@ -275,7 +306,7 @@ function hardModeLink(number: number, record: GameRecord, archive: boolean, play
 }
 
 /** Stats modal: separate daily and hard-mode trackers behind a toggle, read fresh from storage. */
-function StatsSheet({ number, initialMode, onArchive }: { number: number; initialMode: Mode; onArchive: () => void }) {
+function StatsSheet({ number, initialMode, onArchive, onRecap }: { number: number; initialMode: Mode; onArchive: () => void; onRecap?: () => void }) {
 	const [view, setView] = useState<Mode>(initialMode);
 	const [ms, setMs] = useState(msUntilNextPuzzle());
 	useEffect(() => { const t = setInterval(() => setMs(msUntilNextPuzzle()), 1000); return () => clearInterval(t); }, []);
@@ -294,7 +325,10 @@ function StatsSheet({ number, initialMode, onArchive }: { number: number; initia
 			<StatsSummary stats={stats} streak={currentStreak(stats, number)} today={today} />
 			{view === 'hard' && stats.played === 0 && <p class="muted">Win a daily battle to unlock Hard Mode.</p>}
 			<p class="next">Next battle in <Countdown ms={ms} /></p>
-			<button class="btn archive-btn" onClick={onArchive}><CalendarIcon /> Archive</button>
+			<div class="sheet-buttons">
+				{onRecap && <button class="btn archive-btn" onClick={onRecap}>Yesterday's results</button>}
+				<button class="btn archive-btn" onClick={onArchive}><CalendarIcon /> Archive</button>
+			</div>
 		</div>
 	);
 }
@@ -311,6 +345,7 @@ function HowToPlay() {
 			<p><b>Hard Mode:</b> win the daily battle to unlock it. You take over the day's themed team and face a top competitive team.</p>
 			<p>Tap any Pokémon or HP bar for details, and tap the text box to skip ahead.</p>
 			<p>One battle per day. Your progress is saved, so you can leave and come back. Past battles stay playable in the <b>Archive</b> (from the stats screen); those don't count toward your stats.</p>
+			<p class="muted small">Results of each day's battles are shared anonymously to build the community stats.</p>
 		</div>
 	);
 }

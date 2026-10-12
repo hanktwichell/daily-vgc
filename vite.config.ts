@@ -1,9 +1,15 @@
 import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
+import { existsSync, readFileSync } from 'node:fs';
 
 const siteUrl = (process.env.VITE_SITE_URL || 'dailyvgc.online').replace(/^https?:\/\//, '').replace(/\/$/, '');
 
+// Community stats recorder (recorder/). recorder.json is written by the "Deploy recorder" workflow.
+const recorderUrl = process.env.VITE_RECORDER_URL ??
+	(existsSync('recorder.json') ? JSON.parse(readFileSync('recorder.json', 'utf8')).url ?? '' : '');
+
 export default defineConfig({
+	define: { 'import.meta.env.VITE_RECORDER_URL': JSON.stringify(recorderUrl) },
 	// Relative asset paths work both at a domain root and under /daily-vgc/ on GitHub Pages.
 	base: process.env.BASE_PATH || './',
 	plugins: [
