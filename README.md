@@ -100,29 +100,6 @@ npm run calibrate -- --upcoming 14      # simulate and pin the next 14 puzzles' 
 node scripts/e2e.mjs http://localhost:4173/ [screenshotDir] [--mobile] [--reload]   # browser test (after `npm run preview`)
 ```
 
-## Deploying for free (GitHub Pages)
-
-The repository includes `.github/workflows/deploy.yml`. On every push to `main` it type-checks,
-validates the teams, builds, and publishes the site to the `gh-pages` branch. GitHub Pages serves
-that branch at `https://hanktwichell.github.io/daily-vgc/`. You can also run it by hand from
-**Actions → Deploy to GitHub Pages → Run workflow**.
-
-GitHub turns Pages on automatically the first time a `gh-pages` branch appears. If the site
-doesn't show up, open **Settings → Pages**, set **Source** to **Deploy from a branch**, and pick
-branch `gh-pages`, folder `/ (root)`.
-
-The share message uses the address the player is on. To show a different one (for example a
-custom domain), add a repository variable `SITE_URL` under
-**Settings → Secrets and variables → Actions → Variables**.
-
-**Custom domain (optional, about $10/year):** buy a domain such as `daily-vgc.com`, add it
-under **Settings → Pages → Custom domain**, point the DNS records at GitHub Pages as GitHub
-describes, and set `SITE_URL` to the domain. The build uses relative paths, so it works at a
-domain root or under `/daily-vgc/` without changes.
-
-Other free static hosts (Cloudflare Pages, Netlify, Vercel) work too: build with
-`npm run build` and publish `dist/`. No server, EC2 instance, or database is needed.
-
 ## Changing things
 
 - **Launch date / puzzle numbering:** `LAUNCH_DATE` in `src/data/calendar.ts`.
