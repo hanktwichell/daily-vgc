@@ -64,6 +64,10 @@ interface JointOption {
 }
 
 const NEEDS_TARGET = new Set(['normal', 'any', 'adjacentFoe', 'adjacentAlly', 'adjacentAllyOrSelf']);
+/** Single-target moves that only make sense on a partner (they boost, heal or help the target). */
+const ALLY_ONLY = new Set(['decorate', 'healpulse', 'floralhealing', 'instruct']);
+/** Moves worth considering on either a foe or the partner. */
+const ALLY_OR_FOE = new Set(['pollenpuff']);
 
 function aliveFoeSlots(side: Side): number[] {
 	const foe = side.foe;
@@ -106,6 +110,11 @@ function enumerateSlot(battle: Battle, side: Side, slot: number, request: any, f
 				options.push({ choice: `move ${i + 1} -${slot + 1}${mega}`, kind: 'move', moveId: m.id, target: -(slot + 1), score: 0 });
 				return;
 			}
+			const allyTarget = ALLY_ONLY.has(m.id) || ALLY_OR_FOE.has(m.id);
+			if (allyTarget && ally && !ally.fainted) {
+				options.push({ choice: `move ${i + 1} -${(slot ^ 1) + 1}${mega}`, kind: 'move', moveId: m.id, target: -((slot ^ 1) + 1), score: 0 });
+			}
+			if (ALLY_ONLY.has(m.id)) return;
 			for (const t of foes) {
 				options.push({ choice: `move ${i + 1} ${t}${mega}`, kind: 'move', moveId: m.id, target: t, score: 0 });
 			}
@@ -248,6 +257,12 @@ function scoreSlot(an: Analyzer, side: Side, slot: number, opt: SlotOption): num
 	const hpFrac = self.hp / self.maxhp;
 
 	if (move.category !== 'Status') {
+		if (opt.target && opt.target < 0) {
+			// Pollen Puff on the partner heals it for half its HP.
+			if (!ally || ally.fainted) return -1;
+			const missing = 1 - ally.hp / ally.maxhp;
+			return missing > 0.4 ? 0.1 + missing * 0.5 : -0.5;
+		}
 		let score = 0;
 		const spreadFoes = move.target === 'allAdjacentFoes' || move.target === 'allAdjacent';
 		const targets: Pokemon[] = [];
@@ -278,11 +293,21 @@ function scoreSlot(an: Analyzer, side: Side, slot: number, opt: SlotOption): num
 
 	// Status moves
 	const threat = incomingThreat(an, self);
+	// Never raise a foe's stats or heal it (Swagger and Flatter confuse, which is the point).
+	if (opt.target && opt.target > 0 && !['swagger', 'flatter'].includes(move.id)) {
+		if (move.heal || (move.boosts && Object.values(move.boosts).some(v => (v as number) > 0))) return -2;
+	}
 	if (PROTECT_MOVES.has(move.id)) {
 		const lastProtect = self.volatiles['stall'] ? 0.35 : 1;
 		return lastProtect * (0.08 + Math.min(0.5, threat * 0.35));
 	}
-	if (move.id === 'tailwind') return side.sideConditions['tailwind'] ? -1 : 0.55;
+	if (move.id === 'tailwind') {
+		if (side.sideConditions['tailwind']) return -1;
+		// Under Trick Room, Tailwind makes your side move later. Only set it as the room runs out.
+		const tr = battle.field.getPseudoWeather('trickroom');
+		if (tr && (tr.duration ?? 0) > 1) return -0.8;
+		return 0.55;
+	}
 	if (move.id === 'trickroom') {
 		const tr = battle.field.getPseudoWeather('trickroom');
 		const slow = slowerTeam(side);
@@ -328,7 +353,19 @@ function scoreSlot(an: Analyzer, side: Side, slot: number, opt: SlotOption): num
 	if (['recover', 'roost', 'slackoff', 'synthesis', 'strengthsap', 'moonlight', 'morningsun', 'shoreup'].includes(move.id)) {
 		return hpFrac < 0.55 ? 0.4 : 0.02;
 	}
-	if (['healpulse', 'decorate', 'coaching', 'instruct', 'pollenpuff', 'lifedew'].includes(move.id)) return ally && !ally.fainted ? 0.18 : -1;
+	const partner = opt.target && opt.target < 0 && opt.target !== -(slot + 1) ? ally : null;
+	if (move.id === 'healpulse' || move.id === 'floralhealing') {
+		if (!partner || partner.fainted) return -1;
+		const missing = 1 - partner.hp / partner.maxhp;
+		return missing > 0.4 ? 0.1 + missing * 0.5 : -0.4;
+	}
+	if (move.id === 'decorate' || move.id === 'instruct') {
+		if (!partner || partner.fainted) return -1;
+		let best = 0;
+		for (const foe of foeSide.active) if (foe && !foe.fainted) best = Math.max(best, an.bestDamage(partner, foe));
+		return 0.08 + best * 0.35;
+	}
+	if (['coaching', 'lifedew'].includes(move.id)) return ally && !ally.fainted ? 0.18 : -1;
 	if (move.id === 'wideguard') return 0.1;
 	if (move.id === 'shedtail') return hpFrac > 0.55 ? 0.25 : -0.5;
 	if (move.id === 'revivalblessing') return side.pokemon.some(p => p.fainted) ? 0.5 : -1;
@@ -431,7 +468,12 @@ function sideValue(side: Side): number {
 	let v = 0;
 	for (const p of side.pokemon) v += monValue(p);
 	const sc = side.sideConditions;
-	if (sc['tailwind']) v += 0.12 + 0.07 * (sc['tailwind'].duration ?? 2);
+	if (sc['tailwind']) {
+		// Tailwind only helps once Trick Room is gone; count the turns left after it ends.
+		const tr = side.battle.field.getPseudoWeather('trickroom');
+		const turns = (sc['tailwind'].duration ?? 2) - (tr ? tr.duration ?? 0 : 0);
+		if (turns > 0) v += 0.12 + 0.07 * turns;
+	}
 	if (sc['reflect']) v += 0.04 * (sc['reflect'].duration ?? 3);
 	if (sc['lightscreen']) v += 0.04 * (sc['lightscreen'].duration ?? 3);
 	if (sc['auroraveil']) v += 0.06 * (sc['auroraveil'].duration ?? 3);
