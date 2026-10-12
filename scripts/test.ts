@@ -23,10 +23,11 @@ async function test(name: string, fn: () => void | Promise<void>) {
 }
 
 await test('calendar: puzzle day rolls over at midnight New York time', () => {
-	assert.equal(puzzleNumberFor(LAUNCH_DATE), 1);
-	assert.equal(dateForPuzzleNumber(1), LAUNCH_DATE);
-	assert.equal(dateForPuzzleNumber(32), '2026-11-12');
-	// 23:59 EDT on Oct 12 is still puzzle #1; 00:00 EDT Oct 13 (04:00 UTC) is #2.
+	assert.equal(puzzleNumberFor(LAUNCH_DATE), 0);
+	assert.equal(puzzleNumberFor('2026-10-13'), 1);
+	assert.equal(dateForPuzzleNumber(0), LAUNCH_DATE);
+	assert.equal(dateForPuzzleNumber(31), '2026-11-12');
+	// 23:59 EDT on Oct 12 is still puzzle #0; 00:00 EDT Oct 13 (04:00 UTC) is #1.
 	assert.equal(puzzleDateFor(new Date('2026-10-13T03:59:00Z')), '2026-10-12');
 	assert.equal(puzzleDateFor(new Date('2026-10-13T04:00:00Z')), '2026-10-13');
 	// Winter (EST, UTC-5).
@@ -38,7 +39,7 @@ await test('calendar: puzzle day rolls over at midnight New York time', () => {
 
 const validator = TeamValidator.get(FORMAT_ID);
 await test('daily puzzles: deterministic, legal under Reg M-C, opponent always has one Mega', () => {
-	for (let n = 1; n <= 20; n++) {
+	for (let n = 0; n <= 20; n++) {
 		const date = dateForPuzzleNumber(n);
 		const a = generateDaily(date), b = generateDaily(date);
 		assert.deepEqual(a.playerIds, b.playerIds, `puzzle ${n} not deterministic`);
@@ -60,6 +61,27 @@ await test('share text format', async () => {
 	(globalThis as any).location = { host: 'daily-vgc.com', pathname: '/' };
 	const text = shareText({ number: 1, won: true, alive: [true, true, false, true], turns: 16 }, 1);
 	assert.equal(text, 'Daily VGC #1\n🟩🟩🟥🟩 3/4 left · 16 turns\nStreak: 1 · #DailyVGC\ndaily-vgc.com');
+});
+
+await test('stats: streaks work starting from puzzle #0', async () => {
+	const store = new Map<string, string>();
+	(globalThis as any).localStorage = {
+		getItem: (k: string) => store.get(k) ?? null,
+		setItem: (k: string, v: string) => void store.set(k, v),
+	};
+	const { recordResult, currentStreak, loadStats } = await import('../src/ui/storage');
+	const alive = [true, true, true, true];
+	recordResult({ number: 0, won: true, alive, turns: 8 });
+	assert.equal(currentStreak(loadStats(), 0), 1);
+	assert.equal(currentStreak(loadStats(), 1), 1, 'streak should carry into the next day');
+	recordResult({ number: 1, won: true, alive, turns: 9 });
+	assert.equal(currentStreak(loadStats(), 1), 2);
+	assert.equal(currentStreak(loadStats(), 3), 0, 'missing a day resets the streak');
+	recordResult({ number: 2, won: false, alive: [false, false, false, false], turns: 7 });
+	const stats = loadStats();
+	assert.equal(currentStreak(stats, 2), 0);
+	assert.deepEqual([stats.played, stats.won, stats.maxStreak], [3, 2, 2]);
+	delete (globalThis as any).localStorage;
 });
 
 await test('battle runner: save/restore mid-battle keeps the pending request', () => {

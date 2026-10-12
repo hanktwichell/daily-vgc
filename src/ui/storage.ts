@@ -54,7 +54,7 @@ export function loadStats(): Stats {
 
 /** A streak survives only if yesterday's puzzle was won. */
 export function currentStreak(stats: Stats, todayNumber: number): number {
-	if (!stats.lastNumber) return 0;
+	// Puzzle numbers start at #0, so check the history rather than lastNumber's truthiness.
 	const last = stats.history[stats.lastNumber];
 	if (!last?.won) return 0;
 	return stats.lastNumber >= todayNumber - 1 ? stats.streak : 0;

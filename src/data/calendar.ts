@@ -1,7 +1,7 @@
 // Puzzle calendar: a new puzzle every midnight in New York (Eastern Time).
 // Kept free of engine imports so the UI can use it cheaply.
 
-/** Puzzle #1 is this date (America/New_York). */
+/** Puzzle #0 is this date (America/New_York); #1 is the next day, and so on. */
 export const LAUNCH_DATE = '2026-10-12';
 export const PUZZLE_TIME_ZONE = 'America/New_York';
 
@@ -20,11 +20,11 @@ function dayIndex(date: string) {
 }
 
 export function puzzleNumberFor(date: string) {
-	return dayIndex(date) - dayIndex(LAUNCH_DATE) + 1;
+	return dayIndex(date) - dayIndex(LAUNCH_DATE);
 }
 
 export function dateForPuzzleNumber(n: number) {
-	const ms = (dayIndex(LAUNCH_DATE) + n - 1) * 86400000;
+	const ms = (dayIndex(LAUNCH_DATE) + n) * 86400000;
 	return new Date(ms).toISOString().slice(0, 10);
 }
 

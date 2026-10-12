@@ -186,9 +186,9 @@ export function generatePlayerTeam(rng: SeededRNG, exclude: Set<number>, archety
 
 export function opponentForPuzzle(n: number): OpponentTeam {
 	const count = OPPONENT_TEAMS.length;
-	const cycle = Math.floor((n - 1) / count);
+	const cycle = Math.floor(n / count);
 	const order = new SeededRNG(`daily-vgc:opponents:${cycle}`).shuffle(OPPONENT_TEAMS.map((_, i) => i));
-	return OPPONENT_TEAMS[order[(((n - 1) % count) + count) % count]];
+	return OPPONENT_TEAMS[order[((n % count) + count) % count]];
 }
 
 /**
