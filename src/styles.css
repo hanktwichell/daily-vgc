@@ -587,10 +587,23 @@ main { flex: 1; }
 .result-square.fainted { background: #e05a4a; }
 .result-square .sprite { width: 58px; height: 58px; }
 .result-square.fainted .sprite { filter: grayscale(1) brightness(0.8); opacity: 0.7; }
-.stat-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 8px 0 12px; }
+.stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 8px 0 12px; }
 .stat-row div { display: flex; flex-direction: column; align-items: center; }
 .stat-row b { font-size: 28px; }
 .stat-row span { font-size: 11px; color: var(--muted); text-transform: uppercase; }
+.dist-title { margin: 6px 0 6px; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; text-align: left; }
+.dist { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.dist-row { display: grid; grid-template-columns: 4.2em 1fr; align-items: center; gap: 8px; }
+.dist-label { font-size: 13px; text-align: right; white-space: nowrap; }
+.dist-track { display: block; }
+.dist-bar {
+	display: block; min-width: 1.6em; box-sizing: border-box;
+	padding: 1px 7px; text-align: right;
+	font-size: 13px; font-weight: 700; color: #fff;
+	background: #7d8796; border-radius: 3px;
+}
+.dist-bar.current { background: #4caf50; }
+.dist-bar.loss.current { background: #d9534f; }
 .share-prompt { font-weight: 700; margin: 8px 0; }
 .share-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
 .share-preview { background: #eef0e8; border-radius: 8px; padding: 10px; font-family: inherit; font-size: 14px; text-align: left; display: inline-block; margin: 12px auto 4px; white-space: pre-wrap; }

@@ -84,6 +84,18 @@ await test('stats: streaks work starting from puzzle #0', async () => {
 	delete (globalThis as any).localStorage;
 });
 
+await test('stats: results graph buckets', async () => {
+	const { bucketFor, resultDistribution } = await import('../src/ui/StatsSummary');
+	const rec = (number: number, won: boolean, left: number) => ({ number, won, alive: [0, 1, 2, 3].map(i => i < left), turns: 10 });
+	assert.equal(bucketFor(rec(0, true, 4)), 'Perfect');
+	assert.equal(bucketFor(rec(0, true, 3)), '3/4');
+	assert.equal(bucketFor(rec(0, true, 1)), '1/4');
+	assert.equal(bucketFor(rec(0, false, 0)), 'Loss');
+	const history = { 0: rec(0, true, 4), 1: rec(1, true, 2), 2: rec(2, false, 0), 3: rec(3, true, 2) };
+	assert.deepEqual(resultDistribution({ played: 4, won: 3, streak: 1, maxStreak: 2, lastNumber: 3, history }),
+		{ Perfect: 1, '3/4': 0, '2/4': 2, '1/4': 0, Loss: 1 });
+});
+
 await test('battle runner: save/restore mid-battle keeps the pending request', () => {
 	const d = generateDaily(dateForPuzzleNumber(3));
 	const r = new BattleRunner({ name: 'You', team: d.playerTeam }, { name: 'CPU', team: d.opponentTeam });
