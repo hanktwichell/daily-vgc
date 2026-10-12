@@ -1,6 +1,6 @@
 // Runs the Showdown simulator and the opponent AI off the main thread.
 /// <reference lib="webworker" />
-import { Dex, FORMAT_ID, Battle, Teams, toID, type PokemonSet } from '../engine/ps';
+import { Dex, FORMAT_ID, Battle, Teams, type PokemonSet } from '../engine/ps';
 import { generateDaily, ARCHETYPE_NAMES, type DailyPuzzle } from '../data/daily';
 import { BattleRunner } from '../engine/runner';
 import { chooseAction, chooseTeamPreview } from '../engine/ai';
@@ -178,4 +178,3 @@ function restoreOrder(r: BattleRunner): number[] {
 	return digits.slice(0, 4).map(c => Number(c) - 1);
 }
 
-export { toID };

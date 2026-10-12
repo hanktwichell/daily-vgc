@@ -10,7 +10,7 @@
 //
 // The AI sees what Open Team Sheets shows (species, moves, items, abilities) and the current
 // battle state, never the player's pending choice or the battle's RNG seed.
-import { Battle, State, toID } from './ps';
+import { Battle, State } from './ps';
 import type { Pokemon } from '../../vendor/ps/sim/pokemon';
 import type { Side } from '../../vendor/ps/sim/side';
 
@@ -721,7 +721,6 @@ export function chooseTeamPreview(battle: Battle, sideIndex: number, rng: RNG = 
 	return `team ${[l1, l2, ...back].map(i => i + 1).join('')}`;
 }
 
-export { toID };
 
 /** A simple greedy policy (best-looking move each turn, no lookahead). Used to model a casual player in balance tests. */
 export function chooseGreedy(json: string, sideIndex: number, rng: RNG = Math.random): string {
