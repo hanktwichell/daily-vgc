@@ -42,10 +42,10 @@ uses fresh randomness per player.
 
 4. **Calibration.** The quick matchup score can't see everything (Trick Room, weather and
    setup are hard to score), so upcoming puzzles are also checked by simulation.
-   `npm run calibrate` plays the top four candidates against the opponent: AI vs AI, plus a
+   `npm run calibrate` plays the top three candidates against the opponent: AI vs AI, plus a
    greedy "casual player" bot. It pins the best-balanced team for each date in
    `src/data/calibrated.json`. A weekly GitHub Action (`calibrate.yml`) does this for the
-   next three weeks and commits the result. Today's and past puzzles are never changed.
+   next two weeks and commits the result. Today's and past puzzles are never changed.
    Dates without an entry fall back to step 3.
 
 Every set and team is checked against the Reg M-C validator (`npm run validate-teams`).

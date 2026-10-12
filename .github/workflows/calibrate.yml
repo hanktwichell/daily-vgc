@@ -1,6 +1,6 @@
 name: Calibrate upcoming puzzles
 
-# Once a week, simulate the next three weeks of puzzles and pin the best-balanced player
+# Once a week, simulate the next two weeks of puzzles and pin the best-balanced player
 # teams in src/data/calibrated.json. Today's and past puzzles are never changed.
 on:
   schedule:
@@ -11,9 +11,12 @@ permissions:
   contents: write
 
 jobs:
-  calibrate:
+  simulate:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 240
+    strategy:
+      matrix:
+        shard: [0, 1, 2, 3]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -21,8 +24,22 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Simulate upcoming puzzles
-        run: npm run calibrate -- --upcoming 21
+      - run: cp src/data/calibrated.json shard.json
+      - run: npx tsx scripts/calibrate.ts --upcoming 14 shard.json --shard=${{ matrix.shard }}/4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: calibration-${{ matrix.shard }}
+          path: shard.json
+
+  commit:
+    needs: simulate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: shards
+      - run: node scripts/merge-calibration.mjs shards/*/shard.json
       - name: Commit results
         run: |
           if git diff --quiet src/data/calibrated.json; then echo "Nothing new"; exit 0; fi
