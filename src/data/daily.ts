@@ -5,6 +5,7 @@ import { LIBRARY, type LibrarySet } from './library';
 import { OPPONENT_TEAMS, type OpponentTeam } from './opponents';
 import { buildTeam } from './team-builder';
 import { SeededRNG } from './rng';
+import { matchupScore } from '../engine/matchup';
 
 /** Puzzle #1 is this date (America/New_York). */
 export const LAUNCH_DATE = '2026-10-12';
@@ -102,10 +103,7 @@ const SPEED_CONTROL = ['tailwind', 'trickroom', 'speedctrl'];
 const SUPPORT = ['fakeout', 'intimidate', 'redirect'];
 const WEATHERS = ['sun', 'rain', 'sand', 'snow'];
 
-export function generatePlayerTeam(rng: SeededRNG, exclude: Set<number>) {
-	const archetype = rng.weighted(ARCHETYPE_WEIGHTS, ([, w]) => w)![0];
-	const megaRoll = rng.next();
-	const megaTarget = megaRoll < 0.25 ? 0 : megaRoll < 0.8 ? 1 : 2;
+export function generatePlayerTeam(rng: SeededRNG, exclude: Set<number>, archetype: Archetype, megaTarget: number) {
 
 	const team: LibrarySet[] = [];
 	const nums = new Set(exclude);
@@ -215,17 +213,34 @@ export function opponentForPuzzle(n: number): OpponentTeam {
 	return OPPONENT_TEAMS[order[(((n - 1) % count) + count) % count]];
 }
 
+/**
+ * The player's team is slightly favoured on paper (the AI plays well, so this keeps the
+ * puzzle winnable); teams without a Mega get a bigger edge.
+ */
+const TARGET_EDGE = [1.1, 0.6, 0.4];
+const CANDIDATES = 16;
+
 export function generateDaily(date: string): DailyPuzzle {
 	const number = puzzleNumberFor(date);
 	const opponent = opponentForPuzzle(number);
+	const opponentTeam = buildTeam(opponent.sets);
 	const rng = new SeededRNG(`daily-vgc:${date}`);
 	const exclude = new Set(opponent.sets.map(id => natNum(LIBRARY.find(l => l.id === id)!)));
-	const { archetype, ids } = generatePlayerTeam(rng, exclude);
+	const archetype = rng.weighted(ARCHETYPE_WEIGHTS, ([, w]) => w)![0];
+	const megaRoll = rng.next();
+	const megaTarget = megaRoll < 0.25 ? 0 : megaRoll < 0.8 ? 1 : 2;
+
+	let best: { ids: string[], team: PokemonSet[], diff: number } | null = null;
+	for (let i = 0; i < CANDIDATES; i++) {
+		const { ids } = generatePlayerTeam(rng, exclude, archetype, megaTarget);
+		const team = buildTeam(ids);
+		const diff = Math.abs(matchupScore(team, opponentTeam) - TARGET_EDGE[megaTarget]);
+		if (!best || diff < best.diff) best = { ids, team, diff };
+	}
 	return {
-		date, number, opponent,
-		opponentTeam: buildTeam(opponent.sets),
-		playerIds: ids,
-		playerTeam: buildTeam(ids),
+		date, number, opponent, opponentTeam,
+		playerIds: best!.ids,
+		playerTeam: best!.team,
 		archetype,
 	};
 }

@@ -33,6 +33,7 @@ const DATA = [
 for (const f of DATA) copy(`data/${f}.ts`);
 for (const f of fs.readdirSync(path.join(src, 'data/mods/champions'))) copy(`data/mods/champions/${f}`);
 copy('LICENSE');
+for (const f of ['default', 'moves', 'abilities', 'items', 'names']) copy(`data/text/${f}.ts`);
 
 const patch = (rel, pairs) => {
 	const file = path.join(out, rel);
