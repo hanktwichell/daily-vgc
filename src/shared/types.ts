@@ -42,6 +42,9 @@ export interface MonView {
 
 export type Mode = 'normal' | 'hard';
 
+/** A weather, terrain, room or side condition in play, with the turns it has left (including the coming turn). */
+export interface FieldEffect { id: string; name: string; side: 'p1' | 'p2' | null; turns: number | null; layers?: number }
+
 export interface PuzzleView {
 	mode: Mode;
 	number: number;
@@ -63,6 +66,7 @@ export type FromWorker =
 	| { type: 'puzzle'; puzzle: PuzzleView }
 	| { type: 'update'; lines: string[]; request: any | null; battle: string; ended: boolean; winner?: string; turn: number;
 		/** Which of the player's four (in their chosen order) are still standing. */
-		alive: boolean[] }
+		alive: boolean[];
+		field: FieldEffect[] }
 	| { type: 'thinking'; thinking: boolean }
 	| { type: 'error'; message: string };

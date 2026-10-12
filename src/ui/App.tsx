@@ -207,7 +207,7 @@ function Game({ mode, archive, date, number, settings, onSettings, onPhase, onRe
 			}
 			progress.current = next;
 			saveProgress(next, mode, archive);
-			setUpdates(u => [...u, { lines: msg.lines, request: msg.request, ended: msg.ended, alive: msg.alive, turn: msg.turn, winner: msg.winner }]);
+			setUpdates(u => [...u, { lines: msg.lines, request: msg.request, ended: msg.ended, alive: msg.alive, turn: msg.turn, winner: msg.winner, field: msg.field }]);
 			break;
 		}
 		case 'thinking':

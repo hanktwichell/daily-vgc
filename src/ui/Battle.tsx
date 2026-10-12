@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from 'preact/hooks';
-import type { MonView, MoveView, PuzzleView, TargetHint } from '../shared/types';
+import type { FieldEffect, MonView, MoveView, PuzzleView, TargetHint } from '../shared/types';
 import { BattleTextParser } from '../engine/text-parser';
 import { applyLine, emptyScene, findMon, toID, type FieldMon, type SceneState, type SideID } from './battle-state';
 import { Sprite, Modal, MonDetails, TypeBadge } from './components';
@@ -12,6 +12,7 @@ export interface BattleUpdate {
 	alive: boolean[];
 	turn: number;
 	winner?: string;
+	field?: FieldEffect[];
 }
 
 interface Props {
@@ -47,9 +48,9 @@ export function BattleScreen(props: Props) {
 	const [playing, setPlaying] = useState(false);
 	const [waiting, setWaiting] = useState(false);
 	const [infoMon, setInfoMon] = useState<FieldMon | null>(null);
-	const [showLog, setShowLog] = useState(false);
+	const [info, setInfo] = useState<InfoTab | null>(null);
+	const [field, setField] = useState<FieldEffect[]>([]);
 	const [prompt, setPrompt] = useState('');
-	const [showSheets, setShowSheets] = useState(false);
 	const log = useRef<string[]>([]);
 	const consumed = useRef(0);
 	const skip = useRef<(() => void) | null>(null);
@@ -66,6 +67,8 @@ export function BattleScreen(props: Props) {
 	const textFor = (line: string) => {
 		const { args, kwArgs } = BattleTextParser.parseBattleLine(line);
 		if (args[0] === 'start') return [`${puzzle.opponent.trainer} would like to battle!`];
+		// Turn markers go in the log only (as headings).
+		if (args[0] === 'turn') return [`${TURN_MARK}${args[1]}`];
 		if (args[0] === 'win') {
 			return [args[1] === 'You' ? `You defeated ${puzzle.opponent.trainer}!` : `You were defeated by ${puzzle.opponent.trainer}...`];
 		}
@@ -132,6 +135,10 @@ export function BattleScreen(props: Props) {
 					}
 					let shown = 0;
 					for (const t of texts) {
+						if (t.startsWith(TURN_MARK)) {
+							log.current.push(t);
+							continue;
+						}
 						// Parenthesized lines ("(X was hurt!)", "(Rain continues to fall.)") are minor: log only.
 						if (t.startsWith('(') && t.endsWith(')')) {
 							log.current.push(t.slice(1, -1));
@@ -144,6 +151,7 @@ export function BattleScreen(props: Props) {
 					}
 					if (!shown && ['damage', 'heal', 'faint', 'switch'].includes(effect.kind)) await wait(500);
 				}
+				if (update.field) setField(update.field);
 				if (update.ended) setEnded(true);
 				if (update.request && consumed.current === updatesRef.current.length) setRequest(update.request);
 			}
@@ -191,8 +199,10 @@ export function BattleScreen(props: Props) {
 			</div>
 			<div class="hinge">
 				<span class="turn-chip">Turn {s.turn || 1}</span>
-				<FieldTags scene={s} />
-				<button class="speed-btn" onClick={() => setShowSheets(true)} title="Open team sheets">Teams</button>
+				<button class="field-tags-btn" onClick={() => setInfo('field')} aria-label="Battle info: field effects">
+					<FieldTags scene={s} field={field} />
+				</button>
+				<button class="speed-btn" onClick={() => setInfo('field')} title="Field effects, battle log and team sheets">Info</button>
 				<button class="speed-btn" onClick={props.onToggleSpeed} aria-label="Toggle text speed" title="Text speed">
 					{props.speed === 'fast' ? 'Fast ▶▶' : 'Text ▶'}
 				</button>
@@ -204,7 +214,7 @@ export function BattleScreen(props: Props) {
 				) : (
 					<div class="idle-panel">
 						<FieldInfo scene={s} />
-						<button class="btn ghost" onClick={() => setShowLog(true)}>Battle log</button>
+						<button class="btn ghost" onClick={() => setInfo('log')}>Battle log</button>
 						{props.error && <p class="error">{props.error}</p>}
 					</div>
 				)}
@@ -214,16 +224,74 @@ export function BattleScreen(props: Props) {
 					<LiveInfo mon={infoMon} view={viewFor(infoMon)} />
 				</Modal>
 			)}
-			{showSheets && (
-				<Modal title="Team sheets" onClose={() => setShowSheets(false)}>
-					<TeamSheets puzzle={puzzle} />
+			{info && (
+				<Modal onClose={() => setInfo(null)}>
+					<div class="mode-toggle info-tabs" role="tablist" aria-label="Battle info">
+						{INFO_TABS.map(([tab, label]) => (
+							<button key={tab} role="tab" aria-selected={info === tab} class={info === tab ? 'on' : ''} onClick={() => setInfo(tab)}>{label}</button>
+						))}
+					</div>
+					{info === 'field' && <FieldPanel scene={s} field={field} trainer={puzzle.opponent.trainer} />}
+					{info === 'log' && <BattleLog lines={log.current} />}
+					{info === 'teams' && <TeamSheets puzzle={puzzle} />}
 				</Modal>
 			)}
-			{showLog && (
-				<Modal title="Battle log" onClose={() => setShowLog(false)}>
-					<div class="battle-log">{log.current.map((l, i) => <p key={i}>{l}</p>)}</div>
-				</Modal>
-			)}
+		</div>
+	);
+}
+
+type InfoTab = 'field' | 'log' | 'teams';
+const INFO_TABS: [InfoTab, string][] = [['field', 'Field'], ['log', 'Log'], ['teams', 'Teams']];
+const TURN_MARK = '\u00a7turn:';
+
+function BattleLog({ lines }: { lines: string[] }) {
+	const end = useRef<HTMLDivElement>(null);
+	useEffect(() => { end.current?.scrollIntoView({ block: 'end' }); }, []);
+	return (
+		<div class="battle-log">
+			{lines.map((l, i) => (l.startsWith(TURN_MARK)
+				? <h4 key={i} class="log-turn">Turn {l.slice(TURN_MARK.length)}</h4>
+				: <p key={i}>{l}</p>))}
+			<div ref={end} />
+		</div>
+	);
+}
+
+/** Display name for a field effect ("RainDance" -> "Rain"). */
+function effectName(e: FieldEffect) {
+	return weatherName(e.name);
+}
+
+function turnsLeft(e: FieldEffect) {
+	if (e.turns === null) return e.layers && e.layers > 1 ? `${e.layers} layers` : 'Active';
+	return e.turns === 1 ? 'Last turn' : `${e.turns} turns left`;
+}
+
+/** Field effects grouped by who they help, plus a quick count of who's left. */
+function FieldPanel({ scene, field, trainer }: { scene: SceneState; field: FieldEffect[]; trainer: string }) {
+	const groups: [string, FieldEffect[]][] = [
+		['Whole field', field.filter(e => !e.side)],
+		['Your side', field.filter(e => e.side === 'p1')],
+		['Opponent\'s side', field.filter(e => e.side === 'p2')],
+	];
+	const left = (side: SideID) => scene.roster[side].filter(r => !r.fainted).length + Math.max(0, 4 - scene.roster[side].length);
+	return (
+		<div class="field-panel">
+			<div class="field-count">
+				<span>You<b>{left('p1')}/4</b></span>
+				<span>{trainer}<b>{left('p2')}/4</b></span>
+			</div>
+			{groups.map(([title, list]) => (
+				<section key={title}>
+					<h4>{title}</h4>
+					{list.length ? (
+						<ul>
+							{list.map(e => <li key={e.id}><span>{effectName(e)}</span><b>{turnsLeft(e)}</b></li>)}
+						</ul>
+					) : <p class="muted small">Nothing active.</p>}
+				</section>
+			))}
+			<p class="muted small">Turns left include the coming turn.</p>
 		</div>
 	);
 }
@@ -308,14 +376,19 @@ function Scene({ scene, anims, onInspect }: { scene: SceneState; anims: Record<s
 	);
 }
 
-function FieldTags({ scene }: { scene: SceneState }) {
+function FieldTags({ scene, field }: { scene: SceneState; field: FieldEffect[] }) {
+	// Turn counts come from the battle state at the last decision; tags follow the animated scene.
+	const count = (name: string, side: FieldEffect['side']) => {
+		const e = field.find(f => f.side === side && toID(f.name) === toID(name));
+		return e?.turns ? ` ${e.turns}` : '';
+	};
 	return (
 		<span class="field-tags">
-			{scene.weather && <span>{weatherName(scene.weather)}</span>}
-			{scene.terrain && <span>{scene.terrain}</span>}
-			{scene.pseudo.map(p => <span key={p}>{p}</span>)}
-			{scene.sideConditions.p2.map(c => <span key={`p2${c}`} class="foe-tag">Foe {c}</span>)}
-			{scene.sideConditions.p1.map(c => <span key={`p1${c}`} class="ally-tag">Your {c}</span>)}
+			{scene.weather && <span>{weatherName(scene.weather)}{count(scene.weather, null)}</span>}
+			{scene.terrain && <span>{scene.terrain}{count(scene.terrain, null)}</span>}
+			{scene.pseudo.map(p => <span key={p}>{p}{count(p, null)}</span>)}
+			{scene.sideConditions.p2.map(c => <span key={`p2${c}`} class="foe-tag">Foe {c}{count(c, 'p2')}</span>)}
+			{scene.sideConditions.p1.map(c => <span key={`p1${c}`} class="ally-tag">Your {c}{count(c, 'p1')}</span>)}
 		</span>
 	);
 }
@@ -324,7 +397,9 @@ function balls(scene: SceneState, side: SideID) {
 	const roster = scene.roster[side];
 	return [0, 1, 2, 3].map(i => {
 		const r = roster[i];
-		return <span key={i} class={`ball ${!r ? 'unknown' : r.fainted ? 'fainted' : r.status ? 'status' : 'ok'}`} />;
+		// Not yet seen still counts as healthy: they always bring four.
+		const state = r?.fainted ? 'fainted' : r?.status ? 'status' : 'ok';
+		return <span key={i} class={`ball ${state}`} title={r ? `${r.name}: ${state === 'ok' ? 'healthy' : state}` : 'Not yet seen'} />;
 	});
 }
 

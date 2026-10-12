@@ -57,7 +57,17 @@ for (let step = 0; step < 300; step++) {
 			continue;
 		}
 		if (turns === 1) await shot('04-battle-menu');
-		if (turns === 3) await shot('06-turn3');
+		if (turns === 3) {
+			await shot('06-turn3');
+			if (shots) await (await page.$('.scene')).screenshot({ path: `${shots}/06b-scene.png` });
+			await page.click('.speed-btn >> text=Info');
+			await page.waitForSelector('.field-panel');
+			await shot('06c-info-field');
+			await page.click('.info-tabs button >> text=Log');
+			await page.waitForSelector('.battle-log');
+			await shot('06d-info-log');
+			await page.click('.modal .close');
+		}
 		await fight.click();
 		continue;
 	}
