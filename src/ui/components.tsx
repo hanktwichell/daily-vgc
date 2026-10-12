@@ -23,7 +23,7 @@ export function Modal({ onClose, title, children, wide }: { onClose: () => void;
 	return (
 		<div class="modal-backdrop" onClick={onClose}>
 			<div class={`modal ds-frame${wide ? ' wide' : ''}`} role="dialog" aria-modal="true" onClick={e => e.stopPropagation()}>
-				<div class="modal-head">
+				<div class={`modal-head${title ? '' : ' untitled'}`}>
 					{title && <h2>{title}</h2>}
 					<button class="icon-btn close" onClick={onClose} aria-label="Close">✕</button>
 				</div>

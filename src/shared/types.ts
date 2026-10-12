@@ -31,9 +31,13 @@ export interface MonView {
 	mega?: { species: string; speciesId: string; types: string[]; ability: string; abilityId: string; stats: Stats };
 }
 
+export type Mode = 'normal' | 'hard';
+
 export interface PuzzleView {
+	mode: Mode;
 	number: number;
 	date: string;
+	/** Short description of the player's team (game plan, or whose team it is in hard mode). */
 	archetype: string;
 	opponent: { id: string; name: string; trainer: string; quip: string };
 	player: MonView[];
@@ -41,10 +45,10 @@ export interface PuzzleView {
 }
 
 export type ToWorker =
-	| { type: 'init'; date: string }
+	| { type: 'init'; date: string; mode: Mode }
 	| { type: 'start'; order: number[] }
 	| { type: 'choose'; choice: string }
-	| { type: 'resume'; date: string; battle: string };
+	| { type: 'resume'; date: string; mode: Mode; battle: string };
 
 export type FromWorker =
 	| { type: 'puzzle'; puzzle: PuzzleView }

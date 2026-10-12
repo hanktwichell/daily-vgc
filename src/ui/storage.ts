@@ -1,4 +1,7 @@
-// Local persistence: lifetime stats and today's in-progress battle.
+// Local persistence: lifetime stats and today's in-progress battle, kept separately for
+// the daily battle and for hard mode.
+
+export type Mode = 'normal' | 'hard';
 
 export interface GameRecord {
 	number: number;
@@ -28,6 +31,7 @@ export interface Progress {
 	result?: GameRecord;
 }
 
+const key = (base: string, mode: Mode) => (mode === 'hard' ? `${base}-hard` : base);
 const STATS_KEY = 'dailyvgc:stats';
 const PROGRESS_KEY = 'dailyvgc:progress';
 
@@ -48,8 +52,8 @@ function write(key: string, value: unknown) {
 	}
 }
 
-export function loadStats(): Stats {
-	return read<Stats>(STATS_KEY) ?? { played: 0, won: 0, streak: 0, maxStreak: 0, lastNumber: 0, history: {} };
+export function loadStats(mode: Mode = 'normal'): Stats {
+	return read<Stats>(key(STATS_KEY, mode)) ?? { played: 0, won: 0, streak: 0, maxStreak: 0, lastNumber: 0, history: {} };
 }
 
 /** A streak survives only if yesterday's puzzle was won. */
@@ -60,8 +64,8 @@ export function currentStreak(stats: Stats, todayNumber: number): number {
 	return stats.lastNumber >= todayNumber - 1 ? stats.streak : 0;
 }
 
-export function recordResult(record: GameRecord): Stats {
-	const stats = loadStats();
+export function recordResult(record: GameRecord, mode: Mode = 'normal'): Stats {
+	const stats = loadStats(mode);
 	if (stats.history[record.number]) return stats;
 	const continues = stats.lastNumber === record.number - 1 && stats.history[stats.lastNumber]?.won;
 	stats.played++;
@@ -74,17 +78,17 @@ export function recordResult(record: GameRecord): Stats {
 	}
 	stats.lastNumber = record.number;
 	stats.history[record.number] = record;
-	write(STATS_KEY, stats);
+	write(key(STATS_KEY, mode), stats);
 	return stats;
 }
 
-export function loadProgress(number: number): Progress | null {
-	const p = read<Progress>(PROGRESS_KEY);
+export function loadProgress(number: number, mode: Mode = 'normal'): Progress | null {
+	const p = read<Progress>(key(PROGRESS_KEY, mode));
 	return p && p.number === number ? p : null;
 }
 
-export function saveProgress(p: Progress) {
-	write(PROGRESS_KEY, p);
+export function saveProgress(p: Progress, mode: Mode = 'normal') {
+	write(key(PROGRESS_KEY, mode), p);
 }
 
 const SETTINGS_KEY = 'dailyvgc:settings';

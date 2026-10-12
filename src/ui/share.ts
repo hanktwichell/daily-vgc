@@ -7,11 +7,11 @@ export function siteUrl(): string {
 	return (location.host + location.pathname).replace(/\/(index\.html)?$/, '');
 }
 
-export function shareText(record: GameRecord, streak: number): string {
+export function shareText(record: GameRecord, streak: number, hard = false): string {
 	const boxes = record.alive.map(a => (a ? '🟩' : '🟥')).join('');
 	const left = record.alive.filter(Boolean).length;
 	return [
-		`Daily VGC #${record.number}`,
+		`Daily VGC #${record.number}${hard ? ' (Hard Mode)' : ''}`,
 		`${boxes} ${left}/4 left · ${record.turns} turns`,
 		`Streak: ${streak} · #DailyVGC`,
 		siteUrl(),

@@ -1,9 +1,9 @@
 // Runs the Showdown simulator and the opponent AI off the main thread.
 /// <reference lib="webworker" />
 import { Dex, FORMAT_ID, Battle, Teams, type PokemonSet } from '../engine/ps';
-import { generateDaily, ARCHETYPE_NAMES, type DailyPuzzle } from '../data/daily';
+import { generatePuzzle, type DailyPuzzle } from '../data/daily';
 import { BattleRunner } from '../engine/runner';
-import { chooseAction, chooseTeamPreview } from '../engine/ai';
+import { chooseAction, chooseTeamPreview, DEFAULT_AI, RELAXED_AI, type AIConfig } from '../engine/ai';
 import type { ToWorker, FromWorker, MonView, MoveView, PuzzleView, Stats } from '../shared/types';
 
 const ctx = self as unknown as DedicatedWorkerGlobalScope;
@@ -14,6 +14,11 @@ let puzzle: DailyPuzzle | null = null;
 let runner: BattleRunner | null = null;
 let pendingAI: string | null = null;
 let playerOrder: number[] = [];
+
+/** Hard-mode days flagged by calibration use a slightly looser AI so they stay winnable. */
+function aiConfig(): AIConfig {
+	return puzzle?.relaxedAi ? RELAXED_AI : DEFAULT_AI;
+}
 
 function computeStats(set: PokemonSet, speciesName: string): Stats {
 	const b = new Battle({ formatid: FORMAT_ID as any });
@@ -54,7 +59,7 @@ function monView(set: PokemonSet): MonView {
 
 function puzzleView(p: DailyPuzzle): PuzzleView {
 	return {
-		number: p.number, date: p.date, archetype: ARCHETYPE_NAMES[p.archetype],
+		mode: p.mode, number: p.number, date: p.date, archetype: p.label,
 		opponent: { id: p.opponent.id, name: p.opponent.name, trainer: p.opponent.trainer, quip: p.opponent.quip },
 		player: p.playerTeam.map(monView),
 		foe: p.opponentTeam.map(monView),
@@ -90,7 +95,7 @@ function advance() {
 		const playerNeeds = runner.needsChoice(0);
 		if (!aiNeeds) break;
 		post({ type: 'thinking', thinking: true });
-		const choice = chooseAction(runner.serialize(), 1);
+		const choice = chooseAction(runner.serialize(), 1, Math.random, aiConfig());
 		post({ type: 'thinking', thinking: false });
 		if (playerNeeds) {
 			pendingAI = choice;
@@ -105,7 +110,7 @@ ctx.onmessage = (e: MessageEvent<ToWorker>) => {
 	try {
 		switch (msg.type) {
 		case 'init': {
-			puzzle = generateDaily(msg.date);
+			puzzle = generatePuzzle(msg.date, msg.mode);
 			post({ type: 'puzzle', puzzle: puzzleView(puzzle) });
 			break;
 		}
@@ -143,7 +148,7 @@ ctx.onmessage = (e: MessageEvent<ToWorker>) => {
 			break;
 		}
 		case 'resume': {
-			puzzle = generateDaily(msg.date);
+			puzzle = generatePuzzle(msg.date, msg.mode);
 			post({ type: 'puzzle', puzzle: puzzleView(puzzle) });
 			runner = BattleRunner.restore(msg.battle);
 			playerOrder = restoreOrder(runner);
@@ -164,7 +169,7 @@ function advanceForcedOnly() {
 		if (!runner.needsChoice(1) || runner.needsChoice(0)) return;
 		const req = runner.request(1);
 		if (!req?.forceSwitch) return;
-		const choice = chooseAction(runner.serialize(), 1);
+		const choice = chooseAction(runner.serialize(), 1, Math.random, aiConfig());
 		if (!runner.choose(1, choice)) runner.choose(1, 'default');
 	}
 }

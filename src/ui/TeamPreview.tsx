@@ -12,6 +12,7 @@ export function TeamPreview({ puzzle, onStart }: { puzzle: PuzzleView; onStart: 
 		setOrder(o => (o.includes(i) ? o.filter(x => x !== i) : o.length >= 4 ? o : [...o, i]));
 	};
 	const megas = puzzle.player.filter(m => m.mega).length;
+	const hard = puzzle.mode === 'hard';
 	const ready = order.length === 4;
 
 	return (
@@ -19,7 +20,7 @@ export function TeamPreview({ puzzle, onStart }: { puzzle: PuzzleView; onStart: 
 			<section class="ds-frame foe-panel">
 				<div class="trainer-line">
 					<div>
-						<div class="eyebrow">Today's opponent</div>
+						<div class="eyebrow">{hard ? 'Hard Mode opponent' : 'Today\'s opponent'}</div>
 						<div class="trainer-name">{puzzle.opponent.trainer}</div>
 						<div class="team-name">“{puzzle.opponent.name}”</div>
 					</div>
@@ -34,12 +35,12 @@ export function TeamPreview({ puzzle, onStart }: { puzzle: PuzzleView; onStart: 
 						</button>
 					))}
 				</div>
-				<div class="hint">Open Team Sheets: tap any Pokémon to see its moves, item and Ability. They will bring 4, including their Mega.</div>
+				<div class="hint">Open Team Sheets: tap any Pokémon to see its moves, item and Ability. They will bring 4, including a Mega.</div>
 			</section>
 
 			<section class="your-team">
 				<div class="section-head">
-					<h2>Your team</h2>
+					<h2>{hard ? 'Your team (Hard Mode)' : 'Your team'}</h2>
 					<span class="muted">{puzzle.archetype} · {megas === 0 ? 'no Megas' : megas === 1 ? '1 Mega' : '2 Megas (only one can Mega Evolve)'}</span>
 				</div>
 				<p class="instructions">Pick <b>4</b>. Your first two picks lead; the next two start in the back.</p>

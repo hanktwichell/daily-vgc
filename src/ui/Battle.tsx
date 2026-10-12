@@ -411,7 +411,12 @@ function Controls({ request, scene, puzzle, onSubmit, onPrompt }: ControlsProps)
 		for (let i = next.length; i < slot; i++) next[i] = 'pass';
 		next[slot] = choice;
 		const nextSlot = firstSlot(slot + 1);
-		if (nextSlot >= slots) {
+		// If two Pokémon fainted but only one can come in, the other slot passes.
+		const canStillSwitch = !forced || team.some((p: any, i: number) => {
+			const reviving = !!team[nextSlot]?.reviving;
+			return !p.active && p.condition.endsWith(' fnt') === reviving && !next.includes(`switch ${i + 1}`);
+		});
+		if (nextSlot >= slots || !canStillSwitch) {
 			finish(next);
 			return;
 		}
