@@ -1,11 +1,14 @@
-# Simple workflow for deploying static content to GitHub Pages
+# Builds Daily VGC and deploys the built site (dist/) to GitHub Pages.
 name: Deploy static content to Pages
 
 on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
+  # Pushes made by the calibration workflow do not trigger `push`, so redeploy after it runs.
+  workflow_run:
+    workflows: ["Calibrate upcoming puzzles"]
+    types: [completed]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -22,7 +25,6 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
@@ -31,13 +33,29 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run validate-teams -- --strict
+      - name: Build
+        run: npm run build
+        env:
+          # Public address used in share text and link previews. Defaults to the GitHub Pages URL;
+          # set a repository variable SITE_URL (e.g. daily-vgc.com) when using a custom domain.
+          VITE_SITE_URL: ${{ vars.SITE_URL || format('{0}.github.io/{1}', github.repository_owner, github.event.repository.name) }}
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          # Upload the built site, not the source
+          path: dist
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
