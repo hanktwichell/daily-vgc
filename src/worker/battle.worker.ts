@@ -4,6 +4,7 @@ import { Dex, FORMAT_ID, Battle, Teams, type PokemonSet } from '../engine/ps';
 import { generatePuzzle, type DailyPuzzle } from '../data/daily';
 import { BattleRunner } from '../engine/runner';
 import { chooseAction, chooseTeamPreview, DEFAULT_AI, RELAXED_AI, type AIConfig } from '../engine/ai';
+import { moveEffects, moveHints } from '../engine/move-info';
 import type { ToWorker, FromWorker, MonView, MoveView, PuzzleView, Stats } from '../shared/types';
 
 const ctx = self as unknown as DedicatedWorkerGlobalScope;
@@ -38,6 +39,7 @@ function monView(set: PokemonSet): MonView {
 			id: move.id, name: move.name, type: move.type, category: move.category,
 			basePower: move.basePower, accuracy: move.accuracy, pp: move.noPPBoosts ? move.pp : Math.floor(move.pp * 8 / 5),
 			priority: move.priority, target: move.target,
+			...moveEffects(move),
 		};
 	});
 	const view: MonView = {
@@ -79,9 +81,18 @@ function aliveFlags(): boolean[] {
 function sendUpdate() {
 	if (!runner) return;
 	const lines = runner.readLog('p1');
-	const req = runner.needsChoice(0) ? runner.request(0) : null;
+	let req = runner.needsChoice(0) ? runner.request(0) : null;
+	const battle = runner.serialize();
+	if (req?.active && !req.forceSwitch) {
+		try {
+			const { hints, mega } = moveHints(battle, req);
+			req = { ...req, hints, megaHints: mega };
+		} catch (e) {
+			console.error('move hints failed', e);
+		}
+	}
 	post({
-		type: 'update', lines, request: req, battle: runner.serialize(), ended: runner.ended,
+		type: 'update', lines, request: req, battle, ended: runner.ended,
 		winner: runner.winner || undefined, turn: runner.turn, alive: aliveFlags(),
 	});
 }

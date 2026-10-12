@@ -13,7 +13,16 @@ export interface MoveView {
 	pp: number;
 	priority: number;
 	target: string;
+	/** Secondary effects and other notable properties, as short sentences. */
+	effects: string[];
+	/** Move flags that matter for abilities and items (Contact, Sound, Punch, ...). */
+	tags: string[];
 }
+
+/** How effective a damaging move is on one Pokémon: mult 0 is immune. */
+export interface TargetHint { mult: number; note?: string }
+/** hints[activeSlot][moveIndex][targetLoc]; target locs are 1/2 for foes and -1/-2 for your side. */
+export type MoveHints = Record<number, Record<number, TargetHint>[]>;
 
 export interface MonView {
 	species: string;

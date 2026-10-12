@@ -31,8 +31,14 @@ for (let step = 0; step < 300; step++) {
 	const fight = await page.$('.fight-btn');
 	const sw = await page.$('.switch-btn');
 	const move = await page.$('.move-btn:not([disabled])');
-	const target = await page.$('.target-btn.p2:not([disabled])');
-	if (target) { if (!globalThis.tShot) { globalThis.tShot = 1; await shot('05c-target'); } await target.click(); continue; }
+	const confirm = await page.$('.confirm-move');
+	const target = confirm || await page.$('.target-btn.p2:not([disabled])') || await page.$('.target-btn:not([disabled])');
+	if (target) {
+		const n = (globalThis.tShot = (globalThis.tShot || 0) + 1);
+		if (n <= 3) await shot(`05c-target-${n}`);
+		await target.click();
+		continue;
+	}
 	if (move) {
 		const mega = await page.$('.mega-toggle:not(.on)');
 		if (mega) await mega.click();

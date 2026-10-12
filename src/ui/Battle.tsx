@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from 'preact/hooks';
-import type { MonView, PuzzleView } from '../shared/types';
+import type { MonView, MoveView, PuzzleView, TargetHint } from '../shared/types';
 import { BattleTextParser } from '../engine/text-parser';
 import { applyLine, emptyScene, findMon, toID, type FieldMon, type SceneState, type SideID } from './battle-state';
 import { Sprite, Modal, MonDetails, TypeBadge } from './components';
@@ -484,20 +484,40 @@ function Controls({ request, scene, puzzle, onSubmit, onPrompt }: ControlsProps)
 
 	if (view === 'target' && pendingMove !== null) {
 		const move = active.moves[pendingMove];
-		const targets = targetOptions(move.target, slot, scene);
+		const info = moveInfo[move.id];
+		const plan = targetPlan(move.target, slot, scene);
+		const hintSet = (mega && request.megaHints?.[slot]) || request.hints?.[slot];
+		const hints: Record<number, TargetHint> = hintSet?.[pendingMove] ?? {};
+		const use = (loc?: number) => commit(`move ${pendingMove + 1}${loc !== undefined ? ` ${loc}` : ''}${mega ? ' mega' : ''}`);
+		const hitsAlly = move.target === 'allAdjacent' && plan.slots.some(t => t.side === 'p1' && t.affected && t.loc !== -(slot + 1));
 		return (
-			<div class="controls">
-				<div class="controls-head">Use {move.move} on...</div>
-				<div class="target-grid">
-					{targets.map(t => (
-						<button key={t.loc} class={`target-btn ${t.side}`} disabled={!t.enabled}
-							onClick={() => commit(`move ${pendingMove + 1} ${t.loc}${mega ? ' mega' : ''}`)}>
-							{t.mon && <Sprite speciesId={t.mon.speciesId} back={t.side === 'p1'} />}
-							<span>{t.label}</span>
-						</button>
-					))}
+			<div class="controls target-view">
+				<div class="controls-head">
+					<span>{plan.pick ? `Use ${move.move} on...` : hitsAlly ? `${move.move} will hit your partner too!` : `Use ${move.move}?`}</span>
 				</div>
-				<div class="controls-foot"><button class="btn ghost" onClick={() => setView('fight')}>Cancel</button></div>
+				{info && <MoveCard move={info} pp={move.pp} maxpp={move.maxpp} />}
+				<div class="target-grid">
+					{plan.slots.map(t => {
+						const hint = info?.category !== 'Status' && t.affected ? hints[t.loc] : undefined;
+						const ally = t.side === 'p1' && t.loc !== -(slot + 1);
+						return (
+							<button key={t.loc} class={`target-btn ${t.side}${t.affected ? ' affected' : ''}${hitsAlly && ally && t.affected ? ' warn' : ''}`}
+								disabled={!t.affected}
+								onClick={() => use(plan.pick ? t.loc : undefined)}>
+								{t.mon && <Sprite speciesId={t.mon.speciesId} back={t.side === 'p1'} />}
+								<span class="tg-text">
+									<span class="tg-name">{t.label}</span>
+									{hint && <Effectiveness hint={hint} />}
+								</span>
+							</button>
+						);
+					})}
+				</div>
+				{!plan.pick && <button class="btn primary confirm-move" onClick={() => use()}>Use {move.move}</button>}
+				<div class="controls-foot">
+					<button class="btn ghost" onClick={() => { setPendingMove(null); setView('fight'); }}>Change move</button>
+					<button class="btn ghost" onClick={() => { setPendingMove(null); setView('main'); }}>Cancel</button>
+				</div>
 			</div>
 		);
 	}
@@ -520,23 +540,16 @@ function Controls({ request, scene, puzzle, onSubmit, onPrompt }: ControlsProps)
 						return (
 							<button key={i} class="move-btn" style={{ '--type': TYPE_COLORS[v?.type || 'Normal'] }} disabled={disabled}
 								title={moveDesc(m.id)}
-								onClick={() => {
-									const foesAlive = scene.active.p2.filter(x => x && !x.fainted).length;
-									const needsPick = NEEDS_TARGET.has(m.target) &&
-										(foesAlive > 1 || m.target === 'adjacentAlly' || m.target === 'adjacentAllyOrSelf' || ALLY_MOVES.has(m.id));
-									if (needsPick) {
-										setPendingMove(i);
-										setView('target');
-									} else if (NEEDS_TARGET.has(m.target)) {
-										const t = scene.active.p2.findIndex(x => x && !x.fainted);
-										commit(`move ${i + 1} ${t >= 0 ? t + 1 : 1}${mega ? ' mega' : ''}`);
-									} else {
-										commit(`move ${i + 1}${mega ? ' mega' : ''}`);
-									}
-								}}>
+								onClick={() => { setPendingMove(i); setView('target'); }}>
 								<span class="mv-name">{m.move}</span>
+								{v && (
+									<span class="mv-meta">
+										<TypeBadge type={v.type} small />
+										<span class={`cat cat-${v.category.toLowerCase()}`}>{CATEGORY_SHORT[v.category]}</span>
+									</span>
+								)}
 								<span class="mv-meta">
-									{v && <TypeBadge type={v.type} small />}
+									{v && v.category !== 'Status' && <span>{v.basePower ? `${v.basePower} BP` : 'Varies'} ·</span>}
 									<span class="pp">PP {m.pp ?? '-'}/{m.maxpp ?? '-'}</span>
 								</span>
 							</button>
@@ -565,18 +578,70 @@ function Controls({ request, scene, puzzle, onSubmit, onPrompt }: ControlsProps)
 
 const BOOST_NAMES: Record<string, string> = { atk: 'Atk', def: 'Def', spa: 'SpA', spd: 'SpD', spe: 'Spe', accuracy: 'Acc', evasion: 'Eva' };
 
-const ALLY_MOVES = new Set(['pollenpuff', 'healpulse', 'decorate', 'instruct', 'coaching', 'beatup', 'acupressure']);
+const CATEGORY_SHORT: Record<string, string> = { Physical: 'Physical', Special: 'Special', Status: 'Status' };
 
-function targetOptions(target: string, slot: number, scene: SceneState) {
-	const out: { loc: number; label: string; side: SideID; enabled: boolean; mon: FieldMon | null }[] = [];
-	const foeOk = target !== 'adjacentAlly' && target !== 'adjacentAllyOrSelf';
+const EFFECT_LABELS: [number, string, string][] = [
+	[4, '4×', 'Extremely effective'], [2, '2×', 'Super effective'], [1, '1×', 'Effective'],
+	[0.5, '½×', 'Not very effective'], [0.25, '¼×', 'Mostly ineffective'],
+];
+
+function Effectiveness({ hint }: { hint: TargetHint }) {
+	if (hint.mult === 0) return <span class="eff eff-0">0× Immune{hint.note ? ` (${hint.note})` : ''}</span>;
+	if (hint.note === 'fixed damage') return <span class="eff eff-1">Fixed damage</span>;
+	const [mult, short, label] = EFFECT_LABELS.find(([m]) => hint.mult >= m) ?? EFFECT_LABELS[EFFECT_LABELS.length - 1];
+	return <span class={`eff eff-${String(mult).replace('.', '')}`}>{short} {label}</span>;
+}
+
+function MoveCard({ move, pp, maxpp }: { move: MoveView; pp?: number; maxpp?: number }) {
+	const acc = move.accuracy === true ? 'Never misses' : `${move.accuracy}% acc.`;
+	const desc = moveDesc(move.id);
+	// Skip effects the description already states word for word.
+	const effects = move.effects.filter(e => !desc.toLowerCase().includes(e.toLowerCase()));
+	return (
+		<div class="move-card">
+			<div class="mc-line">
+				<TypeBadge type={move.type} small />
+				<span class={`cat cat-${move.category.toLowerCase()}`}>{move.category}</span>
+				<span>{[
+					move.category !== 'Status' ? (move.basePower ? `${move.basePower} BP` : 'Varies') : '',
+					acc,
+					pp !== undefined ? `PP ${pp}/${maxpp}` : '',
+				].filter(Boolean).join(' · ')}</span>
+			</div>
+			{desc && <p class="mc-desc">{desc}</p>}
+			{(effects.length > 0 || move.tags.length > 0) && (
+				<ul class="mc-effects">
+					{effects.map(e => <li key={e}>{e}</li>)}
+					{move.tags.length > 0 && <li class="mc-tags">{move.tags.map(t => <span key={t} class="tag">{t}</span>)}</li>}
+				</ul>
+			)}
+		</div>
+	);
+}
+
+interface TargetSlot { loc: number; label: string; side: SideID; affected: boolean; mon: FieldMon | null }
+
+/**
+ * Which Pokémon a move can or will hit. Single-target moves are picked (pick = true);
+ * spread, self and field moves list everything they affect and are confirmed as a whole.
+ */
+function targetPlan(target: string, slot: number, scene: SceneState): { pick: boolean; slots: TargetSlot[] } {
+	const pick = NEEDS_TARGET.has(target);
+	const alive = (m: FieldMon | null) => !!m && !m.fainted;
+	const slots: TargetSlot[] = [];
 	scene.active.p2.forEach((mon, i) => {
-		out.push({ loc: i + 1, label: mon ? mon.name : '—', side: 'p2', enabled: foeOk && !!mon && !mon.fainted, mon });
+		let affected = alive(mon);
+		if (pick) affected &&= target !== 'adjacentAlly' && target !== 'adjacentAllyOrSelf';
+		else affected &&= ['allAdjacentFoes', 'allAdjacent', 'foeSide', 'randomNormal', 'all', 'scripted'].includes(target);
+		slots.push({ loc: i + 1, label: mon ? mon.name : '—', side: 'p2', affected, mon });
 	});
 	scene.active.p1.forEach((mon, i) => {
 		const self = i === slot;
-		const enabled = !!mon && !mon.fainted && (self ? target === 'adjacentAllyOrSelf' : target !== 'adjacentFoe');
-		out.push({ loc: -(i + 1), label: mon ? `${mon.name}${self ? ' (self)' : ' (ally)'}` : '—', side: 'p1', enabled, mon });
+		let affected = alive(mon);
+		if (pick) affected &&= self ? target === 'adjacentAllyOrSelf' : target !== 'adjacentFoe';
+		else if (self) affected &&= ['self', 'allies', 'allySide', 'allyTeam', 'all'].includes(target);
+		else affected &&= ['allAdjacent', 'allies', 'allySide', 'allyTeam', 'all'].includes(target);
+		slots.push({ loc: -(i + 1), label: mon ? `${mon.name}${self ? ' (you)' : ' (partner)'}` : '—', side: 'p1', affected, mon });
 	});
-	return out;
+	return { pick, slots };
 }
