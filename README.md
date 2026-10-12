@@ -61,6 +61,15 @@ doesn't overwhelm the themed team, and the weekly calibration checks it by simul
 the best pairing is lopsided, that day's AI plays a little looser so it stays winnable. Hard Mode
 has its own progress, stats and share text ("Daily VGC #N (Hard Mode)").
 
+## Archive
+
+Once a day's battle is over, it moves to the **Archive** (calendar icon; reach it from the stats
+screen or the results screen). Every past puzzle, daily and Hard Mode, can be played again.
+Archive games have their own saved progress and results (`dailyvgc:archive*` in `localStorage`)
+and never touch the main stats or streak. In the calendar, gold with a crown means won on the day,
+green means won from the archive, white means not played yet, and grey marks the puzzle being
+played now.
+
 ## The opponent AI
 
 `src/engine/ai.ts` plays by simultaneous-move search on copies of the real battle:
@@ -109,6 +118,7 @@ npm run build            # static site in dist/
 npm run balance -- 1 20 2 [--greedy]   # AI vs AI on puzzles 1-20, 2 games each
 npm run calibrate -- --upcoming 14      # simulate and pin the next 14 puzzles' player teams
 node scripts/e2e.mjs http://localhost:4173/ [screenshotDir] [--mobile] [--reload]   # browser test (after `npm run preview`)
+node scripts/e2e-archive.mjs http://localhost:4173/ [screenshotDir] [--mobile]      # archive flow, with a faked clock
 ```
 
 ## Changing things

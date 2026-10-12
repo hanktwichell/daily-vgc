@@ -11,10 +11,14 @@ export interface HardModeLink {
 	play: () => void;
 }
 
-export function Results({ record, stats, streak, puzzle, order, hard = false, hardMode }: {
+export function Results({ record, stats, streak, puzzle, order, hard = false, hardMode, archive, onArchive }: {
 	record: GameRecord; stats: Stats; streak: number; puzzle: PuzzleView | null; order: number[];
 	/** This result is from hard mode. */
 	hard?: boolean;
+	/** Played from the archive: no stats, but it can be replayed. */
+	archive?: { onReplay: () => void; onCalendar: () => void };
+	/** On today's results: open the archive of past battles. */
+	onArchive?: () => void;
 	/** On the daily results: the hard-mode call to action. */
 	hardMode?: HardModeLink;
 }) {
@@ -25,10 +29,10 @@ export function Results({ record, stats, streak, puzzle, order, hard = false, ha
 		return () => clearInterval(t);
 	}, []);
 	useEffect(() => {
-		if (ms <= 0) location.reload();
+		if (ms <= 0 && !archive) location.reload();
 	}, [ms <= 0]);
 
-	const text = shareText(record, streak, hard);
+	const text = shareText(record, streak, hard, !!archive);
 	const left = record.alive.filter(Boolean).length;
 
 	const onShare = async () => {
@@ -39,7 +43,7 @@ export function Results({ record, stats, streak, puzzle, order, hard = false, ha
 
 	return (
 		<div class={`results ds-frame${hard ? ' hard' : ''}`}>
-			{hard && <div class="hard-banner">HARD MODE</div>}
+			{(hard || archive) && <div class={`hard-banner${archive ? ' archive' : ''}`}>{[archive && 'ARCHIVE', hard && 'HARD MODE'].filter(Boolean).join(' · ')}</div>}
 			<div class={`result-banner ${record.won ? 'win' : 'loss'}`}>
 				{record.won ? 'VICTORY!' : 'DEFEATED'}
 			</div>
@@ -54,26 +58,39 @@ export function Results({ record, stats, streak, puzzle, order, hard = false, ha
 					</div>
 				))}
 			</div>
-			<StatsSummary stats={stats} streak={streak} today={record} />
-			<p class="share-prompt">Challenge your friends to today's battle!</p>
+			{archive ? (
+				<div class="share-actions">
+					<button class="btn" onClick={archive.onReplay}>Play again</button>
+					<button class="btn" onClick={archive.onCalendar}>Open archive</button>
+				</div>
+			) : <StatsSummary stats={stats} streak={streak} today={record} />}
+			<p class="share-prompt">{archive ? 'Share your result' : 'Challenge your friends to today\'s battle!'}</p>
 			<div class="share-actions">
 				<button class="btn primary" onClick={onShare}>Share result</button>
 				{isMobile() && <a class="btn" href={smsLink(text)}>Text a friend</a>}
 			</div>
 			{toast && <div class="toast">{toast}</div>}
 			<pre class="share-preview">{text}</pre>
-			{hardMode && <HardModeCard link={hardMode} />}
-			<p class="next">Next battle in <Countdown ms={ms} /></p>
+			{hardMode && <HardModeCard link={hardMode} archive={!!archive} />}
+			{onArchive && (
+				<div class="hard-card archive-card">
+					<b>Archive</b>
+					<p>Missed a day? Replay past battles. They don't count toward your stats.</p>
+					<button class="btn" onClick={onArchive}>Open archive →</button>
+				</div>
+			)}
+			{!archive && <p class="next">Next battle in <Countdown ms={ms} /></p>}
 		</div>
 	);
 }
 
-function HardModeCard({ link }: { link: HardModeLink }) {
+function HardModeCard({ link, archive }: { link: HardModeLink; archive: boolean }) {
+	const day = archive ? 'this day\'s' : 'today\'s';
 	if (link.state === 'locked') {
 		return (
 			<div class="hard-card locked">
 				<b>Hard Mode</b>
-				<p>Win today's battle to unlock it.</p>
+				<p>Win {day} battle to unlock it.</p>
 			</div>
 		);
 	}
@@ -81,7 +98,7 @@ function HardModeCard({ link }: { link: HardModeLink }) {
 	return (
 		<div class="hard-card">
 			<b>Hard Mode unlocked</b>
-			<p>Take over today's themed team and face a top competitive team.</p>
+			<p>Take over {day} themed team and face a top competitive team.</p>
 			<button class="btn hard" onClick={link.play}>{label} →</button>
 		</div>
 	);

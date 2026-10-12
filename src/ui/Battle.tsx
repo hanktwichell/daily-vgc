@@ -543,14 +543,15 @@ function Controls({ request, scene, puzzle, onSubmit, onPrompt }: ControlsProps)
 								onClick={() => { setPendingMove(i); setView('target'); }}>
 								<span class="mv-name">{m.move}</span>
 								{v && (
-									<span class="mv-meta">
+									<span class="mv-tags">
 										<TypeBadge type={v.type} small />
-										<span class={`cat cat-${v.category.toLowerCase()}`}>{CATEGORY_SHORT[v.category]}</span>
+										<span class={`cat cat-${v.category.toLowerCase()}`}>{v.category}</span>
 									</span>
 								)}
-								<span class="mv-meta">
-									{v && v.category !== 'Status' && <span>{v.basePower ? `${v.basePower} BP` : 'Varies'} ·</span>}
-									<span class="pp">PP {m.pp ?? '-'}/{m.maxpp ?? '-'}</span>
+								<span class="mv-stats">
+									<span><small>PWR</small>{!v || v.category === 'Status' ? '—' : v.basePower || '?'}</span>
+									<span><small>ACC</small>{!v || v.accuracy === true ? '—' : `${v.accuracy}%`}</span>
+									<span><small>PP</small>{m.pp ?? '-'}/{m.maxpp ?? '-'}</span>
 								</span>
 							</button>
 						);
@@ -577,8 +578,6 @@ function Controls({ request, scene, puzzle, onSubmit, onPrompt }: ControlsProps)
 }
 
 const BOOST_NAMES: Record<string, string> = { atk: 'Atk', def: 'Def', spa: 'SpA', spd: 'SpD', spe: 'Spe', accuracy: 'Acc', evasion: 'Eva' };
-
-const CATEGORY_SHORT: Record<string, string> = { Physical: 'Physical', Special: 'Special', Status: 'Status' };
 
 const EFFECT_LABELS: [number, string, string][] = [
 	[4, '4×', 'Extremely effective'], [2, '2×', 'Super effective'], [1, '1×', 'Effective'],
