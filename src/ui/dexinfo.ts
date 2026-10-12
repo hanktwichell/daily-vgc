@@ -2,7 +2,7 @@ import TEXT from '../generated/battle-text.json';
 import SPRITES from '../generated/sprites.json';
 
 const text = TEXT as any;
-const sprites = SPRITES as Record<string, { front: string; back: string; src: string }>;
+const sprites = SPRITES as Record<string, { front: string; back: string }>;
 
 export function moveDesc(id: string): string { return text.Moves[id]?.shortDesc || ''; }
 export function itemDesc(id: string): string { return text.Items[id]?.shortDesc || ''; }
@@ -21,7 +21,6 @@ export function spriteUrl(speciesId: string, back = false): string {
 	return BASE + (back ? entry.back : entry.front);
 }
 
-export function spriteSource(speciesId: string): string { return sprites[speciesId]?.src ?? 'bw'; }
 
 export const TYPE_COLORS: Record<string, string> = {
 	Normal: '#a8a878', Fire: '#f08030', Water: '#6890f0', Electric: '#f8d030', Grass: '#78c850', Ice: '#98d8d8',
