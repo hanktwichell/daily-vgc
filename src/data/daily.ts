@@ -203,21 +203,24 @@ export function generateDaily(date: string): DailyPuzzle {
 	const opponentTeam = buildTeam(opponent.sets);
 	const rng = new SeededRNG(`daily-vgc:${date}`);
 	const exclude = new Set(opponent.sets.map(id => natNum(LIBRARY.find(l => l.id === id)!)));
-	const archetype = rng.weighted(ARCHETYPE_WEIGHTS, ([, w]) => w)![0];
 	const megaRoll = rng.next();
 	const megaTarget = megaRoll < 0.25 ? 0 : megaRoll < 0.8 ? 1 : 2;
 
-	let best: { ids: string[], team: PokemonSet[], diff: number } | null = null;
-	for (let i = 0; i < CANDIDATES; i++) {
-		const { ids } = generatePlayerTeam(rng, exclude, archetype, megaTarget);
-		const team = buildTeam(ids);
-		const diff = Math.abs(matchupScore(team, opponentTeam) - TARGET_EDGE[megaTarget]);
-		if (!best || diff < best.diff) best = { ids, team, diff };
+	let best: { ids: string[], team: PokemonSet[], diff: number, archetype: Archetype } | null = null;
+	// Up to three archetypes; stop early once a team is close to the target edge.
+	for (let attempt = 0; attempt < 3 && !(best && best.diff < 0.25); attempt++) {
+		const archetype = rng.weighted(ARCHETYPE_WEIGHTS, ([, w]) => w)![0];
+		for (let i = 0; i < CANDIDATES; i++) {
+			const { ids } = generatePlayerTeam(rng, exclude, archetype, megaTarget);
+			const team = buildTeam(ids);
+			const diff = Math.abs(matchupScore(team, opponentTeam) - TARGET_EDGE[megaTarget]);
+			if (!best || diff < best.diff) best = { ids, team, diff, archetype };
+		}
 	}
 	return {
 		date, number, opponent, opponentTeam,
 		playerIds: best!.ids,
 		playerTeam: best!.team,
-		archetype,
+		archetype: best!.archetype,
 	};
 }
