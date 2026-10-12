@@ -30,7 +30,7 @@ everything about the *battle* (damage rolls, accuracy, secondary effects, the AI
 uses fresh randomness per player.
 
 1. `src/data/calendar.ts` turns the current time into the puzzle date in `America/New_York`
-   (so it handles EST/EDT) and the puzzle number (#1 = `LAUNCH_DATE`).
+   (so it handles EST/EDT) and the puzzle number (#0 = `LAUNCH_DATE`, October 12, 2026; #1 is October 13).
 2. `src/data/daily.ts` picks the opponent from 41 hand-built teams in
    `src/data/opponents.ts` (shuffled per cycle so none repeats until all have been used).
 3. It then builds the player's team from the 236-set library in
