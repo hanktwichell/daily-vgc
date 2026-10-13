@@ -245,10 +245,24 @@ main { flex: 1; }
 .order-slot small { font-size: 9px; text-transform: uppercase; }
 .order-slot:nth-child(2) { margin-right: 6px; }
 .footer-actions { display: flex; gap: 6px; }
-@media (max-width: 420px) {
+/* Phones: smaller picks, so Reset and Battle! fit beside all four. */
+@media (max-width: 480px) {
 	.order-slot { width: 40px; height: 48px; }
 	.order-slot .sprite { width: 32px; height: 32px; }
 	.footer-actions .btn { padding: 8px 10px; font-size: 15px; }
+}
+@media (max-width: 380px) {
+	.preview-footer { gap: 6px; padding: 8px 6px; }
+	.order-summary { gap: 3px; }
+	.order-slot { width: 34px; height: 46px; }
+	.order-slot .sprite { width: 30px; height: 30px; }
+	.order-slot:nth-child(2) { margin-right: 3px; }
+	.footer-actions .btn { padding: 8px; }
+}
+@media (max-width: 340px) {
+	.order-slot { width: 30px; }
+	.order-slot .sprite { width: 28px; height: 28px; }
+	.footer-actions .btn { padding: 8px 6px; font-size: 14px; }
 }
 
 /* ---------- Modal ---------- */
@@ -594,7 +608,9 @@ main { flex: 1; }
 .tag { margin-right: 4px; font-size: 11px; padding: 0 6px; border-radius: 8px; background: #dfe4ee; color: #3a4458; font-weight: 700; }
 .confirm-move { width: 100%; min-height: 48px; font-size: 18px; }
 
-.switch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.switch-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+/* On phones, one per row: side by side, a name and its HP readout run off the screen. */
+@media (max-width: 560px) { .switch-grid { grid-template-columns: minmax(0, 1fr); } }
 .switch-btn {
 	display: grid; grid-template-columns: 56px 1fr; grid-template-rows: auto auto; align-items: center;
 	gap: 0 8px; text-align: left;
