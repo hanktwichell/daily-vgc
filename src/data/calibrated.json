@@ -97,16 +97,15 @@
 	},
 	"2026-10-20": {
 		"ids": [
+			"houndoom-mega",
 			"ninetales",
-			"vileplume",
-			"tauros-paldea-blaze",
-			"staraptor",
-			"umbreon",
-			"luxray"
+			"arcanine",
+			"lycanroc-dusk",
+			"mabosstiff",
+			"houndstone"
 		],
 		"archetype": "sun",
-		"hard": "lucario-z",
-		"hardRelaxed": true
+		"hard": "swampert-rain"
 	},
 	"2026-10-21": {
 		"ids": [
