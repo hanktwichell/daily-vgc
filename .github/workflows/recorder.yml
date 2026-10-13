@@ -8,7 +8,7 @@ name: Deploy recorder
 on:
   push:
     branches: [main]
-    paths: ['recorder/**', 'src/shared/community.ts', 'src/data/calendar.ts']
+    paths: ['recorder/**', 'src/shared/community.ts', 'src/data/calendar.ts', '.github/workflows/recorder.yml']
   workflow_dispatch:
 
 permissions:
@@ -70,7 +70,15 @@ jobs:
         working-directory: recorder
         run: printf '%s' "$ADMIN_TOKEN" | npx wrangler secret put ADMIN_TOKEN
       - name: Check the Worker responds
-        run: curl -fsS "${{ steps.deploy.outputs.url }}/"
+        # A new workers.dev subdomain can take a few minutes to get its TLS certificate.
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS "${{ steps.deploy.outputs.url }}/"; then echo; exit 0; fi
+            echo "Not reachable yet (attempt $i); retrying in 10s..."
+            sleep 10
+          done
+          echo "::error::The Worker deployed but didn't respond within 5 minutes."
+          exit 1
       - name: Save the URL for the site build
         run: |
           printf '{\n  "url": "%s"\n}\n' "${{ steps.deploy.outputs.url }}" > recorder.json
