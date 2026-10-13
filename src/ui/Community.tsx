@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import type { CommunityMode, CommunityStats, ModeStats } from '../shared/community';
-import { fetchCommunityStats } from './community';
+import { fetchCommunityStats, fetchPlayerCount } from './community';
+import { trainerClassFor } from '../data/trainer-classes';
 import { Sprite } from './components';
 import { toID } from './battle-state';
 
@@ -93,5 +94,30 @@ function ModeRecap({ m }: { m: ModeStats }) {
 				</div>
 			) : <p class="muted center small">Not enough battles with the same four yet.</p>}
 		</>
+	);
+}
+
+/**
+ * Footer line: how many players have finished today's battle, named after the day's trainer
+ * class. `refresh` is bumped when this browser's own result has been reported.
+ */
+export function PlayerCount({ puzzle, refresh }: { puzzle: number; refresh: number }) {
+	const [count, setCount] = useState<number | null>(null);
+	useEffect(() => {
+		let live = true;
+		const load = (fresh: boolean) => fetchPlayerCount(puzzle, fresh).then(n => { if (live && n !== null) setCount(n); });
+		load(refresh > 0);
+		// Catch up when a tab that was left open is looked at again.
+		const onVisible = () => { if (document.visibilityState === 'visible') load(false); };
+		document.addEventListener('visibilitychange', onVisible);
+		return () => { live = false; document.removeEventListener('visibilitychange', onVisible); };
+	}, [puzzle, refresh]);
+
+	if (count === null) return null;
+	const [one, many] = trainerClassFor(puzzle);
+	return (
+		<p class="player-count">
+			{count === 0 ? `Be today's first ${one}!` : <><b>{count.toLocaleString('en-US')}</b> {count === 1 ? one : many} today</>}
+		</p>
 	);
 }

@@ -78,7 +78,10 @@ result, how many Pokémon survived, which four were brought, and no personal dat
 new day's battle the site shows **Yesterday's battle**: the overall win rate, the
 Perfect/3/4/2/4/1/4/Loss chart, how often each Pokémon was picked, and the four with the best win
 rate (pick order doesn't matter). It's also under "Yesterday's results" in the stats screen.
-Stats for a puzzle only appear once its day is over, so they update once a day. A daily Action
+Stats for a puzzle only appear once its day is over, so they update once a day. The one live
+number is the footer's count of players who have finished today's battle, labelled with a
+trainer class that changes daily ("143 Bug Catchers today"; the list is in
+`src/data/trainer-classes.ts`). A daily Action
 copies them into `community/`. Setup and deployment are covered in [recorder/README.md](recorder/README.md).
 The site works normally with no recorder configured.
 
@@ -95,6 +98,11 @@ The site works normally with no recorder configured.
 - It picks a robust move (mostly expected value against a model of a smart player, partly
   worst case) and samples among the best with a soft-max. Two players who make the same
   moves will not get the same game.
+- Its last Pokémon doesn't fish for double Protects. A Protect straight after another is only
+  considered when the stalled turn is worth something: blocking a charged attack that would
+  end the game, running out the last turns of your weather, terrain, screens, Tailwind or
+  Trick Room, passive healing, passive damage on your side (poison, burn, Leech Seed, a
+  perish count...) or draining your last PP. Even then it has to change what happens next turn.
 - Team preview: it picks four including its Mega, using a matchup matrix against your six,
   and leads with speed control, support and weather where it can.
 
