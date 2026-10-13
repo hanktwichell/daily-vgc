@@ -216,8 +216,9 @@ const PROTECT_MOVES = new Set(['protect', 'detect', 'kingsshield', 'spikyshield'
 const SETUP_MOVES = new Set(['swordsdance', 'dragondance', 'nastyplot', 'quiverdance', 'calmmind', 'bulkup', 'shellsmash', 'bellydrum', 'irondefense', 'noretreat', 'coil', 'shiftgear', 'victorydance', 'tidyup']);
 const REDIRECT = new Set(['followme', 'ragepowder']);
 
-function speedOf(p: Pokemon) {
-	return p.getStat('spe', false, false) * (p.side.sideConditions['tailwind'] ? 2 : 1);
+/** Effective Speed: boosts, items, abilities, paralysis and Tailwind (the sim's ModifySpe), but not Trick Room. */
+export function speedOf(p: Pokemon) {
+	return p.getStat('spe', false, false);
 }
 
 function slowerTeam(side: Side) {
