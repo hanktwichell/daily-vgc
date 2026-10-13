@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import type { CommunityMode, CommunityStats, ModeStats } from '../shared/community';
-import { fetchCommunityStats } from './community';
+import { fetchCommunityStats } from './recorder-api';
 import { Sprite } from './components';
 import { toID } from './battle-state';
 
