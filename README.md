@@ -85,7 +85,8 @@ anonymously to a small recorder: a Cloudflare Worker + D1 database in `recorder/
 result, how many Pokémon survived, which four were brought, and no personal data. Before each
 new day's battle the site shows **Yesterday's battle**: the overall win rate, the
 Perfect/3/4/2/4/1/4/Loss chart, how often each Pokémon was picked, and the four with the best win
-rate (pick order doesn't matter). It's also under "Yesterday's results" in the stats screen.
+rate (pick order doesn't matter). It can be reopened from "Yesterday's stats" in the footer or
+"Yesterday's results" in the stats screen.
 Stats for a puzzle only appear once its day is over, so they update once a day. The one live
 number is the footer's count of players who have finished today's battle, named after the
 class of the day's themed trainer ("143 Bug Catchers today" against Bug Catcher Rick; each
