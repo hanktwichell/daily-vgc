@@ -91,4 +91,9 @@ export const META_TEAMS: MetaTeam[] = [
 		quip: 'Last Respects gets stronger with every faint. Choose wisely.',
 		sets: ['pelipper', 'basculegion', 'archaludon', 'greninja-mega', 'incineroar', 'rillaboom'],
 	},
+	{
+		id: 'psyspam', name: 'Psyspam', trainer: 'Ace Trainer Sibyl',
+		quip: 'Psychic Terrain is up. Expanding Force is coming for both of you.',
+		sets: ['hatterene', 'indeedee-f', 'armarouge', 'gardevoir-mega', 'kommo-o', 'kingambit'],
+	},
 ];
