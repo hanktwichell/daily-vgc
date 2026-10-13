@@ -204,6 +204,14 @@ await test('community stats: submissions are validated and summarised', async ()
 	assert.equal(aggregate([]), null);
 });
 
+await test('player count: every day has a trainer class, and neighbouring days differ', async () => {
+	const { TRAINER_CLASSES, trainerClassFor } = await import('../src/data/trainer-classes');
+	assert.equal(new Set(TRAINER_CLASSES.map(c => c[0])).size, TRAINER_CLASSES.length);
+	for (const [one, many] of TRAINER_CLASSES) assert.ok(one && many && one !== many, `bad class ${one}/${many}`);
+	assert.deepEqual(trainerClassFor(0), ['Bug Catcher', 'Bug Catchers']);
+	for (let n = 0; n < TRAINER_CLASSES.length * 2; n++) assert.notEqual(trainerClassFor(n)[0], trainerClassFor(n + 1)[0]);
+});
+
 await test('AI vs AI: a full battle finishes without invalid choices', () => {
 	const d = generateDaily(dateForPuzzleNumber(5));
 	const result = playGame(d.playerTeam, d.opponentTeam, {

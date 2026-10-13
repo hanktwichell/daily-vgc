@@ -663,6 +663,8 @@ main { flex: 1; }
 /* ---------- Footer ---------- */
 .site-footer { margin-top: 28px; font-size: 12px; color: #9fb0c4; text-align: center; }
 .site-footer p { margin: 4px 0; }
+.site-footer .player-count { margin-bottom: 12px; font-size: 15px; color: #eef2f8; }
+.player-count b { font-family: var(--font-display); font-weight: 400; font-size: 18px; color: var(--yellow); }
 .site-footer .muted { color: #7f8ea2; }
 
 @media (prefers-reduced-motion: reduce) {

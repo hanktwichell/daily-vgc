@@ -4,9 +4,10 @@
 //   POST /result           a finished battle (BattleSubmission), only for today's puzzle
 //                          (or yesterday's, for a few hours after midnight)
 //   GET  /stats/:puzzle    CommunityStats for a finished puzzle
+//   GET  /players          PlayerCount: how many players have finished today's puzzle so far
 //   GET  /export/:puzzle   raw results for a finished puzzle (Authorization: Bearer ADMIN_TOKEN)
 import { puzzleDateFor, puzzleNumberFor, dateForPuzzleNumber } from '../../src/data/calendar';
-import { aggregate, validateSubmission, COMMUNITY_MODES, type CommunityStats, type StoredBattle } from '../../src/shared/community';
+import { aggregate, validateSubmission, COMMUNITY_MODES, type CommunityStats, type PlayerCount, type StoredBattle } from '../../src/shared/community';
 
 export interface Env {
 	DB: D1Database;
@@ -25,6 +26,8 @@ export interface Env {
 const GRACE_MS = 3 * 3600_000;
 /** How often a summary is recomputed while late results can still arrive. */
 const REFRESH_MS = 10 * 60_000;
+/** How long today's player count is reused before it's counted again. */
+const PLAYERS_TTL_MS = 60_000;
 
 const puzzleAt = (t: number) => puzzleNumberFor(puzzleDateFor(new Date(t)));
 
@@ -76,6 +79,7 @@ async function submit(req: Request, env: Env, now: number, cors: Record<string, 
 		`INSERT OR IGNORE INTO results (puzzle, mode, cid, iphash, won, alive, turns, picks, team, version, created_at)
 		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 	).bind(s.puzzle, s.mode, s.cid, iphash, s.won ? 1 : 0, s.alive, s.turns, s.picks.join(','), JSON.stringify(s.team), s.v ?? null, now).run();
+	if (res.meta.changes && playerCount?.puzzle === s.puzzle) playerCount = null;
 	return json({ ok: true, duplicate: res.meta.changes === 0 }, 200, cors);
 }
 
@@ -103,6 +107,20 @@ async function stats(puzzle: number, env: Env, now: number, cors: Record<string,
 	});
 }
 
+/** The last count, kept while this instance of the Worker stays warm. */
+let playerCount: (PlayerCount & { at: number }) | null = null;
+
+/** Players (browsers) with a result on today's puzzle, in either mode. */
+async function players(env: Env, now: number, cors: Record<string, string>) {
+	const puzzle = puzzleAt(now);
+	if (!playerCount || playerCount.puzzle !== puzzle || now - playerCount.at > PLAYERS_TTL_MS) {
+		const row = await env.DB.prepare('SELECT COUNT(DISTINCT cid) AS n FROM results WHERE puzzle = ?').bind(puzzle).first<{ n: number }>();
+		playerCount = { puzzle, players: row?.n ?? 0, at: now };
+	}
+	const body: PlayerCount = { puzzle, players: playerCount.players };
+	return json(body, 200, cors, 'public, max-age=60');
+}
+
 async function exportRows(req: Request, puzzle: number, env: Env, now: number, cors: Record<string, string>) {
 	if (!env.ADMIN_TOKEN || req.headers.get('Authorization') !== `Bearer ${env.ADMIN_TOKEN}`) return json({ error: 'unauthorized' }, 401, cors);
 	if (puzzle < 0 || puzzle >= puzzleAt(now)) return json({ error: 'puzzle not finished' }, 404, cors);
@@ -125,6 +143,7 @@ export default {
 				const puzzle = Number(m[2]);
 				return m[1] === 'stats' ? await stats(puzzle, env, now, cors) : await exportRows(req, puzzle, env, now, cors);
 			}
+			if (req.method === 'GET' && url.pathname === '/players') return await players(env, now, cors);
 			if (req.method === 'GET' && url.pathname === '/') {
 				return json({ service: 'Daily VGC recorder', today: puzzleAt(now) }, 200, cors);
 			}

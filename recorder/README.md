@@ -8,6 +8,7 @@ puzzle.
 | --- | --- |
 | `POST /result` | A finished battle (`BattleSubmission` in `src/shared/community.ts`). Accepted only for today's puzzle, or yesterday's for 3 hours after midnight. Archive replays aren't sent. |
 | `GET /stats/:puzzle` | `CommunityStats` for a finished puzzle: win rate, Pokémon left, pick rates and the best four. Recomputed every 10 minutes until late results stop, then fixed. |
+| `GET /players` | `PlayerCount`: how many browsers have a result on today's puzzle so far (either mode). Shown in the site footer; counted at most once a minute. |
 | `GET /export/:puzzle` | Raw results for a finished puzzle. Needs `Authorization: Bearer <ADMIN_TOKEN>`. |
 
 **Stored per battle:** puzzle, mode (daily or hard), win or loss, Pokémon left, turns, the four
