@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Mode } from '../shared/types';
 import { puzzleDateFor, puzzleNumberFor, dateForPuzzleNumber } from '../data/calendar';
 import {
-	loadStats, loadArchiveResults, archiveResult, loadProgress, clearArchiveProgress, dailyWon, type GameRecord,
+	loadStats, loadArchiveResults, archiveResult, loadProgress, clearArchiveProgress, dailyPlayed, type GameRecord,
 } from './storage';
 
 export interface ArchiveSelection { number: number; mode: Mode }
@@ -76,7 +76,7 @@ export function ArchiveCalendar({ current, onPlay }: { current: ArchiveSelection
 		onPlay({ number, mode });
 	};
 
-	const detail = picked !== null ? { daily: describe(picked, 'normal'), hard: describe(picked, 'hard'), unlocked: dailyWon(picked) } : null;
+	const detail = picked !== null ? { daily: describe(picked, 'normal'), hard: describe(picked, 'hard'), unlocked: dailyPlayed(picked) } : null;
 
 	return (
 		<div class="archive">
@@ -116,7 +116,7 @@ export function ArchiveCalendar({ current, onPlay }: { current: ArchiveSelection
 							{detail.hard.inProgress ? 'Continue' : detail.hard.played ? 'Replay' : 'Play'}
 						</button>
 					</div>
-					{!detail.unlocked && <p class="muted small">Win this day's battle to unlock its Hard Mode.</p>}
+					{!detail.unlocked && <p class="muted small">Play this day's battle to unlock its Hard Mode.</p>}
 				</div>
 			)}
 			<div class="cal-legend small">

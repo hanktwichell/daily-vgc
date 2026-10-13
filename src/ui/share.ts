@@ -9,14 +9,15 @@ export function siteUrl(): string {
 	return (configured || SITE_URL).replace(/^https?:\/\//, '').replace(/\/$/, '');
 }
 
-export function shareText(record: GameRecord, streak: number, hard = false, archive = false): string {
+/** `replay`: not the day's own attempt, but an archive game or a replay of today's battle. */
+export function shareText(record: GameRecord, streak: number, hard = false, replay?: 'Archive' | 'Replay'): string {
 	const boxes = record.alive.map(a => (a ? '🟩' : '🟥')).join('');
 	const left = record.alive.filter(Boolean).length;
-	const tags = [hard && 'Hard Mode', archive && 'Archive'].filter(Boolean).join(', ');
+	const tags = [hard && 'Hard Mode', replay].filter(Boolean).join(', ');
 	return [
 		`Daily VGC #${record.number}${tags ? ` (${tags})` : ''}`,
 		`${boxes} ${left}/4 left · ${record.turns} turns`,
-		archive ? '#DailyVGC' : `Streak: ${streak} · #DailyVGC`,
+		replay ? '#DailyVGC' : `Streak: ${streak} · #DailyVGC`,
 		siteUrl(),
 	].join('\n');
 }

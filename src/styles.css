@@ -690,9 +690,6 @@ main { flex: 1; }
 }
 .hard-card b { font-family: var(--font-display); font-weight: 400; font-size: 18px; letter-spacing: 1px; color: #a32638; }
 .hard-card p { margin: 4px 0 10px; }
-.hard-card.locked { border-color: #a0a8b0; background: #eef0f2; }
-.hard-card.locked b { color: #6d7280; }
-.hard-card.locked p { margin-bottom: 0; }
 .btn.hard { background: linear-gradient(#d9475a, #a32638); color: #fff; border-color: #6e1422; box-shadow: 0 4px 0 #6e1422; text-shadow: 1px 1px 0 #6e1422; }
 .mode-toggle { display: flex; gap: 0; margin: 2px 0 10px; border: 2px solid #8fa6b8; border-radius: 10px; overflow: hidden; }
 .mode-toggle button {

@@ -78,6 +78,9 @@ await test('share text format', async () => {
 	assert.equal(text, 'Daily VGC #1\n🟩🟩🟥🟩 3/4 left · 16 turns\nStreak: 1 · #DailyVGC\ndailyvgc.online');
 	const hard = shareText({ number: 2, won: false, alive: [false, false, false, false], turns: 9 }, 0, true);
 	assert.equal(hard.split('\n')[0], 'Daily VGC #2 (Hard Mode)');
+	// Replays and archive games say so, and leave the streak out.
+	const replay = shareText({ number: 2, won: true, alive: [true, true, true, true], turns: 9 }, 4, true, 'Replay');
+	assert.deepEqual(replay.split('\n').slice(0, 3), ['Daily VGC #2 (Hard Mode, Replay)', '🟩🟩🟩🟩 4/4 left · 9 turns', '#DailyVGC']);
 });
 
 await test('stats: streaks work starting from puzzle #0', async () => {
@@ -98,6 +101,25 @@ await test('stats: streaks work starting from puzzle #0', async () => {
 	const stats = loadStats();
 	assert.equal(currentStreak(stats, 2), 0);
 	assert.deepEqual([stats.played, stats.won, stats.maxStreak], [3, 2, 2]);
+	delete (globalThis as any).localStorage;
+});
+
+await test('hard mode unlocks once the daily battle has been played, win or lose', async () => {
+	const store = new Map<string, string>();
+	(globalThis as any).localStorage = {
+		getItem: (k: string) => store.get(k) ?? null,
+		setItem: (k: string, v: string) => void store.set(k, v),
+	};
+	const { recordResult, recordArchiveResult, dailyPlayed } = await import('../src/ui/storage');
+	const lost = (number: number) => ({ number, won: false, alive: [false, false, false, false], turns: 7 });
+	assert.equal(dailyPlayed(4), false);
+	recordResult(lost(4));
+	assert.equal(dailyPlayed(4), true);
+	// A past day first played (and lost) in the archive counts too; its hard mode doesn't.
+	recordArchiveResult(lost(2), 'hard');
+	assert.equal(dailyPlayed(2), false);
+	recordArchiveResult(lost(2), 'normal');
+	assert.equal(dailyPlayed(2), true);
 	delete (globalThis as any).localStorage;
 });
 
