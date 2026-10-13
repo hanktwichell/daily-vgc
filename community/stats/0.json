@@ -1,0 +1,81 @@
+{
+	"puzzle": 0,
+	"date": "2026-10-12",
+	"final": true,
+	"modes": {
+		"normal": {
+			"played": 11,
+			"won": 5,
+			"results": [
+				3,
+				1,
+				1,
+				0,
+				6
+			],
+			"team": [
+				"Musharna",
+				"Dragalge",
+				"Indeedee-F",
+				"Perrserker",
+				"Araquanid",
+				"Bastiodon"
+			],
+			"picks": [
+				10,
+				11,
+				6,
+				10,
+				3,
+				4
+			],
+			"best": {
+				"picks": [
+					0,
+					1,
+					2,
+					3
+				],
+				"played": 5,
+				"won": 4
+			}
+		},
+		"hard": {
+			"played": 3,
+			"won": 1,
+			"results": [
+				0,
+				0,
+				0,
+				1,
+				2
+			],
+			"team": [
+				"Whimsicott",
+				"Alcremie",
+				"Meganium",
+				"Appletun",
+				"Slurpuff",
+				"Tinkaton"
+			],
+			"picks": [
+				3,
+				0,
+				3,
+				3,
+				0,
+				3
+			],
+			"best": {
+				"picks": [
+					0,
+					2,
+					3,
+					5
+				],
+				"played": 3,
+				"won": 1
+			}
+		}
+	}
+}
