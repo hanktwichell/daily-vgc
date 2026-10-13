@@ -437,6 +437,219 @@ function slotOptionsFor(an: Analyzer, side: Side, request: any, forced: boolean,
 }
 
 /* ------------------------------------------------------------------------------------------ */
+/* Repeated Protects on the last Pokémon                                                        */
+/* ------------------------------------------------------------------------------------------ */
+
+/** A field effect this close to running out (in turns) can be stalled out with Protect. */
+const STALL_OUT_TURNS = 2;
+/** A foe with this few attacks left can be run out of PP. */
+const PP_STALL_MAX = 2;
+const SEMI_INVULNERABLE = ['fly', 'bounce', 'dig', 'dive', 'phantomforce', 'shadowforce', 'skydrop'];
+
+const hpLeft = (p: Pokemon) => p.hp / p.maxhp;
+const activeFoes = (p: Pokemon) => p.side.foe.active.filter(f => f && !f.fainted);
+const running = (state: any) => !!state && state.duration > 0 && state.duration <= STALL_OUT_TURNS;
+
+/** Damage as a fraction of the target's max HP if the move connects (damageFrac weighs in accuracy). */
+function damageOnHit(an: Analyzer, source: Pokemon, target: Pokemon, moveId: string) {
+	const acc = an.battle.dex.moves.get(moveId).accuracy;
+	const sure = acc === true || source.hasAbility('noguard') || target.hasAbility('noguard');
+	return an.damageFrac(source, target, moveId) / (sure ? 1 : Math.min(1, (acc as number) / 100));
+}
+
+/**
+ * HP gained (+) or lost (-) at the end of each turn, as a fraction of max HP, from status,
+ * items, Abilities, weather, terrain and the like. Healing counts only up to the HP missing.
+ */
+function endOfTurnChange(p: Pokemon): number {
+	const battle = p.battle;
+	const weather = p.effectiveWeather();
+	const rain = weather === 'raindance' || weather === 'primordialsea';
+	const sun = weather === 'sunnyday' || weather === 'desolateland';
+	const poisoned = p.status === 'psn' || p.status === 'tox';
+
+	let heal = 0;
+	if (p.hasItem('leftovers') || (p.hasItem('blacksludge') && p.hasType('Poison'))) heal += 1 / 16;
+	if (p.volatiles['ingrain']) heal += 1 / 16;
+	if (p.volatiles['aquaring']) heal += 1 / 16;
+	if (battle.field.isTerrain('grassyterrain') && p.isGrounded()) heal += 1 / 16;
+	if (rain && p.hasAbility('raindish')) heal += 1 / 16;
+	if (rain && p.hasAbility('dryskin')) heal += 1 / 8;
+	if ((weather === 'hail' || weather === 'snowscape') && p.hasAbility('icebody')) heal += 1 / 16;
+	if (poisoned && p.hasAbility('poisonheal')) heal += 1 / 8;
+	const wish = p.side.slotConditions[p.position]?.['wish'];
+	if (wish) heal += (wish.hp ?? p.maxhp / 2) / p.maxhp;
+	// Leech Seed feeds whoever stands where the seeder stood.
+	for (const foe of activeFoes(p)) {
+		const seed = foe.volatiles['leechseed'];
+		if (seed && !foe.hasAbility(['magicguard', 'liquidooze']) && battle.getAtSlot(seed.sourceSlot) === p) heal += foe.maxhp / 8 / p.maxhp;
+	}
+	if (p.volatiles['healblock']) heal = 0;
+	heal = Math.min(heal, 1 - hpLeft(p));
+
+	let hurt = 0;
+	if (!p.hasAbility('magicguard')) {
+		if (p.status === 'brn') hurt += 1 / 16;
+		if (p.status === 'psn' && !p.hasAbility('poisonheal')) hurt += 1 / 8;
+		if (p.status === 'tox' && !p.hasAbility('poisonheal')) hurt += Math.min(15, (p.statusState.stage ?? 0) + 1) / 16;
+		if (p.volatiles['leechseed']) hurt += 1 / 8;
+		if (p.volatiles['saltcure']) hurt += p.hasType(['Water', 'Steel']) ? 1 / 4 : 1 / 8;
+		if (p.volatiles['curse']) hurt += 1 / 4;
+		if (p.volatiles['partiallytrapped']) hurt += 1 / (p.volatiles['partiallytrapped'].boundDivisor ?? 8);
+		if (p.volatiles['nightmare'] && p.status === 'slp') hurt += 1 / 4;
+		if ((weather === 'sandstorm' || weather === 'hail') && p.runStatusImmunity(weather)) hurt += 1 / 16;
+		if (sun && p.hasAbility(['dryskin', 'solarpower'])) hurt += 1 / 8;
+		if (p.hasItem('stickybarb') || (p.hasItem('blacksludge') && !p.hasType('Poison'))) hurt += 1 / 8;
+		if (p.status === 'slp' && activeFoes(p).some(f => f.hasAbility('baddreams'))) hurt += 1 / 8;
+	}
+	return heal - hurt;
+}
+
+/** How a Pokémon fares against the foes in front of it: damage dealt and taken, and how many it outspeeds. */
+function standing(an: Analyzer, p: Pokemon) {
+	let dealt = 0, taken = 0, outsped = 0;
+	for (const foe of activeFoes(p)) {
+		dealt += an.bestDamage(p, foe);
+		taken += an.bestDamage(foe, p);
+		if (p.getActionSpeed() > foe.getActionSpeed()) outsped++;
+	}
+	return { dealt, taken, outsped };
+}
+
+/**
+ * True if the last Pokémon is better off once a field effect is gone, judged by removing it
+ * on a scratch copy: the damage trade shifts its way, or it moves before a foe it now trails.
+ */
+function betterOffWithout(json: string, sideIndex: number, now: ReturnType<typeof standing>, remove: (b: Battle) => void) {
+	try {
+		const an = new Analyzer(json);
+		remove(an.battle);
+		const self = an.battle.sides[sideIndex].active.find(p => p && !p.fainted);
+		if (!self) return false;
+		const then = standing(an, self);
+		return then.dealt - then.taken > now.dealt - now.taken + 0.05 || then.outsped > now.outsped;
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * A side's last Pokémon has no partner to buy time for, so a Protect right after another
+ * (1 in 3 to work, then 1 in 9) only delays the loss unless the stalled turn is worth something
+ * by itself. Returns what makes it worth trying, or null when it would just be fishing.
+ */
+export function repeatProtectReason(json: string, sideIndex: number): string | null {
+	const an = new Analyzer(json);
+	const battle = an.battle;
+	const side = battle.sides[sideIndex];
+	const self = side.active.find(p => p && !p.fainted);
+	if (!self) return null;
+	const foes = activeFoes(self);
+	const foeLeft = side.foe.pokemon.filter(p => !p.fainted).length;
+
+	// A charged attack lands this turn and would knock us out, and we can't win first.
+	for (const foe of foes) {
+		const charging = foe.volatiles['twoturnmove'];
+		if (!charging) continue;
+		const charged = battle.dex.moves.get(charging.move);
+		if (charged.category === 'Status' || !charged.flags['protect'] || charged.breaksProtect) continue;
+		if (damageOnHit(an, foe, self, charged.id) < hpLeft(self)) continue;
+		const winsFirst = foeLeft === 1 && !SEMI_INVULNERABLE.some(id => foe.volatiles[id]) && self.moveSlots.some(ms => {
+			if (ms.pp <= 0 || ms.disabled) return false;
+			const move = battle.dex.moves.get(ms.id);
+			const first = move.priority !== charged.priority ? move.priority > charged.priority : self.getActionSpeed() > foe.getActionSpeed();
+			return first && damageOnHit(an, self, foe, ms.id) >= hpLeft(foe);
+		});
+		if (!winsFirst) return `blocking ${charged.name}`;
+	}
+
+	// Running out the clock on a field effect that favours the other side.
+	const now = standing(an, self);
+	const field = battle.field;
+	if (running(field.weatherState) && betterOffWithout(json, sideIndex, now, b => { b.field.clearWeather(); })) return `stalling out ${field.weather}`;
+	if (running(field.terrainState) && betterOffWithout(json, sideIndex, now, b => { b.field.clearTerrain(); })) return `stalling out ${field.terrain}`;
+	for (const id in field.pseudoWeather) {
+		if (running(field.pseudoWeather[id]) && betterOffWithout(json, sideIndex, now, b => { b.field.removePseudoWeather(id); })) return `stalling out ${id}`;
+	}
+	for (const id in side.foe.sideConditions) {
+		if (running(side.foe.sideConditions[id]) &&
+			betterOffWithout(json, sideIndex, now, b => { b.sides[1 - sideIndex].removeSideCondition(id); })) return `stalling out ${id}`;
+	}
+	// ...or on something that is holding us back.
+	for (const id of ['disable', 'throatchop', 'healblock']) if (running(self.volatiles[id])) return `waiting out ${id}`;
+
+	// Each stalled turn heals us, or costs them more than it costs us.
+	const change = endOfTurnChange(self);
+	if (change > 0) return 'passive healing';
+	const drain = foes.reduce((sum, foe) => sum + Math.max(0, -endOfTurnChange(foe)), 0);
+	if (drain > Math.max(0, -change)) return 'passive damage';
+	for (const foe of foes) {
+		if (foe.volatiles['perishsong'] && !self.volatiles['perishsong']) return 'perish count';
+		if (side.foe.slotConditions[foe.position]?.['futuremove']) return 'future attack';
+		if (foe.volatiles['yawn'] && !foe.status) return 'foe falling asleep';
+	}
+	// Speed Boost turns a stalled turn into the first move.
+	if (self.hasAbility('speedboost') && self.boosts.spe < 6 && now.outsped < foes.length) return 'Speed Boost';
+
+	// PP stall: nothing on the bench, and every foe is nearly out of attacks that can hurt us.
+	if (foes.length && foeLeft === foes.length) {
+		const limit = PP_STALL_MAX * (self.hasAbility('pressure') ? 2 : 1);
+		const attacksLeft = (foe: Pokemon) => foe.moveSlots.reduce((n, ms) => n + (an.damageFrac(foe, self, ms.id) > 0 ? ms.pp : 0), 0);
+		if (foes.every(foe => attacksLeft(foe) <= limit)) return 'PP stall';
+	}
+	return null;
+}
+
+/** True if this would be a repeat Protect from a side's last Pokémon. */
+function isRepeatProtect(side: Side, slot: number, opt: SlotOption) {
+	// The stall counter is what makes the next Protect likely to fail.
+	return !!opt.moveId && PROTECT_MOVES.has(opt.moveId) && !!side.active[slot]?.volatiles['stall'] &&
+		side.pokemon.filter(p => !p.fainted).length === 1;
+}
+
+/** Takes repeat Protects away from a side's last Pokémon unless there's a reason for one. */
+function dropFishingProtects(json: string, side: Side, perSlot: SlotOption[][]) {
+	perSlot.forEach((opts, i) => {
+		const others = opts.filter(o => !isRepeatProtect(side, i, o));
+		if (!others.length || others.length === opts.length) return;
+		if (!repeatProtectReason(json, side.n)) perSlot[i] = others;
+	});
+}
+
+/**
+ * True if a side's last Pokémon is knocked out next turn whatever it does: the foes deal
+ * enough between them, and it can't win or remove enough of that damage by knocking one out
+ * first. Only counts attacks the foes are sure to have ready (not asleep, recharging or needing
+ * a turn to charge), so a stalled turn that wasted one of those still counts for something.
+ */
+function doomed(b: Battle, sideIndex: number): boolean {
+	const an = new Analyzer(b);
+	const side = b.sides[sideIndex];
+	const self = side.active.find(p => p && !p.fainted);
+	if (!self || side.pokemon.filter(p => !p.fainted).length !== 1) return false;
+	const threat = (foe: Pokemon) => {
+		if (foe.volatiles['mustrecharge'] || foe.status === 'frz' || (foe.status === 'slp' && foe.statusState.time > 1)) return 0;
+		const charging = foe.volatiles['twoturnmove']?.move;
+		let best = 0;
+		for (const ms of foe.moveSlots) {
+			if (ms.pp <= 0 || (charging ? ms.id !== charging : b.dex.moves.get(ms.id).flags['charge'])) continue;
+			best = Math.max(best, an.damageFrac(foe, self, ms.id));
+		}
+		return best;
+	};
+	const hits = activeFoes(self).map(foe => ({
+		dmg: threat(foe),
+		// We can knock this one out before it moves.
+		beaten: self.moveSlots.some(ms => ms.pp > 0 && damageOnHit(an, self, foe, ms.id) >= hpLeft(foe) &&
+			(b.dex.moves.get(ms.id).priority > 0 || self.getActionSpeed() > foe.getActionSpeed())),
+	}));
+	const total = hits.reduce((sum, h) => sum + h.dmg, 0);
+	if (total < hpLeft(self)) return false;
+	const lastFoe = side.foe.pokemon.filter(p => !p.fainted).length === 1;
+	return !hits.some(h => h.beaten && (lastFoe || total - h.dmg < hpLeft(self)));
+}
+
+/* ------------------------------------------------------------------------------------------ */
 /* Static evaluation                                                                            */
 /* ------------------------------------------------------------------------------------------ */
 
@@ -514,7 +727,8 @@ function randomSeed(rng: RNG): string {
 	return `sodium,${[n(), n(), n(), n(), n(), n(), n(), n()].map(x => x.toString(16).padStart(4, '0')).join('')}`;
 }
 
-function rollout(json: string, mySide: number, myChoice: string, theirChoice: string, rng: RNG): number | null {
+/** `stalling`: our choice is a repeat Protect from our last Pokémon. */
+function rollout(json: string, mySide: number, myChoice: string, theirChoice: string, rng: RNG, stalling = false): number | null {
 	const b = State.deserializeBattle(json);
 	(b as any).resetRNG(randomSeed(rng));
 	const ok1 = b.sides[mySide].choose(myChoice);
@@ -526,6 +740,8 @@ function rollout(json: string, mySide: number, myChoice: string, theirChoice: st
 	} catch {
 		return null;
 	}
+	// A stalled turn that leaves us knocked out next turn anyway bought nothing.
+	if (stalling && !b.ended && doomed(b, mySide)) return -100;
 	return evaluate(b, mySide) + tempo(myChoice) - tempo(theirChoice) + positional(b, mySide);
 }
 
@@ -580,7 +796,9 @@ export function chooseAction(json: string, sideIndex: number, rng: RNG = Math.ra
 	const forced = !!request.forceSwitch;
 	if (forced) return chooseForcedSwitch(an, side, request, rng);
 
-	const mine = jointOptions(an, side, slotOptionsFor(an, side, request, false, 5, true), config.ownJoint, rng);
+	const perSlot = slotOptionsFor(an, side, request, false, 5, true);
+	dropFishingProtects(json, side, perSlot);
+	const mine = jointOptions(an, side, perSlot, config.ownJoint, rng);
 	if (mine.length === 1) return mine[0].choice;
 
 	// Model the opponent. If they also have a request (normal turn), enumerate theirs.
@@ -596,8 +814,9 @@ export function chooseAction(json: string, sideIndex: number, rng: RNG = Math.ra
 	const base = evaluate(battle, sideIndex) + positional(new Analyzer(json).battle, sideIndex);
 	const matrix: number[][] = mine.map(() => theirs.map(() => 0));
 	const counts: number[][] = mine.map(() => theirs.map(() => 0));
+	const stalling = mine.map(m => m.slots.some((o, slot) => isRepeatProtect(side, slot, o)));
 	const sample = (i: number, j: number) => {
-		const v = rollout(json, sideIndex, mine[i].choice, theirs[j].choice, rng);
+		const v = rollout(json, sideIndex, mine[i].choice, theirs[j].choice, rng, stalling[i]);
 		if (v === null) return;
 		matrix[i][j] += v - base + protectTempo(mine[i], side) - protectTempo(theirs[j], foe);
 		counts[i][j]++;

@@ -98,6 +98,11 @@ The site works normally with no recorder configured.
 - It picks a robust move (mostly expected value against a model of a smart player, partly
   worst case) and samples among the best with a soft-max. Two players who make the same
   moves will not get the same game.
+- Its last Pokémon doesn't fish for double Protects. A Protect straight after another is only
+  considered when the stalled turn is worth something: blocking a charged attack that would
+  end the game, running out the last turns of your weather, terrain, screens, Tailwind or
+  Trick Room, passive healing, passive damage on your side (poison, burn, Leech Seed, a
+  perish count...) or draining your last PP. Even then it has to change what happens next turn.
 - Team preview: it picks four including its Mega, using a matchup matrix against your six,
   and leads with speed control, support and weather where it can.
 
