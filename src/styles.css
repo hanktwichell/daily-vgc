@@ -501,77 +501,121 @@ main { flex: 1; }
 .controls { display: flex; flex-direction: column; gap: 10px; flex: 1; }
 .controls-head { display: flex; justify-content: space-between; align-items: center; color: #fff; font-size: 18px; min-height: 36px; }
 .controls-foot { display: flex; justify-content: space-between; gap: 8px; margin-top: auto; }
-.controls-foot .btn.ghost { color: #e8eef8; }
+.controls-foot .btn.ghost { color: #e8eef8; background: #3b475d; box-shadow: 0 3px 0 #1a2130; }
+.controls-foot .btn.ghost:active { transform: translateY(2px); box-shadow: 0 1px 0 #1a2130; }
 
-.main-menu { justify-content: center; }
-.fight-btn {
-	flex: 1; min-height: 140px;
-	border-radius: 50% / 34%;
-	border: 4px solid #7a1810;
-	background: radial-gradient(ellipse at 50% 30%, #ff8070, #e83828 60%, #b82018);
-	color: #fff;
-	font-size: 34px; font-weight: 700; letter-spacing: 2px;
-	text-shadow: 2px 2px 0 #801010;
-	box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.25), 0 5px 0 #501008;
-	display: flex; flex-direction: column; align-items: center; justify-content: center;
+/* Battle buttons share one look: a coloured face with a light rim and a soft shine on its upper
+   half, on a darker lip it sinks into when pressed. Each one sets --face, --edge and --lip. */
+.fight-btn, .pkmn-btn, .back-btn, .move-btn, .target-btn, .switch-btn {
+	--shine: linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.06) 48%, rgba(255, 255, 255, 0) 52%);
+	--rim: inset 0 0 0 2px rgba(255, 255, 255, 0.28), inset 0 -4px 0 rgba(0, 0, 0, 0.14);
+	border: 3px solid var(--edge);
+	background: var(--shine), var(--face);
+	box-shadow: var(--rim), 0 5px 0 var(--lip), 0 8px 10px rgba(0, 0, 0, 0.28);
+	transition: transform 0.06s, box-shadow 0.06s;
 }
-.fight-btn small { font-size: 15px; letter-spacing: 0; opacity: 0.9; }
-.fight-btn:active, .pkmn-btn:active:not(:disabled), .back-btn:active { transform: translateY(3px); }
-.menu-row { display: flex; gap: 10px; }
+.fight-btn:active, .pkmn-btn:active:not(:disabled), .back-btn:active, .move-btn:active:not(:disabled),
+.target-btn:active:not(:disabled), .switch-btn:active {
+	transform: translateY(4px);
+	box-shadow: var(--rim), 0 1px 0 var(--lip), 0 2px 4px rgba(0, 0, 0, 0.28);
+}
+
+.main-menu { justify-content: center; gap: 16px; padding-bottom: 6px; }
+.fight-btn {
+	--face: linear-gradient(#f4503c, #c9261a);
+	--edge: #6e150e; --lip: #4a0d08;
+	flex: 1; min-height: 132px;
+	border-radius: 24px;
+	/* A Poké Ball outline as a watermark, tilted and running off the right edge. */
+	background:
+		var(--shine),
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg transform='rotate(-20 50 50)' fill='none' stroke='white' stroke-width='7' opacity='.26'%3E%3Cpath d='M6 50a44 44 0 0 1 88 0z' fill='white' stroke='none' opacity='.4'/%3E%3Ccircle cx='50' cy='50' r='44'/%3E%3Cpath d='M6 50h29M65 50h29'/%3E%3Ccircle cx='50' cy='50' r='15'/%3E%3Ccircle cx='50' cy='50' r='5.5' fill='white' stroke='none'/%3E%3C/g%3E%3C/svg%3E") no-repeat right -38px center / 196px 196px,
+		var(--face);
+	color: #fff;
+	font-size: 40px; font-weight: 700; letter-spacing: 3px; line-height: 1;
+	text-shadow: 3px 3px 0 #7a1810;
+	display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 10px;
+	padding: 0 26px;
+}
+.fight-btn small {
+	font-size: 15px; letter-spacing: 0.5px; line-height: 1.2;
+	padding: 3px 12px; border-radius: 12px;
+	background: rgba(74, 13, 8, 0.45);
+	text-shadow: none;
+}
+.menu-row { display: flex; gap: 12px; }
 .pkmn-btn, .back-btn {
 	flex: 1; min-height: 58px;
-	border-radius: 14px;
-	font-size: 20px; font-weight: 700; color: #fff;
+	border-radius: 16px;
+	font-size: 20px; font-weight: 700; letter-spacing: 1px; color: #fff;
+	display: flex; align-items: center; justify-content: center; gap: 10px;
 }
-.pkmn-btn { background: linear-gradient(#78e078, #38a838); border: 4px solid #1f6a20; text-shadow: 2px 2px 0 #1f6a20; box-shadow: 0 4px 0 #154816; }
-.back-btn { flex: 0 0 34%; background: linear-gradient(#78a8f8, #3870d8); border: 4px solid #1c3c80; text-shadow: 2px 2px 0 #1c3c80; box-shadow: 0 4px 0 #142a5a; }
+.pkmn-btn { --face: linear-gradient(#5fd35f, #2f9a35); --edge: #17561b; --lip: #0f3d12; text-shadow: 2px 2px 0 #17561b; }
+.back-btn { --face: linear-gradient(#6ea2f6, #2f62c8); --edge: #173a7c; --lip: #0f2856; flex: 0 0 34%; text-shadow: 2px 2px 0 #173a7c; }
+/* A small Poké Ball beside POKéMON, and an arrow beside BACK. */
+.pkmn-btn::before {
+	content: ''; flex: none; width: 18px; height: 18px; border-radius: 50%;
+	border: 2px solid #1c2a1c;
+	background:
+		radial-gradient(circle, #fff 0 2px, #1c2a1c 2.5px 4.5px, transparent 5px),
+		linear-gradient(#ff5a48 0 42%, #1c2a1c 42% 58%, #fff 58%);
+}
+.back-btn::before {
+	content: ''; flex: none; width: 9px; height: 9px;
+	border-left: 4px solid #fff; border-bottom: 4px solid #fff;
+	transform: rotate(45deg);
+	filter: drop-shadow(1px 1px 0 #173a7c);
+}
 .pkmn-btn:disabled { filter: grayscale(0.8); opacity: 0.6; }
 
-.move-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.move-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 12px; padding-bottom: 6px; }
 .move-btn {
-	min-height: 96px;
-	border-radius: 12px;
-	border: 4px solid color-mix(in srgb, var(--type) 60%, black);
-	background: linear-gradient(color-mix(in srgb, var(--type) 55%, white), var(--type));
+	--face: linear-gradient(color-mix(in srgb, var(--type) 74%, white), var(--type) 72%);
+	--edge: color-mix(in srgb, var(--type) 50%, black);
+	--lip: color-mix(in srgb, var(--type) 32%, black);
+	min-height: 98px;
+	border-radius: 16px;
 	color: #fff;
-	text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.55);
-	display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-	padding: 6px;
-	box-shadow: 0 4px 0 color-mix(in srgb, var(--type) 40%, black);
+	text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6), 0 0 4px rgba(0, 0, 0, 0.4);
+	display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+	padding: 8px 8px 9px;
 }
-.move-btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 color-mix(in srgb, var(--type) 40%, black); }
 .move-btn:disabled { filter: grayscale(1); opacity: 0.5; }
 .mv-name { font-size: 18px; font-weight: 700; line-height: 1.15; text-align: center; }
 .mv-tags { display: flex; gap: 5px; align-items: center; justify-content: center; flex-wrap: wrap; }
 .mv-tags .cat { text-shadow: none; }
 .mv-stats {
 	display: grid; grid-template-columns: 1fr 1fr 1.3fr; width: 100%;
-	background: rgba(0, 0, 0, 0.28); border-radius: 6px; padding: 3px 2px;
+	background: rgba(0, 0, 0, 0.3); border-radius: 9px; padding: 4px 2px;
+	box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.25);
 	font-size: 14px; line-height: 1.1; text-align: center;
 }
 .mv-stats span { display: flex; flex-direction: column; align-items: center; }
 .mv-stats span + span { border-left: 1px solid rgba(255, 255, 255, 0.25); }
 .mv-stats small { font-size: 9px; letter-spacing: 1px; opacity: 0.8; }
 .mega-toggle {
-	border-radius: 18px; padding: 6px 12px;
-	border: 3px solid #5a3a90;
-	background: #2a2440;
+	border-radius: 18px; padding: 6px 14px;
+	border: 3px solid #6a48a8;
+	background: linear-gradient(rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 52%), #2d2548;
 	color: #e8d8ff; font-weight: 700;
+	box-shadow: 0 3px 0 #171226;
 }
+.mega-toggle:active { transform: translateY(2px); box-shadow: 0 1px 0 #171226; }
 .mega-toggle.on { background: linear-gradient(90deg, #f05090, #8060f0, #30b0e0); color: #fff; border-color: #fff; animation: pulse 1s infinite; }
 @keyframes pulse { 50% { box-shadow: 0 0 12px #c080ff; } }
 
-.target-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.target-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 12px; padding-bottom: 6px; }
 .target-btn {
 	min-width: 0; overflow: hidden;
-	min-height: 84px; border-radius: 12px;
+	min-height: 84px; border-radius: 16px;
 	display: flex; align-items: center; gap: 8px; padding: 6px 10px;
 	font-size: 16px; font-weight: 700; color: #fff; text-align: left;
+	text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
 }
 .target-btn .sprite { width: 56px; height: 56px; flex: none; }
-.target-btn.p2 { background: linear-gradient(#f07868, #c83828); border: 4px solid #801c14; }
-.target-btn.p1 { background: linear-gradient(#78a8f8, #3870d8); border: 4px solid #1c3c80; }
-.target-btn:disabled { filter: grayscale(1); opacity: 0.4; }
+.target-btn.p2 { --face: linear-gradient(#ee6a5a, #bd2f22); --edge: #731710; --lip: #4d0e09; }
+.target-btn.p1 { --face: linear-gradient(#6ea2f6, #2f62c8); --edge: #173a7c; --lip: #0f2856; }
+.target-btn:disabled { filter: grayscale(1); opacity: 0.4; box-shadow: none; }
 .target-btn.warn { outline: 3px solid #ffd23c; outline-offset: 2px; }
 .tg-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; flex: 1; }
 .tg-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -608,19 +652,21 @@ main { flex: 1; }
 .tag { margin-right: 4px; font-size: 11px; padding: 0 6px; border-radius: 8px; background: #dfe4ee; color: #3a4458; font-weight: 700; }
 .confirm-move { width: 100%; min-height: 48px; font-size: 18px; }
 
-.switch-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.switch-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 12px; padding-bottom: 6px; }
 /* On phones, one per row: side by side, a name and its HP readout run off the screen. */
 @media (max-width: 560px) { .switch-grid { grid-template-columns: minmax(0, 1fr); } }
 .switch-btn {
+	--face: linear-gradient(#9bea93, #4fb955); --edge: #1f6a20; --lip: #134a15;
 	display: grid; grid-template-columns: 56px 1fr; grid-template-rows: auto auto; align-items: center;
 	gap: 0 8px; text-align: left;
-	min-height: 72px; padding: 6px 10px;
-	border-radius: 12px;
-	border: 4px solid #1f6a20;
-	background: linear-gradient(#a8f0a0, #58c058);
-	color: #183818; font-weight: 700;
+	min-height: 72px; padding: 6px 12px;
+	border-radius: 16px;
+	color: #143214; font-weight: 700;
 }
 .switch-btn .sprite { width: 56px; height: 56px; grid-row: span 2; }
+/* A green HP bar disappears on a green button: give it a dark track and a pale fill. */
+.switch-btn .mini-hp { background: #1d4a22; box-shadow: 0 0 0 1px #1d4a22; }
+.switch-btn .mini-hp span { background: #dcffd4; }
 .sw-name { font-size: 16px; }
 .sw-hp { font-size: 12px; display: flex; align-items: center; }
 
