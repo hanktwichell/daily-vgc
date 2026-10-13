@@ -177,6 +177,24 @@ await test('AI: never Decorates a foe or sets Tailwind under Trick Room', async 
 	}
 });
 
+await test('AI: Tailwind doubles speedOf once, and Trick Room leaves it alone', async () => {
+	const { speedOf } = await import('../src/engine/ai');
+	const { Battle, Teams } = await import('../src/engine/ps');
+	const { buildTeam } = await import('../src/data/team-builder');
+	const b = new Battle({ formatid: 'gen9championsdoublescustomgame' as any });
+	b.setPlayer('p1', { name: 'You', team: Teams.pack(buildTeam(['incineroar', 'rillaboom'])) });
+	b.setPlayer('p2', { name: 'CPU', team: Teams.pack(buildTeam(['whimsicott', 'alcremie'])) });
+	b.choose('p1', 'team 12');
+	b.choose('p2', 'team 12');
+	const [mon, foe] = [b.sides[1].active[0], b.sides[0].active[0]];
+	const [base, foeBase] = [speedOf(mon), speedOf(foe)];
+	assert.ok(b.sides[1].addSideCondition('tailwind', mon));
+	assert.equal(speedOf(mon), base * 2);
+	assert.equal(speedOf(foe), foeBase, 'Tailwind only speeds up its own side');
+	b.field.addPseudoWeather('trickroom', mon);
+	assert.equal(speedOf(mon), base * 2, 'callers flip for Trick Room themselves');
+});
+
 await test('community stats: submissions are validated and summarised', async () => {
 	const { validateSubmission, aggregate } = await import('../src/shared/community');
 	const team = ['Musharna', 'Dragalge', 'Indeedee-F', 'Perrserker', 'Araquanid', 'Bastiodon'];
