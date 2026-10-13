@@ -162,7 +162,7 @@ interface GameProps {
 	mode: Mode;
 	/** A game that doesn't count (from the archive, or a replay of today's battle): separate progress, no stats. */
 	archive: boolean;
-	/** That game is a replay of today's battle, which leaves no record at all. */
+	/** That game is a replay of today's battle, which leaves no record on this device. */
 	replayToday: boolean;
 	onCalendar: () => void;
 	onReplay: () => void;
@@ -246,19 +246,24 @@ function Game({ mode, archive, replayToday, date, number, settings, onSettings, 
 				next.phase = 'done';
 				next.result = result;
 				delete next.battle;
-				if (archive) {
-					// A replay of today's battle isn't recorded anywhere: the day's result is the first try.
-					if (!replayToday) recordArchiveResult(result, mode);
+				// Battles played on their own day feed the community stats, replays included (archive games don't).
+				const view = puzzleRef.current;
+				const report = (replay: boolean) => {
+					if (!view || prev?.order?.length !== 4) return;
+					const sent = submitResult({
+						puzzle: number, mode, won: result.won, alive: result.won ? result.alive.filter(Boolean).length : 0,
+						turns: result.turns, picks: prev.order, team: view.player.map(p => p.species), ...(replay ? { replay: true } : {}),
+					});
+					if (!replay) sent.then(onReported);
+				};
+				if (replayToday) {
+					// On this device a replay of today's battle leaves no record: the day's result is the first try.
+					report(true);
+				} else if (archive) {
+					recordArchiveResult(result, mode);
 				} else {
 					setStats(recordResult(result, mode));
-					// Day-of battles feed the community stats (archive replays don't).
-					const view = puzzleRef.current;
-					if (view && prev?.order?.length === 4) {
-						submitResult({
-							puzzle: number, mode, won: result.won, alive: result.won ? result.alive.filter(Boolean).length : 0,
-							turns: result.turns, picks: prev.order, team: view.player.map(p => p.species),
-						}).then(onReported);
-					}
+					report(false);
 				}
 				setRecord(result);
 				onRecorded();

@@ -1,6 +1,7 @@
 // Replay smoke test: fakes the clock to Oct 13 2026 (puzzle #1) with the daily battle already
 // lost, checks Hard Mode is open anyway, replays the daily battle to the end and checks the
-// replay left no trace in the stats, the archive or the day's saved result.
+// replay left no trace in the stats, the archive or the day's saved result, and was reported
+// to the community stats as a replay.
 // The recorder is faked, so any build works. Usage: node scripts/e2e-replay.mjs [url] [shotsDir] [--mobile]
 import { chromium, devices } from 'playwright';
 
@@ -76,7 +77,8 @@ await playToEnd();
 await shot('full-r3-replay-result');
 const after = await stored();
 for (const k of Object.keys(before)) if (before[k] !== after[k]) fail(`${k} changed by a replay: ${before[k]} -> ${after[k]}`);
-if (posts.length) fail(`a replay was reported to the recorder: ${JSON.stringify(posts)}`);
+// (Nothing is reported at all when the build has no recorder configured.)
+if (posts.length > 1 || posts.some(p => p.replay !== true || p.mode !== 'normal')) fail(`expected the replay to be reported once, as a replay: ${JSON.stringify(posts)}`);
 const share = await page.textContent('.share-preview');
 if (!share.includes('(Replay)') || share.includes('Streak')) fail(`share text: ${share}`);
 if (await page.$('.stat-row')) fail('stats shown on a replay result');
@@ -95,11 +97,11 @@ await page.click('.hard-card .btn.hard');
 await playToEnd();
 const hard = JSON.parse((await stored())['dailyvgc:stats-hard']);
 if (hard?.played !== 1 || !hard.history?.['1']) fail(`hard mode's first try wasn't counted: ${JSON.stringify(hard)}`);
-// (Nothing is reported at all when the build has no recorder configured.)
-if (posts.length > 1 || posts.some(p => p.mode !== 'hard')) fail(`expected only the hard mode result to be reported: ${JSON.stringify(posts)}`);
+const firstTries = posts.filter(p => !p.replay);
+if (firstTries.length > 1 || firstTries.some(p => p.mode !== 'hard')) fail(`expected hard mode to be reported as a first try: ${JSON.stringify(posts)}`);
 if (!(await page.$('.results .btn >> text=Play again'))) fail('no Play again on the Hard Mode result');
 await shot('full-r4-hard-result');
-console.log('replay left storage untouched; hard mode counted', JSON.stringify({ played: hard?.played, won: hard?.won }));
+console.log('replay left storage untouched; hard mode counted', JSON.stringify({ played: hard?.played, won: hard?.won }), '| reported:', posts.map(p => `${p.mode}${p.replay ? ' replay' : ''}`).join(', ') || 'nothing');
 console.log('errors', errors);
 if (errors.length) process.exitCode = 1;
 await browser.close();

@@ -65,8 +65,9 @@ has its own progress, stats and share text ("Daily VGC #N (Hard Mode)").
 
 Only the first try at each battle counts. After that, the daily battle and Hard Mode can each
 be replayed as often as you like from their results screens ("Play again"). A replay has its
-own saved progress, a "(Replay)" share text and no effect on stats, streaks, the archive
-calendar or the community stats.
+own saved progress, a "(Replay)" share text and no effect on your stats, streak or the archive
+calendar. It is reported to the community stats as a replay: it counts as a battle there, but
+not as another player.
 
 ## Archive
 
@@ -79,7 +80,7 @@ played now.
 
 ## Community stats
 
-Each battle played on its own day (daily and Hard Mode, not archive replays) is reported
+Each battle played on its own day (daily and Hard Mode, replays included, but not archive games) is reported
 anonymously to a small recorder: a Cloudflare Worker + D1 database in `recorder/`. It stores the
 result, how many Pokémon survived, which four were brought, and no personal data. Before each
 new day's battle the site shows **Yesterday's battle**: the overall win rate, the

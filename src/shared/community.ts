@@ -4,7 +4,7 @@
 export type CommunityMode = 'normal' | 'hard';
 export const COMMUNITY_MODES: CommunityMode[] = ['normal', 'hard'];
 
-/** One finished battle, played on its own day. */
+/** One finished battle, played on its own day: a browser's first try at it, or a replay. */
 export interface BattleSubmission {
 	/** Anonymous random id, one per browser: lets the recorder ignore duplicates. */
 	cid: string;
@@ -20,9 +20,12 @@ export interface BattleSubmission {
 	team: string[];
 	/** Site build that sent it. */
 	v?: string;
+	/** Not this browser's first try at the battle. Replays count toward the stats, but not as players. */
+	replay?: boolean;
 }
 
 export interface ModeStats {
+	/** Battles, replays included. */
 	played: number;
 	won: number;
 	/** Battles per result bar: Perfect, 3/4, 2/4, 1/4, Loss. */
@@ -65,8 +68,12 @@ export function validateSubmission(x: any): BattleSubmission | string {
 		!x.picks.every((p: unknown) => Number.isInteger(p) && (p as number) >= 0 && (p as number) < 6)) return 'bad picks';
 	if (!Array.isArray(x.team) || x.team.length !== 6 || new Set(x.team).size !== 6 ||
 		!x.team.every((t: unknown) => typeof t === 'string' && NAME.test(t))) return 'bad team';
+	if (x.replay !== undefined && typeof x.replay !== 'boolean') return 'bad replay';
 	const v = typeof x.v === 'string' ? x.v.slice(0, 40) : undefined;
-	return { cid: x.cid, puzzle: x.puzzle, mode: x.mode, won: x.won, alive: x.alive, turns: x.turns, picks: x.picks, team: x.team, v };
+	return {
+		cid: x.cid, puzzle: x.puzzle, mode: x.mode, won: x.won, alive: x.alive, turns: x.turns, picks: x.picks, team: x.team, v,
+		...(x.replay ? { replay: true } : {}),
+	};
 }
 
 /** A stored battle, as the recorder keeps it. */
