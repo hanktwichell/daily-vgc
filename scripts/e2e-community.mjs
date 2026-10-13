@@ -1,6 +1,6 @@
 // Community stats smoke test against a local recorder (see recorder/README.md): fakes the clock
 // to Oct 13 2026 (puzzle #1), expects yesterday's recap before the battle, plays #1 to the end
-// and checks the recap isn't shown again.
+// and checks the recap isn't shown again and that the footer's player count went up by one.
 // Usage: node scripts/e2e-community.mjs [url] [shotsDir] [--mobile]
 import { chromium, devices } from 'playwright';
 
@@ -28,6 +28,9 @@ await shot('full-c1-recap');
 const hardTab = await page.$('.recap .mode-toggle button.hard');
 if (hardTab) { await hardTab.click(); await shot('full-c2-recap-hard'); }
 await page.click('.recap-play');
+const playerCount = async () => Number((await page.textContent('.player-count b', { timeout: 2000 }).catch(() => '0')).replace(/,/g, ''));
+await page.waitForSelector('.player-count', { timeout: 10000 }).catch(() => fail('player count not shown'));
+const playersBefore = await playerCount();
 await page.waitForSelector('.mon-card', { timeout: 30000 });
 const cards = await page.$$('.mon-card');
 for (const i of [0, 1, 2, 3]) await cards[i].click();
@@ -52,6 +55,9 @@ await page.waitForSelector('.results', { timeout: 120000 });
 await page.waitForTimeout(1000);
 console.log('submitted', posts);
 if (posts.length !== 1) fail(`expected one submission, got ${posts.length}`);
+const playersAfter = await playerCount();
+console.log('player count', playersBefore, '->', playersAfter, `(${await page.textContent('.player-count')})`);
+if (playersAfter !== playersBefore + 1) fail(`player count went from ${playersBefore} to ${playersAfter}, expected one more`);
 await page.reload();
 await page.waitForSelector('.results', { timeout: 20000 });
 await page.waitForTimeout(1500);

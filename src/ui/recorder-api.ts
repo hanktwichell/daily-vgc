@@ -1,6 +1,7 @@
 // Talks to the recorder (recorder/): reports each finished day-of battle and fetches the
-// community summary of finished puzzles. Disabled when no recorder URL is configured.
-import type { BattleSubmission, CommunityStats } from '../shared/community';
+// community summary of finished puzzles and today's player count. Disabled when no recorder
+// URL is configured.
+import type { BattleSubmission, CommunityStats, PlayerCount } from '../shared/community';
 
 const API = ((import.meta.env.VITE_RECORDER_URL as string | undefined) || '').replace(/\/$/, '');
 const VERSION = (import.meta.env.VITE_COMMIT as string | undefined)?.slice(0, 12) || 'dev';
@@ -22,15 +23,20 @@ function clientId(): string {
 	}
 }
 
-/** Fire-and-forget: a failed report never affects the game. */
-export function submitResult(result: Omit<BattleSubmission, 'cid' | 'v'>) {
-	if (!API) return;
+/**
+ * Fire-and-forget: a failed report never affects the game. The promise settles once the
+ * recorder has answered (or the report failed) and never rejects.
+ */
+export function submitResult(result: Omit<BattleSubmission, 'cid' | 'v'>): Promise<void> {
+	if (!API) return Promise.resolve();
 	try {
 		const body: BattleSubmission = { ...result, cid: clientId(), v: VERSION };
 		// text/plain keeps this a "simple" request (no CORS preflight), which keepalive needs.
-		fetch(`${API}/result`, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(body), keepalive: true })
-			.catch(() => {});
-	} catch { /* ignore */ }
+		return fetch(`${API}/result`, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(body), keepalive: true })
+			.then(() => {}, () => {});
+	} catch {
+		return Promise.resolve();
+	}
 }
 
 const cache = new Map<number, Promise<CommunityStats | null>>();
@@ -47,6 +53,21 @@ export function fetchCommunityStats(puzzle: number): Promise<CommunityStats | nu
 			.finally(() => clearTimeout(timer)));
 	}
 	return cache.get(puzzle)!;
+}
+
+/**
+ * How many players have finished today's puzzle so far, or null if that isn't known.
+ * `fresh` skips the browser's cached answer, for right after this browser's own result.
+ */
+export function fetchPlayerCount(puzzle: number, fresh = false): Promise<number | null> {
+	if (!API) return Promise.resolve(null);
+	const ctrl = new AbortController();
+	const timer = setTimeout(() => ctrl.abort(), 6000);
+	return fetch(`${API}/players`, { signal: ctrl.signal, cache: fresh ? 'no-store' : 'default' })
+		.then(r => (r.ok ? r.json() as Promise<PlayerCount> : null))
+		.then(c => (c && c.puzzle === puzzle && Number.isInteger(c.players) && c.players >= 0 ? c.players : null))
+		.catch(() => null)
+		.finally(() => clearTimeout(timer));
 }
 
 /** True if a summary has any battles worth showing. */
