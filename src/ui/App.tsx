@@ -127,6 +127,12 @@ export function App() {
 
 			<footer class="site-footer">
 				{recorderEnabled() && <PlayerCount puzzle={number} refresh={reported} />}
+				{recorderEnabled() && number > 0 && (
+					<button class="recap-link" onClick={() => setModal('recap')}>
+						<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M2 9h3v5H2zM6.5 5h3v9h-3zM11 2h3v12h-3z" /></svg>
+						Yesterday's stats
+					</button>
+				)}
 				<p>Pokémon Champions Reg M-C Format · Created by <a href="https://x.com/FourZeroDesigns" target="_blank" rel="noopener">Hank Twichell</a></p>
 				<p class="muted">Fan-made and not affiliated with Nintendo, Game Freak, The Pokémon Company or Creatures.
 					Battle engine: <a href="https://github.com/smogon/pokemon-showdown" target="_blank" rel="noopener">Pokémon Showdown</a>.

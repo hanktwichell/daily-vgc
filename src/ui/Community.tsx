@@ -79,7 +79,7 @@ function ModeRecap({ m }: { m: ModeStats }) {
 				))}
 			</div>
 
-			<h3 class="dist-title">Best team of four</h3>
+			<h3 class="dist-title">Best team</h3>
 			{m.best ? (
 				<div class="best-four">
 					<div class="best-mons">

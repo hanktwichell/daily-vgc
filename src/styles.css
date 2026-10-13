@@ -726,6 +726,15 @@ main { flex: 1; }
 .site-footer { margin-top: 28px; font-size: 12px; color: #9fb0c4; text-align: center; }
 .site-footer p { margin: 4px 0; }
 .site-footer .player-count { margin-bottom: 12px; font-size: 15px; color: #eef2f8; }
+/* Opens the recap of yesterday's battle (win rate and what everyone brought). */
+.recap-link {
+	display: inline-flex; align-items: center; gap: 8px;
+	margin: -2px 0 14px; padding: 6px 14px; min-height: 36px;
+	border: 2px solid #8fa6b8; border-radius: 10px;
+	background: #2d3b50; color: #fff; font-size: 14px;
+	box-shadow: 0 3px 0 #18202c;
+}
+.recap-link:active { transform: translateY(2px); box-shadow: 0 1px 0 #18202c; }
 .player-count b { font-family: var(--font-display); font-weight: 400; font-size: 18px; color: var(--yellow); }
 .site-footer .muted { color: #7f8ea2; }
 
