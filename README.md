@@ -79,9 +79,9 @@ new day's battle the site shows **Yesterday's battle**: the overall win rate, th
 Perfect/3/4/2/4/1/4/Loss chart, how often each Pokémon was picked, and the four with the best win
 rate (pick order doesn't matter). It's also under "Yesterday's results" in the stats screen.
 Stats for a puzzle only appear once its day is over, so they update once a day. The one live
-number is the footer's count of players who have finished today's battle, labelled with a
-trainer class that changes daily ("143 Bug Catchers today"; the list is in
-`src/data/trainer-classes.ts`). A daily Action
+number is the footer's count of players who have finished today's battle, named after the
+class of the day's themed trainer ("143 Bug Catchers today" against Bug Catcher Rick; each
+team's `players` in `src/data/opponents.ts`). A daily Action
 copies them into `community/`. Setup and deployment are covered in [recorder/README.md](recorder/README.md).
 The site works normally with no recorder configured.
 
@@ -148,7 +148,8 @@ node scripts/e2e-community.mjs http://localhost:4173/ [screenshotDir] [--mobile]
 - **Add a set:** append a block to `src/data/sets-library.ts` (Showdown format, `EVs:` are
   Stat Points, `@ A / B` lists fallback items), then run `npm run validate-teams`. If it is a
   new species, run `npm run gen:sprites`.
-- **Add an opponent team:** add an entry to `src/data/opponents.ts` with exactly one Mega.
+- **Add an opponent team:** add an entry to `src/data/opponents.ts` with exactly one Mega. Its
+  `players` is the trainer's class, singular and plural, for the footer's player count.
 - **Update the battle engine** (new regulation, bug fixes):
   `git clone https://github.com/smogon/pokemon-showdown`, then
   `node scripts/vendor-ps.mjs ../pokemon-showdown`, update `FORMAT_ID` in `src/engine/ps.ts`

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 import type { CommunityMode, CommunityStats, ModeStats } from '../shared/community';
 import { fetchCommunityStats, fetchPlayerCount } from './recorder-api';
-import { trainerClassFor } from '../data/trainer-classes';
+import { opponentForPuzzle } from '../data/opponents';
 import { Sprite } from './components';
 import { toID } from './battle-state';
 
@@ -98,8 +98,8 @@ function ModeRecap({ m }: { m: ModeStats }) {
 }
 
 /**
- * Footer line: how many players have finished today's battle, named after the day's trainer
- * class. `refresh` is bumped when this browser's own result has been reported.
+ * Footer line: how many players have finished today's battle, named after the class of the
+ * day's themed trainer. `refresh` is bumped when this browser's own result has been reported.
  */
 export function PlayerCount({ puzzle, refresh }: { puzzle: number; refresh: number }) {
 	const [count, setCount] = useState<number | null>(null);
@@ -114,7 +114,7 @@ export function PlayerCount({ puzzle, refresh }: { puzzle: number; refresh: numb
 	}, [puzzle, refresh]);
 
 	if (count === null) return null;
-	const [one, many] = trainerClassFor(puzzle);
+	const [one, many] = opponentForPuzzle(puzzle).players;
 	return (
 		<p class="player-count">
 			{count === 0 ? `Be today's first ${one}!` : <><b>{count.toLocaleString('en-US')}</b> {count === 1 ? one : many} today</>}

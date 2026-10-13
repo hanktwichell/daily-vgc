@@ -296,12 +296,15 @@ await test('community stats: submissions are validated and summarised', async ()
 	assert.equal(aggregate([]), null);
 });
 
-await test('player count: every day has a trainer class, and neighbouring days differ', async () => {
-	const { TRAINER_CLASSES, trainerClassFor } = await import('../src/data/trainer-classes');
-	assert.equal(new Set(TRAINER_CLASSES.map(c => c[0])).size, TRAINER_CLASSES.length);
-	for (const [one, many] of TRAINER_CLASSES) assert.ok(one && many && one !== many, `bad class ${one}/${many}`);
-	assert.deepEqual(trainerClassFor(0), ['Bug Catcher', 'Bug Catchers']);
-	for (let n = 0; n < TRAINER_CLASSES.length * 2; n++) assert.notEqual(trainerClassFor(n)[0], trainerClassFor(n + 1)[0]);
+await test('player count: players are named after the class of the day\'s themed trainer', async () => {
+	const { OPPONENT_TEAMS, opponentForPuzzle } = await import('../src/data/opponents');
+	for (const t of OPPONENT_TEAMS) {
+		const [one, many] = t.players;
+		assert.ok(t.trainer.startsWith(`${one} `), `${t.trainer} is not a ${one}`);
+		assert.ok(many && many !== one, `bad plural for ${one}: ${many}`);
+	}
+	assert.equal(generateDaily(dateForPuzzleNumber(0)).opponent.trainer, 'Pâtissière Coco');
+	assert.deepEqual(opponentForPuzzle(0).players, ['Pâtissière', 'Pâtissières']);
 });
 
 await test('AI vs AI: a full battle finishes without invalid choices', () => {
