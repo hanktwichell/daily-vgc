@@ -69,8 +69,8 @@ export function Results({ record, stats, streak, puzzle, order, hard = false, ha
 				<button class="btn primary" onClick={onShare}>Share result</button>
 				{isMobile() && <a class="btn" href={smsLink(text)}>Text a friend</a>}
 			</div>
-			{toast && <div class="toast">{toast}</div>}
 			<pre class="share-preview">{text}</pre>
+			{toast && <div class="toast" role="status">{toast}</div>}
 			{hardMode && <HardModeCard link={hardMode} archive={!!archive} />}
 			{onArchive && (
 				<div class="hard-card archive-card">
