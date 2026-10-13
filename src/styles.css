@@ -63,15 +63,20 @@ a { color: #9fd0ff; }
 main { flex: 1; }
 
 /* ---------- Top bar ---------- */
+/* Equal side columns keep the title centred whether one button or two sit on the right. On a
+   narrow phone the title gives way first, and its tags drop to a second line. */
 .topbar {
-	display: flex;
+	display: grid;
+	grid-template-columns: 1fr minmax(0, auto) 1fr;
 	align-items: center;
-	justify-content: space-between;
+	gap: 8px;
 	padding: 12px 0;
 	border-bottom: 2px solid #3a4a60;
 	margin-bottom: 14px;
 }
-.title { display: flex; align-items: baseline; gap: 10px; }
+.topbar > .icon-btn { justify-self: start; }
+.topbar-actions { display: flex; gap: 8px; justify-self: end; }
+.title { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 2px 10px; }
 .title h1 {
 	margin: 0;
 	font-size: 28px;

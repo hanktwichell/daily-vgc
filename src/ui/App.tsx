@@ -101,13 +101,15 @@ export function App() {
 					{archive !== null && <span class="archive-tag">{replayingToday ? 'REPLAY' : 'ARCHIVE'}</span>}
 					{mode === 'hard' && <span class="hard-tag">HARD</span>}
 				</div>
-				{archive !== null && !replayingToday ? (
+				<div class="topbar-actions">
 					<button class="icon-btn" onClick={() => setModal('calendar')} aria-label="Archive calendar"><CalendarIcon /></button>
-				) : (
-					<button class="icon-btn" onClick={() => setModal('stats')} aria-label="Statistics">
-						<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M2 9h3v5H2zM6.5 5h3v9h-3zM11 2h3v12h-3z" /></svg>
-					</button>
-				)}
+					{/* Stats belong to today's battles, so they step aside while a past puzzle is showing. */}
+					{(archive === null || replayingToday) && (
+						<button class="icon-btn" onClick={() => setModal('stats')} aria-label="Statistics">
+							<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M2 9h3v5H2zM6.5 5h3v9h-3zM11 2h3v12h-3z" /></svg>
+						</button>
+					)}
+				</div>
 			</header>
 
 			<main>
