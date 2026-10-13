@@ -265,7 +265,6 @@ main { flex: 1; }
 /* Untitled modals (stats): the close button sits beside the content instead of on its own row. */
 .modal-head.untitled { position: absolute; top: 14px; right: 14px; }
 .modal-head.untitled + .modal-body { margin-top: 0; }
-.modal-head.untitled + .modal-body .mode-toggle { margin-right: 48px; }
 .modal-head h2 { margin: 0; font-size: 22px; }
 .icon-btn.close { margin-left: auto; background: #e0e8f0; color: #304050; border-color: #8fa6b8; box-shadow: 0 2px 0 #8fa6b8; }
 .modal-body { margin-top: 8px; }
@@ -700,6 +699,8 @@ main { flex: 1; }
 .mode-toggle button.on { background: #485868; color: #fff; }
 .mode-toggle button.hard.on { background: #a32638; }
 .sheet-section { margin: 18px 0 4px; font-size: 18px; color: #a32638; border-top: 2px solid #d8dcd0; padding-top: 12px; }
+/* The stats toggle shares a row with the modal's close button: clear it on both sides so it stays centred. */
+.stats-sheet .mode-toggle { margin-left: 48px; margin-right: 48px; }
 .stats-sheet .next { text-align: center; }
 
 /* ---------- Archive ---------- */
