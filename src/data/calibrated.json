@@ -32,8 +32,7 @@
 			"perrserker"
 		],
 		"archetype": "rain",
-		"hard": "kangaskhan-fakeout",
-		"hardRelaxed": true
+		"hard": "psyspam"
 	},
 	"2026-10-15": {
 		"ids": [
