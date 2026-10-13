@@ -8,7 +8,7 @@ import { Modal, Countdown } from './components';
 import { StatsSummary } from './StatsSummary';
 import { ArchiveCalendar, CalendarIcon, type ArchiveSelection } from './Archive';
 import { CommunityRecap, PlayerCount } from './Community';
-import { recorderEnabled, fetchCommunityStats, hasData, submitResult } from './community';
+import { recorderEnabled, fetchCommunityStats, hasData, submitResult } from './recorder-api';
 import {
 	loadProgress, saveProgress, loadStats, recordResult, currentStreak, loadSettings, saveSettings,
 	recordArchiveResult, clearArchiveProgress, dailyWon,
