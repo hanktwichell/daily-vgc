@@ -24,10 +24,16 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-audit --no-fund
+      - name: Players
+        run: |
+          npx wrangler d1 execute dailyvgc --remote --json --command "
+            SELECT 'all puzzles' AS scope, COUNT(DISTINCT cid) AS players, COUNT(*) AS battles FROM results
+            UNION ALL
+            SELECT 'puzzle ' || puzzle, COUNT(DISTINCT cid), COUNT(*) FROM results GROUP BY puzzle"
       - name: Battles per puzzle and mode
         run: |
           npx wrangler d1 execute dailyvgc --remote --json --command "
-            SELECT puzzle, mode, COUNT(*) AS battles, SUM(won) AS wins,
+            SELECT puzzle, mode, COUNT(DISTINCT cid) AS players, COUNT(*) AS battles, SUM(won) AS wins,
               SUM(CASE WHEN won = 1 AND alive = 4 THEN 1 ELSE 0 END) AS perfect,
               SUM(CASE WHEN won = 1 AND alive = 3 THEN 1 ELSE 0 END) AS three_left,
               SUM(CASE WHEN won = 1 AND alive = 2 THEN 1 ELSE 0 END) AS two_left,
