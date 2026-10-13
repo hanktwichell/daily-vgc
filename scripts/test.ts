@@ -301,6 +301,10 @@ await test('community stats: submissions are validated and summarised', async ()
 	assert.equal(validateSubmission({ ...ok, picks: [0, 1, 2, 6] }), 'bad picks');
 	assert.equal(validateSubmission({ ...ok, team: team.slice(0, 5) }), 'bad team');
 	assert.equal(validateSubmission({ ...ok, mode: 'archive' }), 'bad mode');
+	// Replays are marked as such; a first try carries no flag.
+	assert.equal((validateSubmission({ ...ok, replay: true }) as any).replay, true);
+	assert.ok(!('replay' in (validateSubmission({ ...ok, replay: false }) as object)));
+	assert.equal(validateSubmission({ ...ok, replay: 'yes' }), 'bad replay');
 
 	const row = (won: boolean, alive: number, picks: number[], t = team) => ({ won: won ? 1 : 0, alive, picks: picks.join(','), team: JSON.stringify(t) });
 	const rows = [

@@ -42,6 +42,13 @@ jobs:
               datetime(MIN(created_at) / 1000, 'unixepoch') AS first_utc,
               datetime(MAX(created_at) / 1000, 'unixepoch') AS last_utc
             FROM results GROUP BY puzzle, mode ORDER BY puzzle, mode"
+      - name: Replays per puzzle and mode
+        run: |
+          npx wrangler d1 execute dailyvgc --remote --json --command "
+            SELECT puzzle, mode, COUNT(DISTINCT cid) AS players, COUNT(*) AS replays, SUM(won) AS wins,
+              datetime(MIN(created_at) / 1000, 'unixepoch') AS first_utc,
+              datetime(MAX(created_at) / 1000, 'unixepoch') AS last_utc
+            FROM replays GROUP BY puzzle, mode ORDER BY puzzle, mode"
       - name: Fours brought (pick order ignored by the site; shown as sent)
         run: |
           npx wrangler d1 execute dailyvgc --remote --json --command "

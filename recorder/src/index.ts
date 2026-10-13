@@ -1,8 +1,9 @@
-// Daily VGC recorder: stores one anonymous result per browser for each day's battles and
-// serves a summary of each puzzle once its day is over.
+// Daily VGC recorder: stores one anonymous result per browser for each day's battles, plus
+// any replays, and serves a summary of each puzzle once its day is over.
 //
 //   POST /result           a finished battle (BattleSubmission), only for today's puzzle
-//                          (or yesterday's, for a few hours after midnight)
+//                          (or yesterday's, for a few hours after midnight): a browser's
+//                          first try, or a replay
 //   GET  /stats/:puzzle    CommunityStats for a finished puzzle
 //   GET  /players          PlayerCount: how many players have finished today's puzzle so far
 //   GET  /export/:puzzle   raw results for a finished puzzle (Authorization: Bearer ADMIN_TOKEN)
@@ -18,6 +19,8 @@ export interface Env {
 	SALT?: string;
 	/** Max results per IP address per puzzle and mode. */
 	PER_IP_LIMIT?: string;
+	/** Max replays per IP address per puzzle and mode. */
+	PER_IP_REPLAY_LIMIT?: string;
 	/** For local testing only: pretend it's this time (ISO string). */
 	NOW?: string;
 }
@@ -68,18 +71,20 @@ async function submit(req: Request, env: Env, now: number, cors: Record<string, 
 	// Only the current day's puzzle counts (archive replays don't), plus a grace period after midnight.
 	if (s.puzzle !== puzzleAt(now) && s.puzzle !== puzzleAt(now - GRACE_MS)) return json({ error: 'puzzle not open' }, 409, cors);
 
+	// First tries go in `results` (one per browser: a second is ignored); replays in `replays`.
+	const table = s.replay ? 'replays' : 'results';
 	const ip = req.headers.get('CF-Connecting-IP') ?? 'unknown';
 	const iphash = await sha256(`${ip}|${s.puzzle}|${env.SALT ?? 'daily-vgc'}`);
-	const limit = Number(env.PER_IP_LIMIT ?? 20);
-	const used = await env.DB.prepare('SELECT COUNT(*) AS n FROM results WHERE puzzle = ? AND mode = ? AND iphash = ?')
+	const limit = s.replay ? Number(env.PER_IP_REPLAY_LIMIT ?? 200) : Number(env.PER_IP_LIMIT ?? 20);
+	const used = await env.DB.prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE puzzle = ? AND mode = ? AND iphash = ?`)
 		.bind(s.puzzle, s.mode, iphash).first<{ n: number }>();
 	if ((used?.n ?? 0) >= limit) return json({ error: 'too many results from this address' }, 429, cors);
 
 	const res = await env.DB.prepare(
-		`INSERT OR IGNORE INTO results (puzzle, mode, cid, iphash, won, alive, turns, picks, team, version, created_at)
+		`INSERT OR IGNORE INTO ${table} (puzzle, mode, cid, iphash, won, alive, turns, picks, team, version, created_at)
 		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 	).bind(s.puzzle, s.mode, s.cid, iphash, s.won ? 1 : 0, s.alive, s.turns, s.picks.join(','), JSON.stringify(s.team), s.v ?? null, now).run();
-	if (res.meta.changes && playerCount?.puzzle === s.puzzle) playerCount = null;
+	if (!s.replay && res.meta.changes && playerCount?.puzzle === s.puzzle) playerCount = null;
 	return json({ ok: true, duplicate: res.meta.changes === 0 }, 200, cors);
 }
 
@@ -92,8 +97,11 @@ async function stats(puzzle: number, env: Env, now: number, cors: Record<string,
 	if (!cached || (!cached.final && (final || now - cached.computed_at > REFRESH_MS))) {
 		const summary: CommunityStats = { puzzle, date: dateForPuzzleNumber(puzzle), final, modes: {} };
 		for (const mode of COMMUNITY_MODES) {
-			const { results } = await env.DB.prepare('SELECT won, alive, picks, team FROM results WHERE puzzle = ? AND mode = ?')
-				.bind(puzzle, mode).all<StoredBattle>();
+			// Every battle counts here: first tries and replays alike.
+			const { results } = await env.DB.prepare(
+				`SELECT won, alive, picks, team FROM results WHERE puzzle = ? AND mode = ?
+				 UNION ALL SELECT won, alive, picks, team FROM replays WHERE puzzle = ? AND mode = ?`,
+			).bind(puzzle, mode, puzzle, mode).all<StoredBattle>();
 			const m = aggregate(results);
 			if (m) summary.modes[mode] = m;
 		}
@@ -110,7 +118,7 @@ async function stats(puzzle: number, env: Env, now: number, cors: Record<string,
 /** The last count, kept while this instance of the Worker stays warm. */
 let playerCount: (PlayerCount & { at: number }) | null = null;
 
-/** Players (browsers) with a result on today's puzzle, in either mode. */
+/** Players (browsers) with a result on today's puzzle, in either mode. Replays don't add players. */
 async function players(env: Env, now: number, cors: Record<string, string>) {
 	const puzzle = puzzleAt(now);
 	if (!playerCount || playerCount.puzzle !== puzzle || now - playerCount.at > PLAYERS_TTL_MS) {
@@ -125,8 +133,10 @@ async function exportRows(req: Request, puzzle: number, env: Env, now: number, c
 	if (!env.ADMIN_TOKEN || req.headers.get('Authorization') !== `Bearer ${env.ADMIN_TOKEN}`) return json({ error: 'unauthorized' }, 401, cors);
 	if (puzzle < 0 || puzzle >= puzzleAt(now)) return json({ error: 'puzzle not finished' }, 404, cors);
 	const { results } = await env.DB.prepare(
-		'SELECT puzzle, mode, cid, won, alive, turns, picks, team, version, created_at FROM results WHERE puzzle = ? ORDER BY id',
-	).bind(puzzle).all();
+		`SELECT puzzle, mode, cid, won, alive, turns, picks, team, version, created_at, 0 AS replay FROM results WHERE puzzle = ?
+		 UNION ALL SELECT puzzle, mode, cid, won, alive, turns, picks, team, version, created_at, 1 AS replay FROM replays WHERE puzzle = ?
+		 ORDER BY created_at`,
+	).bind(puzzle, puzzle).all();
 	return json(results, 200, cors);
 }
 

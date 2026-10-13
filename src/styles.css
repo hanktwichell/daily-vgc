@@ -654,8 +654,10 @@ main { flex: 1; }
 .stat-row b { font-size: 28px; }
 .stat-row span { font-size: 11px; color: var(--muted); text-transform: uppercase; }
 .dist-title { margin: 6px 0 6px; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
-.dist { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
-.dist-row { display: grid; grid-template-columns: 4.2em 1fr; align-items: center; gap: 8px; }
+/* One grid for all the rows: the label column is only as wide as the longest label, so the
+   chart starts at the left edge the same way its longest bar ends at the right one. */
+.dist { display: grid; grid-template-columns: max-content 1fr; align-items: center; gap: 5px 8px; margin-bottom: 12px; }
+.dist-row { display: contents; }
 .dist-label { font-size: 13px; text-align: right; white-space: nowrap; }
 .dist-track { display: block; }
 .dist-bar {

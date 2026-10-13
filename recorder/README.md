@@ -1,19 +1,19 @@
 # Daily VGC recorder
 
 A Cloudflare Worker with a D1 database (both free tier) that collects one anonymous result per
-browser for each day's battles and serves the daily community stats shown before the next
-puzzle.
+browser for each day's battles, plus any replays, and serves the daily community stats shown
+before the next puzzle.
 
 | Endpoint | What it does |
 | --- | --- |
-| `POST /result` | A finished battle (`BattleSubmission` in `src/shared/community.ts`). Accepted only for today's puzzle, or yesterday's for 3 hours after midnight. Archive replays aren't sent. |
-| `GET /stats/:puzzle` | `CommunityStats` for a finished puzzle: win rate, Pokémon left, pick rates and the best four. Recomputed every 10 minutes until late results stop, then fixed. |
-| `GET /players` | `PlayerCount`: how many browsers have a result on today's puzzle so far (either mode). Shown in the site footer; counted at most once a minute. |
-| `GET /export/:puzzle` | Raw results for a finished puzzle. Needs `Authorization: Bearer <ADMIN_TOKEN>`. |
+| `POST /result` | A finished battle (`BattleSubmission` in `src/shared/community.ts`). Accepted only for today's puzzle, or yesterday's for 3 hours after midnight. A browser's first try is stored once in `results`; a submission marked `replay` goes in `replays`, any number of times. Archive games aren't sent. |
+| `GET /stats/:puzzle` | `CommunityStats` for a finished puzzle, over first tries and replays alike: win rate, Pokémon left, pick rates and the best four. Recomputed every 10 minutes until late results stop, then fixed. |
+| `GET /players` | `PlayerCount`: how many browsers have a result on today's puzzle so far (either mode). Replays don't add to it. Shown in the site footer; counted at most once a minute. |
+| `GET /export/:puzzle` | Raw results for a finished puzzle, each marked `replay` 0 or 1. Needs `Authorization: Bearer <ADMIN_TOKEN>`. |
 
 **Stored per battle:** puzzle, mode (daily or hard), win or loss, Pokémon left, turns, the four
 brought (team indices, in pick order), the six species, the site build, a random per-browser id
-and a salted hash of the IP, used only to cap submissions at 20 per address per puzzle. No names
+and a salted hash of the IP, used only to cap submissions per address per puzzle and mode (20 first tries, 200 replays). No names
 or accounts. Only results reporting the puzzle's real team (the most common one) count toward
 the stats.
 
