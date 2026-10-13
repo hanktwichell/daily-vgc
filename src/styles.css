@@ -654,8 +654,9 @@ main { flex: 1; }
 .dist-bar.loss.current { background: #d9534f; }
 .share-prompt { font-weight: 700; margin: 8px 0; }
 .share-actions { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-.share-preview { background: #eef0e8; border-radius: 8px; padding: 10px; font-family: inherit; font-size: 14px; text-align: left; display: inline-block; margin: 12px auto 4px; white-space: pre-wrap; }
-.toast { margin-top: 10px; background: #303848; color: #fff; display: inline-block; padding: 6px 12px; border-radius: 8px; }
+.share-preview { background: #eef0e8; border-radius: 8px; padding: 10px; font-family: inherit; font-size: 14px; text-align: left; display: block; width: fit-content; max-width: 100%; margin: 12px auto 4px; white-space: pre-wrap; }
+/* Its own line, centred under the share text. */
+.toast { display: block; width: fit-content; max-width: 100%; margin: 8px auto 0; background: #303848; color: #fff; padding: 6px 12px; border-radius: 8px; }
 .next { margin-top: 8px; }
 .countdown { font-weight: 700; letter-spacing: 1px; }
 
