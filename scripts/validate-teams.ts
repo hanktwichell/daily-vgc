@@ -1,4 +1,4 @@
-// Validates every set in the library (and every curated opponent team) against Reg M-C.
+// Validates every set in the library (and every curated opponent, meta and practice team) against Reg M-C.
 import { TeamValidator, Dex, FORMAT_ID } from '../src/engine/ps-node';
 import { LIBRARY, materialize } from '../src/data/library';
 
@@ -54,5 +54,24 @@ for (const team of META_TEAMS) {
 }
 console.log(`${META_TEAMS.length} hard-mode meta teams, ${metaErrors} problems`);
 teamErrors += metaErrors;
+
+import { PRACTICE_SETS } from '../src/data/practice';
+let practiceErrors = 0;
+for (const p of PRACTICE_SETS) {
+	try {
+		const megas = p.sets.filter(id => getLibrarySet(id).isMega).length;
+		if (megas !== 1) { console.log(`${p.id}: ${megas} megas on the opponent's team`); practiceErrors++; }
+		for (const [side, ids] of [['opponent', p.sets], ['player', p.playerIds]] as const) {
+			if (ids.length !== 6) { console.log(`${p.id} ${side}: ${ids.length} sets`); practiceErrors++; }
+			const probs = validator.validateTeam(buildTeam(ids));
+			if (probs?.length) { console.log(`${p.id} ${side}: ${probs.join(' | ')}`); practiceErrors++; }
+		}
+		const theirs = new Set(p.sets.map(id => dex.species.get(getLibrarySet(id).set.species).baseSpecies));
+		const shared = p.playerIds.filter(id => theirs.has(dex.species.get(getLibrarySet(id).set.species).baseSpecies));
+		if (shared.length) { console.log(`${p.id}: ${shared.join(', ')} on both teams`); practiceErrors++; }
+	} catch (e: any) { console.log(`${p.id}: ${e.message}`); practiceErrors++; }
+}
+console.log(`${PRACTICE_SETS.length} practice battles, ${practiceErrors} problems`);
+teamErrors += practiceErrors;
 console.log('Most reused opponent sets:', [...usage].sort((a, b) => b[1] - a[1]).slice(0, 10).map(([k, v]) => `${k}×${v}`).join(', '));
 if (process.argv.includes('--strict') && (errors || teamErrors)) process.exit(1);

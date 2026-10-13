@@ -797,6 +797,10 @@ main { flex: 1; }
 	display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px;
 	max-height: 46vh; overflow-y: auto; padding: 10px 4px 6px; margin: 8px 0;
 }
+/* Practice battles sit in their own row above the days, with their theme where a date would be. */
+.cal-section { margin: 12px 0 0; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); text-align: center; }
+.practice-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; padding: 8px 4px 6px; }
+.practice-grid .cal-date { font-size: 10px; line-height: 1.15; text-align: center; padding: 0 1px; }
 .cal-box {
 	position: relative;
 	display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -822,7 +826,7 @@ main { flex: 1; }
 .cal-hard.gold { background: #f2bf26; color: #4a3600; border-color: #9a7200; }
 .cal-hard.green { background: #45b866; color: #fff; border-color: #1f7a3a; }
 .cal-detail { border: 2px solid #8fa6b8; border-radius: 10px; padding: 10px 12px; background: #f2f5f8; display: grid; gap: 8px; }
-.cal-detail-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.cal-detail-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 8px; }
 .cal-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .cal-row .btn { min-width: 96px; }
 .cal-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center; margin-top: 10px; color: var(--muted); }

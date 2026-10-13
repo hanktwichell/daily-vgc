@@ -4,6 +4,7 @@ import { Dex, FORMAT_ID, type PokemonSet } from '../engine/ps';
 import { LIBRARY, type LibrarySet } from './library';
 import { opponentForPuzzle, type OpponentTeam } from './opponents';
 import { META_TEAMS, type MetaTeam } from './meta-teams';
+import { practiceSet } from './practice';
 import { buildTeam } from './team-builder';
 import { SeededRNG } from './rng';
 import { matchupScore } from '../engine/matchup';
@@ -29,7 +30,7 @@ export interface DailyPuzzle {
 	mode: Mode;
 	date: string;
 	number: number;
-	/** The day's themed team, or a meta team in hard mode. */
+	/** The day's themed team, a meta team in hard mode, or a practice battle's opponent. */
 	opponent: OpponentTeam | MetaTeam;
 	opponentTeam: PokemonSet[];
 	playerIds: string[];
@@ -287,6 +288,20 @@ export function generateHard(date: string): DailyPuzzle {
 	};
 }
 
+/** A practice battle from the archive (practice.ts): fixed teams, played like a daily battle. */
+export function generatePractice(date: string): DailyPuzzle {
+	const number = -Number(date.slice(PRACTICE_DATE.length));
+	const practice = practiceSet(number);
+	if (!practice) throw new Error(`Unknown practice battle: ${date}`);
+	return {
+		mode: 'normal', date, number, opponent: practice, opponentTeam: buildTeam(practice.sets),
+		playerIds: practice.playerIds, playerTeam: buildTeam(practice.playerIds),
+		archetype: practice.archetype, label: ARCHETYPE_NAMES[practice.archetype],
+	};
+}
+const PRACTICE_DATE = 'practice-';
+
 export function generatePuzzle(date: string, mode: Mode): DailyPuzzle {
+	if (date.startsWith(PRACTICE_DATE)) return generatePractice(date);
 	return mode === 'hard' ? generateHard(date) : generateDaily(date);
 }

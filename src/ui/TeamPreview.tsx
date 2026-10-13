@@ -20,7 +20,7 @@ export function TeamPreview({ puzzle, onStart }: { puzzle: PuzzleView; onStart: 
 			<section class="ds-frame foe-panel">
 				<div class="trainer-line">
 					<div>
-						<div class="eyebrow">{hard ? 'Hard Mode opponent' : 'Today\'s opponent'}</div>
+						<div class="eyebrow">{hard ? 'Hard Mode opponent' : puzzle.number < 0 ? 'Practice opponent' : 'Today\'s opponent'}</div>
 						<div class="trainer-name">{puzzle.opponent.trainer}</div>
 						<div class="team-name">“{puzzle.opponent.name}”</div>
 					</div>

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { Mode } from '../shared/types';
 import { puzzleDateFor, puzzleNumberFor, dateForPuzzleNumber } from '../data/calendar';
+import { practiceNumbers, practiceSet, puzzleLabel } from '../data/practice';
 import {
 	loadStats, loadArchiveResults, archiveResult, loadProgress, clearArchiveProgress, dailyPlayed, type GameRecord,
 } from './storage';
@@ -43,8 +44,9 @@ function describe(number: number, mode: Mode) {
 }
 
 /**
- * The archive: one box per past puzzle, five to a row. Gold with a crown = won on the day,
- * green = won from the archive, white = not played yet, grey = the one being played now.
+ * The archive: the practice battles, then one box per past puzzle, five to a row. Gold with a
+ * crown = won on the day, green = won from the archive, white = not played yet, grey = the one
+ * being played now.
  */
 export function ArchiveCalendar({ current, onPlay }: { current: ArchiveSelection | null; onPlay: (sel: ArchiveSelection) => void }) {
 	const today = puzzleNumberFor(puzzleDateFor());
@@ -60,15 +62,6 @@ export function ArchiveCalendar({ current, onPlay }: { current: ArchiveSelection
 		target?.scrollIntoView({ block: 'nearest' });
 	}, []);
 
-	if (!numbers.length) {
-		return (
-			<div class="archive">
-				<h2 class="archive-title">Archive</h2>
-				<p class="muted center">Each day's battle moves here once the next one unlocks. Come back tomorrow to replay #0.</p>
-			</div>
-		);
-	}
-
 	const play = (number: number, mode: Mode) => {
 		const { inProgress } = describe(number, mode);
 		// Finished archive puzzles start over; unfinished ones resume.
@@ -77,11 +70,27 @@ export function ArchiveCalendar({ current, onPlay }: { current: ArchiveSelection
 	};
 
 	const detail = picked !== null ? { daily: describe(picked, 'normal'), hard: describe(picked, 'hard'), unlocked: dailyPlayed(picked) } : null;
+	const practice = picked !== null ? practiceSet(picked) : undefined;
 
 	return (
 		<div class="archive">
 			<h2 class="archive-title">Archive</h2>
 			<p class="muted center small">Archive wins: {archiveWins} · These don't count toward your stats.</p>
+			<h3 class="cal-section">Practice battles</h3>
+			<div class="practice-grid">
+				{practiceNumbers().map(n => {
+					const d = describe(n, 'normal');
+					return (
+						<button key={n} class={`cal-box ${current?.number === n ? 'current' : d.state}${picked === n ? ' picked' : ''}`}
+							onClick={() => setPicked(n)} aria-label={`Practice battle ${puzzleLabel(n)}, ${practiceSet(n)!.name}, ${d.label}`}>
+							<span class="cal-num">{puzzleLabel(n)}</span>
+							<span class="cal-date">{practiceSet(n)!.name}</span>
+						</button>
+					);
+				})}
+			</div>
+			<h3 class="cal-section">Past battles</h3>
+			{!numbers.length && <p class="muted center small">Each day's battle moves here once the next one unlocks.</p>}
 			<div class="cal-grid" ref={grid}>
 				{numbers.map(n => {
 					const d = describe(n, 'normal');
@@ -98,7 +107,21 @@ export function ArchiveCalendar({ current, onPlay }: { current: ArchiveSelection
 					);
 				})}
 			</div>
-			{detail && picked !== null && (
+			{detail && practice && picked !== null && (
+				<div class="cal-detail">
+					<div class="cal-detail-head">
+						<b>Practice {puzzleLabel(picked)} · {practice.name}</b>
+						<span class="muted small">vs {practice.trainer}</span>
+					</div>
+					<div class="cal-row">
+						<span>Battle: <b>{detail.daily.label}</b></span>
+						<button class="btn primary" onClick={() => play(picked, 'normal')}>
+							{detail.daily.inProgress ? 'Continue' : detail.daily.played ? 'Replay' : 'Play'}
+						</button>
+					</div>
+				</div>
+			)}
+			{detail && !practice && picked !== null && (
 				<div class="cal-detail">
 					<div class="cal-detail-head">
 						<b>Daily VGC #{picked}</b>

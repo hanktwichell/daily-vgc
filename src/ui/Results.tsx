@@ -5,13 +5,14 @@ import { shareText, shareResult, smsLink, isMobile } from './share';
 import { Sprite, Countdown } from './components';
 import { StatsSummary } from './StatsSummary';
 import { msUntilNextPuzzle } from '../data/calendar';
+import { isPractice, puzzleLabel } from '../data/practice';
 
 export interface HardModeLink {
 	state: 'available' | 'in-progress' | 'done';
 	play: () => void;
 }
 
-/** A game that doesn't count: one from the archive, or (`today`) a replay of today's battle. */
+/** A game that doesn't count: one from the archive (a past day or a practice battle), or (`today`) a replay of today's battle. */
 export interface ReplayActions {
 	today: boolean;
 	onReplay: () => void;
@@ -43,7 +44,7 @@ export function Results({ record, stats, streak, puzzle, order, hard = false, ha
 		if (ms <= 0 && !replay) location.reload();
 	}, [ms <= 0]);
 
-	const kind = replay ? (replay.today ? 'Replay' : 'Archive') : undefined;
+	const kind = replay ? (replay.today ? 'Replay' : isPractice(record.number) ? 'Practice' : 'Archive') : undefined;
 	const text = shareText(record, streak, hard, kind);
 	const left = record.alive.filter(Boolean).length;
 
@@ -60,7 +61,7 @@ export function Results({ record, stats, streak, puzzle, order, hard = false, ha
 				{record.won ? 'VICTORY!' : 'DEFEATED'}
 			</div>
 			<p class="result-sub">
-				Daily VGC #{record.number}{hard ? ' (Hard)' : ''} · {left}/4 left · {record.turns} turns
+				Daily VGC {puzzleLabel(record.number)}{hard ? ' (Hard)' : ''} · {left}/4 left · {record.turns} turns
 				{puzzle && <><br />vs {puzzle.opponent.trainer} ({puzzle.opponent.name})</>}
 			</p>
 			<div class="result-squares">
