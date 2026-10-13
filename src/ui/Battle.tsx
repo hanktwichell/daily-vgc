@@ -656,7 +656,8 @@ const BOOST_NAMES: Record<string, string> = { atk: 'Atk', def: 'Def', spa: 'SpA'
 
 const EFFECT_LABELS: [number, string, string][] = [
 	[4, '4×', 'Extremely effective'], [2, '2×', 'Super effective'], [1, '1×', 'Effective'],
-	[0.5, '½×', 'Not very effective'], [0.25, '¼×', 'Mostly ineffective'],
+	// Decimals, not ½ and ¼: the fraction glyphs are too small to read in the pixel font.
+	[0.5, '0.5×', 'Not very effective'], [0.25, '0.25×', 'Mostly ineffective'],
 ];
 
 function Effectiveness({ hint }: { hint: TargetHint }) {
