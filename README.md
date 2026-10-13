@@ -54,12 +54,19 @@ Every set and team is checked against the Reg M-C validator (`npm run validate-t
 
 ## Hard Mode
 
-Winning the daily battle unlocks Hard Mode. You pilot the day's themed opponent team against
+Finishing the daily battle, win or lose, unlocks Hard Mode. You pilot the day's themed opponent team against
 one of 16 competitive teams built on the cores winning Regulation M-C (`src/data/meta-teams.ts`).
 Everyone gets the same meta team on a given day. It's chosen so it's favoured on paper but
 doesn't overwhelm the themed team, and the weekly calibration checks it by simulation too. If even
 the best pairing is lopsided, that day's AI plays a little looser so it stays winnable. Hard Mode
 has its own progress, stats and share text ("Daily VGC #N (Hard Mode)").
+
+## Playing again
+
+Only the first try at each battle counts. After that, the daily battle and Hard Mode can each
+be replayed as often as you like from their results screens ("Play again"). A replay has its
+own saved progress, a "(Replay)" share text and no effect on stats, streaks, the archive
+calendar or the community stats.
 
 ## Archive
 
@@ -140,6 +147,7 @@ npm run calibrate -- --upcoming 14      # simulate and pin the next 14 puzzles' 
 node scripts/e2e.mjs http://localhost:4173/ [screenshotDir] [--mobile] [--reload]   # browser test (after `npm run preview`)
 node scripts/e2e-archive.mjs http://localhost:4173/ [screenshotDir] [--mobile]      # archive flow, with a faked clock
 node scripts/e2e-community.mjs http://localhost:4173/ [screenshotDir] [--mobile]    # community recap (needs a local recorder)
+node scripts/e2e-replay.mjs http://localhost:4173/ [screenshotDir] [--mobile]       # replays and Hard Mode after a loss, with a faked clock
 ```
 
 ## Changing things

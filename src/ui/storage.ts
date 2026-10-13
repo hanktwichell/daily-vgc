@@ -84,7 +84,7 @@ export function recordResult(record: GameRecord, mode: Mode = 'normal'): Stats {
 
 const archiveKey = (number: number, mode: Mode) => `dailyvgc:archive-progress:${number}${mode === 'hard' ? '-hard' : ''}`;
 
-/** Saved progress for a puzzle: today's battle, or a past one played from the archive. */
+/** Saved progress for a puzzle: today's battle, or (`archive`) a replay of it or of a past one from the archive. */
 export function loadProgress(number: number, mode: Mode = 'normal', archive = false): Progress | null {
 	const p = read<Progress>(archive ? archiveKey(number, mode) : key(PROGRESS_KEY, mode));
 	return p && p.number === number ? p : null;
@@ -118,9 +118,9 @@ export function recordArchiveResult(record: GameRecord, mode: Mode) {
 	write(ARCHIVE_RESULTS_KEY, results);
 }
 
-/** Hard mode for a puzzle unlocks once its daily battle is won, on the day or in the archive. */
-export function dailyWon(number: number): boolean {
-	return !!loadStats('normal').history[number]?.won || !!archiveResult(loadArchiveResults(), number, 'normal')?.won;
+/** Hard mode for a puzzle unlocks once its daily battle has been played, win or lose, on the day or in the archive. */
+export function dailyPlayed(number: number): boolean {
+	return !!loadStats('normal').history[number] || !!archiveResult(loadArchiveResults(), number, 'normal');
 }
 
 const SETTINGS_KEY = 'dailyvgc:settings';
