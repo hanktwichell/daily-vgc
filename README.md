@@ -78,6 +78,13 @@ and never touch the main stats or streak. In the calendar, gold with a crown mea
 green means won from the archive, white means not played yet, and grey marks the puzzle being
 played now.
 
+### Practice battles
+
+The archive also holds five practice battles, tagged **P1** to **P5** instead of a puzzle number.
+They are fixed matchups outside the daily rotation (`src/data/practice.ts`): a themed opponent
+with one Mega, and a set team for you built around Tailwind, sun, Trick Room, rain or sand. They
+are always available, have no Hard Mode, and count toward nothing but the archive's own results.
+
 ## Community stats
 
 Each battle played on its own day (daily and Hard Mode, replays included, but not archive games) is reported
@@ -160,6 +167,8 @@ node scripts/e2e-replay.mjs http://localhost:4173/ [screenshotDir] [--mobile]   
   new species, run `npm run gen:sprites`.
 - **Add an opponent team:** add an entry to `src/data/opponents.ts` with exactly one Mega. Its
   `players` is the trainer's class, singular and plural, for the footer's player count.
+- **Add a practice battle:** append to `PRACTICE_SETS` in `src/data/practice.ts` (the next one
+  becomes P6). Appending never changes an existing battle's number or a day's puzzle.
 - **Update the battle engine** (new regulation, bug fixes):
   `git clone https://github.com/smogon/pokemon-showdown`, then
   `node scripts/vendor-ps.mjs ../pokemon-showdown`, update `FORMAT_ID` in `src/engine/ps.ts`

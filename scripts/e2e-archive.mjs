@@ -1,5 +1,6 @@
 // Archive smoke test: fakes the clock to a later day, seeds some history, opens the calendar,
-// plays a past puzzle to the end and checks it lands in the archive, not the main stats.
+// checks the practice battles, then plays a past puzzle to the end and checks it lands in the
+// archive, not the main stats.
 // Usage: node scripts/e2e-archive.mjs [url] [shotsDir] [--mobile]
 import { chromium, devices } from 'playwright';
 
@@ -31,11 +32,24 @@ if (!(await page.textContent('.puzzle-no')).includes('#3')) fail('expected puzzl
 await page.click('button[aria-label="Statistics"]');
 await page.click('.archive-btn');
 await page.waitForSelector('.cal-grid');
-const boxes = await page.$$eval('.cal-box', els => els.map(e => e.className));
+const boxes = await page.$$eval('.cal-grid .cal-box', els => els.map(e => e.className));
 console.log('boxes', boxes);
 if (boxes.length !== 3 || !boxes[0].includes('gold') || !boxes[1].includes('lost') || !boxes[2].includes('new')) fail('unexpected box states');
 await shot('a1-calendar');
-await page.click('.cal-box:nth-child(3)');
+// Practice battles: five of them, tagged P1-P5, with no hard mode. Open one and come back.
+const practice = await page.$$eval('.practice-grid .cal-box .cal-num', els => els.map(e => e.textContent));
+if (practice.join() !== 'P1,P2,P3,P4,P5') fail(`practice boxes: ${practice}`);
+await page.click('.practice-grid .cal-box:nth-child(2)');
+if ((await page.$$('.cal-detail .btn')).length !== 1) fail('a practice battle should offer one battle and no hard mode');
+await page.click('.cal-detail .btn.primary');
+await page.waitForSelector('.mon-card', { timeout: 30000 });
+const practiceTag = await page.textContent('.title');
+if (!practiceTag.includes('P2') || !practiceTag.includes('PRACTICE')) fail(`practice header: ${practiceTag}`);
+if (!(await page.textContent('.foe-panel')).includes('Luchador Rey')) fail('practice battle P2 has the wrong opponent');
+await shot('a1b-practice');
+await page.click('button[aria-label="Archive calendar"]');
+await page.waitForSelector('.cal-grid');
+await page.click('.cal-grid .cal-box:nth-child(3)');
 await shot('a2-detail');
 await page.click('.cal-detail .btn.primary');
 await page.waitForSelector('.mon-card', { timeout: 30000 });
@@ -48,7 +62,7 @@ await page.click('.preview-footer .btn.primary');
 await page.waitForSelector('.top-screen', { timeout: 10000 });
 await page.click('button[aria-label="Archive calendar"]');
 await page.waitForSelector('.cal-grid');
-const cur = await page.$$eval('.cal-box', els => els.map(e => e.className));
+const cur = await page.$$eval('.cal-grid .cal-box', els => els.map(e => e.className));
 if (!cur[2].includes('current')) fail(`current box not grey: ${cur[2]}`);
 await shot('a3-calendar-current');
 await page.click('.modal .close');

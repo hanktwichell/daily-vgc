@@ -123,6 +123,35 @@ await test('hard mode unlocks once the daily battle has been played, win or lose
 	delete (globalThis as any).localStorage;
 });
 
+await test('practice battles: fixed teams, their own numbers and labels', async () => {
+	const { generatePuzzle } = await import('../src/data/daily');
+	const { PRACTICE_SETS, practiceNumbers, practiceSet, practiceDate, puzzleLabel, isPractice } = await import('../src/data/practice');
+	const { shareText } = await import('../src/ui/share');
+	assert.deepEqual(practiceNumbers(), [-1, -2, -3, -4, -5]);
+	assert.deepEqual([puzzleLabel(-1), puzzleLabel(-5), puzzleLabel(0), puzzleLabel(12)], ['P1', 'P5', '#0', '#12']);
+	assert.ok(isPractice(-3) && !isPractice(0));
+	assert.equal(practiceSet(0), undefined);
+	assert.equal(practiceSet(-6), undefined);
+	for (const n of practiceNumbers()) {
+		const set = practiceSet(n)!;
+		// Asking for hard mode still gives the practice battle: it has no hard mode.
+		for (const mode of ['normal', 'hard'] as const) {
+			const p = generatePuzzle(practiceDate(n), mode);
+			assert.equal(p.number, n);
+			assert.equal(p.mode, 'normal');
+			assert.equal(p.opponent.trainer, set.trainer);
+			assert.deepEqual(p.playerIds, set.playerIds);
+			assert.equal(p.playerTeam.length, 6);
+			assert.equal(p.opponentTeam.length, 6);
+		}
+	}
+	assert.equal(new Set(PRACTICE_SETS.map(p => p.id)).size, PRACTICE_SETS.length);
+	assert.throws(() => generatePuzzle('practice-9', 'normal'));
+	assert.equal(shareText({ number: -2, won: true, alive: [true, true, true, false], turns: 7 }, 3, false, 'Practice').split('\n')[0], 'Daily VGC P2 (Practice)');
+	// A day's puzzle is untouched by the practice battles.
+	assert.equal(generatePuzzle(dateForPuzzleNumber(0), 'normal').opponent.trainer, 'Pâtissière Coco');
+});
+
 await test('stats: results graph buckets', async () => {
 	const { bucketFor, resultDistribution } = await import('../src/ui/StatsSummary');
 	const rec = (number: number, won: boolean, left: number) => ({ number, won, alive: [0, 1, 2, 3].map(i => i < left), turns: 10 });
