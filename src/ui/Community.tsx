@@ -53,7 +53,7 @@ function ModeRecap({ m }: { m: ModeStats }) {
 				<span>won · {m.played.toLocaleString()} {m.played === 1 ? 'battle' : 'battles'}</span>
 			</div>
 
-			<h3 class="dist-title">Pokémon left at the end</h3>
+			<h3 class="dist-title">Pokémon remaining</h3>
 			<div class="dist" role="list">
 				{RESULT_LABELS.map((label, i) => (
 					<div key={label} class="dist-row" role="listitem" aria-label={`${label}: ${pct(m.results[i], m.played)}%`}>
