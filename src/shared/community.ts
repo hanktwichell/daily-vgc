@@ -43,6 +43,12 @@ export interface CommunityStats {
 	modes: Partial<Record<CommunityMode, ModeStats>>;
 }
 
+/** How many players have finished a battle on the current puzzle so far. */
+export interface PlayerCount {
+	puzzle: number;
+	players: number;
+}
+
 const NAME = /^[\p{L}\p{N} .:'’%-]{1,40}$/u;
 
 /** Checks a submission's shape; returns the cleaned submission or the reason it was rejected. */

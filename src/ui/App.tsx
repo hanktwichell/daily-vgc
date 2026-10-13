@@ -7,7 +7,7 @@ import { Results, type HardModeLink } from './Results';
 import { Modal, Countdown } from './components';
 import { StatsSummary } from './StatsSummary';
 import { ArchiveCalendar, CalendarIcon, type ArchiveSelection } from './Archive';
-import { CommunityRecap } from './Community';
+import { CommunityRecap, PlayerCount } from './Community';
 import { recorderEnabled, fetchCommunityStats, hasData, submitResult } from './community';
 import {
 	loadProgress, saveProgress, loadStats, recordResult, currentStreak, loadSettings, saveSettings,
@@ -49,6 +49,8 @@ export function App() {
 	}, [archive, mode]);
 	// Bumped whenever a result is recorded, so the stats modal re-reads storage.
 	const [statsVersion, setStatsVersion] = useState(0);
+	// Bumped once a result has reached the recorder, so the player count includes it.
+	const [reported, setReported] = useState(0);
 	const phaseRef = useRef<Phase>('loading');
 
 	// Reload at midnight Eastern so the next puzzle appears without a manual refresh,
@@ -106,12 +108,14 @@ export function App() {
 					settings={settings} onSettings={updateSettings}
 					onPhase={p => { phaseRef.current = p; }}
 					onRecorded={() => setStatsVersion(v => v + 1)}
+					onReported={() => setReported(v => v + 1)}
 					onSwitchMode={m => { setMode(m); window.scrollTo(0, 0); }}
 					onCalendar={() => setModal('calendar')}
 					onReplay={() => { if (archive !== null) clearArchiveProgress(archive, mode); setReplay(r => r + 1); window.scrollTo(0, 0); }} />
 			</main>
 
 			<footer class="site-footer">
+				{recorderEnabled() && <PlayerCount puzzle={number} refresh={reported} />}
 				<p>Pokémon Champions Reg M-C Format · Created by <a href="https://x.com/FourZeroDesigns" target="_blank" rel="noopener">Hank Twichell</a></p>
 				<p class="muted">Fan-made and not affiliated with Nintendo, Game Freak, The Pokémon Company or Creatures.
 					Battle engine: <a href="https://github.com/smogon/pokemon-showdown" target="_blank" rel="noopener">Pokémon Showdown</a>.
@@ -155,11 +159,13 @@ interface GameProps {
 	onSettings: (s: Settings) => void;
 	onPhase: (p: Phase) => void;
 	onRecorded: () => void;
+	/** A day-of result has been sent to the recorder. */
+	onReported: () => void;
 	onSwitchMode: (m: Mode) => void;
 }
 
 /** One playthrough (the daily battle or hard mode), with its own battle worker and saved progress. */
-function Game({ mode, archive, date, number, settings, onSettings, onPhase, onRecorded, onSwitchMode, onCalendar, onReplay }: GameProps) {
+function Game({ mode, archive, date, number, settings, onSettings, onPhase, onRecorded, onReported, onSwitchMode, onCalendar, onReplay }: GameProps) {
 	const [phase, setPhase] = useState<Phase>('loading');
 	const [puzzle, setPuzzle] = useState<PuzzleView | null>(null);
 	const [updates, setUpdates] = useState<BattleUpdate[]>([]);
@@ -230,7 +236,7 @@ function Game({ mode, archive, date, number, settings, onSettings, onPhase, onRe
 						submitResult({
 							puzzle: number, mode, won: result.won, alive: result.won ? result.alive.filter(Boolean).length : 0,
 							turns: result.turns, picks: prev.order, team: view.player.map(p => p.species),
-						});
+						}).then(onReported);
 					}
 				}
 				setRecord(result);
