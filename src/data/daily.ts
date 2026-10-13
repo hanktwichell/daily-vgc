@@ -2,13 +2,14 @@
 // player gets the same teams; battle RNG and AI choices are not (see engine/).
 import { Dex, FORMAT_ID, type PokemonSet } from '../engine/ps';
 import { LIBRARY, type LibrarySet } from './library';
-import { OPPONENT_TEAMS, type OpponentTeam } from './opponents';
-import { META_TEAMS } from './meta-teams';
+import { opponentForPuzzle, type OpponentTeam } from './opponents';
+import { META_TEAMS, type MetaTeam } from './meta-teams';
 import { buildTeam } from './team-builder';
 import { SeededRNG } from './rng';
 import { matchupScore } from '../engine/matchup';
 import CALIBRATED from './calibrated.json';
 
+export { opponentForPuzzle };
 export { LAUNCH_DATE, PUZZLE_TIME_ZONE, puzzleDateFor, puzzleNumberFor, dateForPuzzleNumber, msUntilNextPuzzle } from './calendar';
 import { puzzleNumberFor } from './calendar';
 
@@ -28,7 +29,8 @@ export interface DailyPuzzle {
 	mode: Mode;
 	date: string;
 	number: number;
-	opponent: OpponentTeam;
+	/** The day's themed team, or a meta team in hard mode. */
+	opponent: OpponentTeam | MetaTeam;
 	opponentTeam: PokemonSet[];
 	playerIds: string[];
 	playerTeam: PokemonSet[];
@@ -192,13 +194,6 @@ export function generatePlayerTeam(rng: SeededRNG, exclude: Set<number>, archety
 	return { archetype, ids: team.slice(0, 6).map(l => l.id) };
 }
 
-export function opponentForPuzzle(n: number): OpponentTeam {
-	const count = OPPONENT_TEAMS.length;
-	const cycle = Math.floor(n / count);
-	const order = new SeededRNG(`daily-vgc:opponents:${cycle}`).shuffle(OPPONENT_TEAMS.map((_, i) => i));
-	return OPPONENT_TEAMS[order[((n % count) + count) % count]];
-}
-
 /**
  * How much the player's team is favoured on paper. Small, so the battle is a real fight
  * against a strong AI; teams without a Mega get a bigger edge.
@@ -262,7 +257,7 @@ export function generateDaily(date: string): DailyPuzzle {
 /** On paper the meta team should be favoured, but not overwhelmingly. */
 const HARD_TARGET = -0.35;
 
-export interface HardCandidate { meta: OpponentTeam; team: PokemonSet[]; score: number; diff: number }
+export interface HardCandidate { meta: MetaTeam; team: PokemonSet[]; score: number; diff: number }
 
 /** Meta teams ordered by how close their matchup against the themed team is to the target. */
 export function hardCandidates(themedTeam: PokemonSet[]): HardCandidate[] {
