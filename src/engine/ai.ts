@@ -417,11 +417,16 @@ function protectTempo(opt: JointOption, side: Side) {
 	return v;
 }
 
-function slotOptionsFor(an: Analyzer, side: Side, request: any, forced: boolean, perSlotLimit: number, keepProtect: boolean): SlotOption[][] {
+function slotOptionsFor(an: Analyzer, side: Side, request: any, forced: boolean, perSlotLimit: number, keepProtect: boolean,
+	drop?: (slot: number, o: SlotOption) => boolean): SlotOption[][] {
 	const result: SlotOption[][] = [];
 	const slots = side.active.length;
 	for (let slot = 0; slot < slots; slot++) {
-		const opts = enumerateSlot(an.battle, side, slot, request, forced);
+		let opts = enumerateSlot(an.battle, side, slot, request, forced);
+		if (drop && !forced) {
+			const keep = opts.filter(o => !drop(slot, o));
+			if (keep.length) opts = keep;
+		}
 		for (const o of opts) o.score = forced ? 0 : scoreSlot(an, side, slot, o);
 		opts.sort((x, y) => y.score - x.score);
 		let kept = opts.slice(0, perSlotLimit);
@@ -435,6 +440,97 @@ function slotOptionsFor(an: Analyzer, side: Side, request: any, forced: boolean,
 		result.push(kept);
 	}
 	return result;
+}
+
+/* ------------------------------------------------------------------------------------------ */
+/* 1v1 endgames: no moves the last foe is immune to                                             */
+/* ------------------------------------------------------------------------------------------ */
+
+const ABILITY_IGNORERS = ['moldbreaker', 'teravolt', 'turboblaze', 'myceliummight'];
+const PRIORITY_BLOCKERS = ['armortail', 'dazzling', 'queenlymajesty'];
+const STATUS_TYPE_IMMUNITY: Record<string, string[]> = { brn: ['Fire'], par: ['Electric'], psn: ['Poison', 'Steel'], tox: ['Poison', 'Steel'], frz: ['Ice'] };
+
+/** True when each side has exactly one Pokémon left. */
+export function isOneVsOne(battle: Battle, sideIndex: number) {
+	const left = (i: number) => battle.sides[i].pokemon.filter(p => !p.fainted).length;
+	return left(sideIndex) === 1 && left(1 - sideIndex) === 1;
+}
+
+/**
+ * Whether a move can't affect the target at all: a type immunity (after type-changing
+ * Abilities), an immunity or absorbing Ability, a status it can't get (or already has), a powder
+ * move into a Grass type, Prankster status into a Dark type, or priority into a priority blocker.
+ */
+export function hasNoEffect(battle: Battle, src: Pokemon, tgt: Pokemon, moveId: string): boolean {
+	try {
+		const move = battle.dex.getActiveMove(moveId) as any;
+		battle.singleEvent('ModifyType', move, null, src, tgt, move, move);
+		battle.runEvent('ModifyType', src, tgt, move, move);
+		// Abilities like Scrappy (ignore Ghost immunity) and Mold Breaker act here.
+		battle.runEvent('ModifyMove', src, tgt, move, move);
+		const status = move.category === 'Status';
+		const breaksAbilities = src.hasAbility(ABILITY_IGNORERS) || move.ignoreAbility;
+		const ability = breaksAbilities ? '' : tgt.getAbility().id;
+		if (move.flags.powder && (tgt.hasType('Grass') || ability === 'overcoat' || tgt.hasItem('safetygoggles'))) return true;
+		if (move.flags.sound && ability === 'soundproof') return true;
+		if (move.flags.bullet && ability === 'bulletproof') return true;
+		if (move.flags.wind && ability === 'windrider') return true;
+		if (move.priority > 0 || (status && src.hasAbility('prankster'))) {
+			if (PRIORITY_BLOCKERS.includes(ability)) return true;
+			if (battle.field.isTerrain('psychicterrain') && tgt.isGrounded() && move.priority > 0) return true;
+		}
+		if (status) {
+			if (src.hasAbility('prankster') && tgt.hasType('Dark')) return true;
+			if (ability === 'goodasgold') return true;
+			if (move.ignoreImmunity === false && !tgt.runImmunity(move)) return true; // Thunder Wave into Ground
+			if (move.status) {
+				if (tgt.status) return true;
+				if (STATUS_TYPE_IMMUNITY[move.status]?.some(t => tgt.hasType(t))) return true;
+				if (move.status === 'slp' && ['insomnia', 'vitalspirit', 'sweetveil'].includes(ability)) return true;
+			}
+			return false;
+		}
+		if (move.ignoreImmunity === undefined) move.ignoreImmunity = false;
+		if (move.type === 'Ground' && breaksAbilities && move.ignoreImmunity !== true) {
+			// The engine's grounding check would still count Levitate.
+			const airborne = !battle.field.getPseudoWeather('gravity') && (!battle.dex.getImmunity('Ground', tgt) ||
+				tgt.hasItem('airballoon') || !!tgt.volatiles['magnetrise'] || !!tgt.volatiles['telekinesis']);
+			if (airborne) return true;
+		} else if (!tgt.runImmunity(move)) {
+			return true;
+		}
+		if (ABSORB[ability]?.includes(move.type)) return true;
+		return false;
+	} catch {
+		return false;
+	}
+}
+
+/**
+ * In a 1v1, a filter that drops this side's moves the foe is immune to. Options that Mega
+ * Evolve are judged after Mega Evolution, since that can change the user's type and Ability.
+ */
+function immuneMoveFilter(json: string, an: Analyzer, side: Side): ((slot: number, o: SlotOption) => boolean) | undefined {
+	if (!isOneVsOne(an.battle, side.n)) return undefined;
+	let megaAn: Analyzer | null = null;
+	return (slot, o) => {
+		if (o.kind !== 'move' || !o.moveId || o.moveId === 'struggle') return false;
+		const move = an.battle.dex.moves.get(o.moveId);
+		const atFoe = (o.target ?? 0) > 0 || ['allAdjacentFoes', 'allAdjacent', 'randomNormal', 'scripted'].includes(move.target);
+		if (!atFoe) return false;
+		let a = an;
+		if (o.choice.endsWith(' mega')) {
+			if (!megaAn) {
+				megaAn = new Analyzer(json);
+				const p = megaAn.battle.sides[side.n].active[slot];
+				if (p?.canMegaEvo) p.formeChange(p.canMegaEvo as string, p.getItem(), true);
+			}
+			a = megaAn;
+		}
+		const me = a.battle.sides[side.n].active[slot];
+		const foe = a.battle.sides[side.n].foe.active.find(p => p && !p.fainted);
+		return !!me && !!foe && hasNoEffect(a.battle, me, foe, o.moveId);
+	};
 }
 
 /* ------------------------------------------------------------------------------------------ */
@@ -797,7 +893,8 @@ export function chooseAction(json: string, sideIndex: number, rng: RNG = Math.ra
 	const forced = !!request.forceSwitch;
 	if (forced) return chooseForcedSwitch(an, side, request, rng);
 
-	const perSlot = slotOptionsFor(an, side, request, false, 5, true);
+	// In a 1v1, never pick a move the foe is immune to unless nothing else is left.
+	const perSlot = slotOptionsFor(an, side, request, false, 5, true, immuneMoveFilter(json, an, side));
 	dropFishingProtects(json, side, perSlot);
 	const mine = jointOptions(an, side, perSlot, config.ownJoint, rng);
 	if (mine.length === 1) return mine[0].choice;
