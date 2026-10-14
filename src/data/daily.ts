@@ -6,6 +6,7 @@ import { opponentForPuzzle, type OpponentTeam } from './opponents';
 import { META_TEAMS, type MetaTeam } from './meta-teams';
 import { practiceSet } from './practice';
 import { buildTeam } from './team-builder';
+import { breakSpeedTies } from './speed-ties';
 import { SeededRNG } from './rng';
 import { matchupScore } from '../engine/matchup';
 import CALIBRATED from './calibrated.json';
@@ -237,7 +238,8 @@ export function generateDaily(date: string): DailyPuzzle {
 	const fixed = calibrated[date];
 	if (fixed?.ids && fixed.archetype && fixed.ids.every(id => LIBRARY.some(l => l.id === id))) {
 		return {
-			mode: 'normal', date, number, opponent, opponentTeam, playerIds: fixed.ids, playerTeam: buildTeam(fixed.ids),
+			mode: 'normal', date, number, opponent, opponentTeam, playerIds: fixed.ids,
+			playerTeam: breakSpeedTies(buildTeam(fixed.ids), opponentTeam),
 			archetype: fixed.archetype, label: ARCHETYPE_NAMES[fixed.archetype],
 		};
 	}
@@ -245,7 +247,7 @@ export function generateDaily(date: string): DailyPuzzle {
 	return {
 		mode: 'normal', date, number, opponent, opponentTeam,
 		playerIds: best.ids,
-		playerTeam: best.team,
+		playerTeam: breakSpeedTies(best.team, opponentTeam),
 		archetype: best.archetype,
 		label: ARCHETYPE_NAMES[best.archetype],
 	};
@@ -280,9 +282,10 @@ export function generateHard(date: string): DailyPuzzle {
 		const top = hardCandidates(playerTeam).slice(0, 3);
 		meta = new SeededRNG(`daily-vgc:hard:${date}`).pick(top).meta;
 	}
+	const opponentTeam = buildTeam(meta.sets);
 	return {
-		mode: 'hard', date, number, opponent: meta, opponentTeam: buildTeam(meta.sets),
-		playerIds: themed.sets, playerTeam, archetype: 'balance',
+		mode: 'hard', date, number, opponent: meta, opponentTeam,
+		playerIds: themed.sets, playerTeam: breakSpeedTies(playerTeam, opponentTeam), archetype: 'balance',
 		label: `${themed.name} (${themed.trainer}'s team)`,
 		relaxedAi: !!(pinned && meta.id === pinned && calibrated[date]?.hardRelaxed),
 	};
@@ -293,9 +296,10 @@ export function generatePractice(date: string): DailyPuzzle {
 	const number = -Number(date.slice(PRACTICE_DATE.length));
 	const practice = practiceSet(number);
 	if (!practice) throw new Error(`Unknown practice battle: ${date}`);
+	const opponentTeam = buildTeam(practice.sets);
 	return {
-		mode: 'normal', date, number, opponent: practice, opponentTeam: buildTeam(practice.sets),
-		playerIds: practice.playerIds, playerTeam: buildTeam(practice.playerIds),
+		mode: 'normal', date, number, opponent: practice, opponentTeam,
+		playerIds: practice.playerIds, playerTeam: breakSpeedTies(buildTeam(practice.playerIds), opponentTeam),
 		archetype: practice.archetype, label: ARCHETYPE_NAMES[practice.archetype],
 	};
 }
