@@ -463,6 +463,8 @@ function Controls({ request, scene, puzzle, onSubmit, onPrompt }: ControlsProps)
 	const [view, setView] = useState<'main' | 'fight' | 'target' | 'switch'>(forced ? 'switch' : 'main');
 	const [mega, setMega] = useState(false);
 	const [pendingMove, setPendingMove] = useState<number | null>(null);
+	// Spread and field moves: pressing any affected Pokémon presses them all (they're one choice).
+	const [groupDown, setGroupDown] = useState(false);
 
 	function slotIsLive(i: number) {
 		if (forced) return !!forced[i];
@@ -565,10 +567,15 @@ function Controls({ request, scene, puzzle, onSubmit, onPrompt }: ControlsProps)
 		const hints: Record<number, TargetHint> = hintSet?.[pendingMove] ?? {};
 		const use = (loc?: number) => commit(`move ${pendingMove + 1}${loc !== undefined ? ` ${loc}` : ''}${mega ? ' mega' : ''}`);
 		const hitsAlly = move.target === 'allAdjacent' && plan.slots.some(t => t.side === 'p1' && t.affected && t.loc !== -(slot + 1));
+		// Spread moves hit every opponent (or every Pokémon) at once, so all of them are one button.
+		const spread = move.target === 'allAdjacentFoes' || move.target === 'allAdjacent';
+		const foesHit = plan.slots.filter(t => t.side === 'p2' && t.affected).length;
+		const spreadLabel = move.target === 'allAdjacent' ? 'all Pokémon' : foesHit > 1 ? 'both opponents' : 'the opponent';
+		const release = () => setGroupDown(false);
 		return (
 			<div class="controls target-view">
 				<div class="controls-head">
-					<span>{plan.pick ? `Use ${move.move} on...` : hitsAlly ? `${move.move} will hit your partner too!` : `Use ${move.move}?`}</span>
+					<span>{plan.pick ? `Use ${move.move} on...` : hitsAlly ? `${move.move} will hit your partner too!` : spread ? `Use ${move.move} on ${spreadLabel}?` : `Use ${move.move}?`}</span>
 				</div>
 				{info && <MoveCard move={info} pp={move.pp} maxpp={move.maxpp} />}
 				<div class="target-grid">
@@ -576,9 +583,15 @@ function Controls({ request, scene, puzzle, onSubmit, onPrompt }: ControlsProps)
 						const hint = info?.category !== 'Status' && t.affected ? hints[t.loc] : undefined;
 						const ally = t.side === 'p1' && t.loc !== -(slot + 1);
 						return (
-							<button key={t.loc} class={`target-btn ${t.side}${t.affected ? ' affected' : ''}${hitsAlly && ally && t.affected ? ' warn' : ''}`}
+							<button key={t.loc}
+								class={`target-btn ${t.side}${t.affected ? ' affected' : ''}${hitsAlly && ally && t.affected ? ' warn' : ''}${!plan.pick && groupDown && t.affected ? ' group-down' : ''}`}
 								disabled={!t.affected}
-								onClick={() => use(plan.pick ? t.loc : undefined)}>
+								aria-label={!plan.pick && spread ? `Use ${move.move} on ${spreadLabel}` : undefined}
+								onPointerDown={plan.pick ? undefined : () => setGroupDown(true)}
+								onPointerUp={plan.pick ? undefined : release}
+								onPointerLeave={plan.pick ? undefined : release}
+								onPointerCancel={plan.pick ? undefined : release}
+								onClick={() => { release(); use(plan.pick ? t.loc : undefined); }}>
 								{t.mon && <Sprite speciesId={t.mon.speciesId} back={t.side === 'p1'} />}
 								<span class="tg-text">
 									<span class="tg-name">{t.label}</span>
@@ -588,7 +601,7 @@ function Controls({ request, scene, puzzle, onSubmit, onPrompt }: ControlsProps)
 						);
 					})}
 				</div>
-				{!plan.pick && <button class="btn primary confirm-move" onClick={() => use()}>Use {move.move}</button>}
+				{!plan.pick && !spread && <button class="btn primary confirm-move" onClick={() => use()}>Use {move.move}</button>}
 				<div class="controls-foot">
 					<button class="btn ghost" onClick={() => { setPendingMove(null); setView('fight'); }}>Change move</button>
 					<button class="btn ghost" onClick={() => { setPendingMove(null); setView('main'); }}>Cancel</button>
