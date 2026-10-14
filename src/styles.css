@@ -520,7 +520,7 @@ main { flex: 1; }
 	transition: transform 0.06s, box-shadow 0.06s;
 }
 .fight-btn:active, .pkmn-btn:active:not(:disabled), .back-btn:active, .move-btn:active:not(:disabled),
-.target-btn:active:not(:disabled), .switch-btn:active {
+.target-btn:active:not(:disabled), .target-btn.group-down:not(:disabled), .switch-btn:active {
 	transform: translateY(4px);
 	box-shadow: var(--rim), 0 1px 0 var(--lip), 0 2px 4px rgba(0, 0, 0, 0.28);
 }
