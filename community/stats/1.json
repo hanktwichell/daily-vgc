@@ -1,0 +1,81 @@
+{
+	"puzzle": 1,
+	"date": "2026-10-13",
+	"final": true,
+	"modes": {
+		"normal": {
+			"played": 107,
+			"won": 42,
+			"results": [
+				3,
+				7,
+				21,
+				11,
+				65
+			],
+			"team": [
+				"Skarmory",
+				"Krookodile",
+				"Wigglytuff",
+				"Vanilluxe",
+				"Palafin",
+				"Espeon"
+			],
+			"picks": [
+				78,
+				103,
+				61,
+				56,
+				100,
+				30
+			],
+			"best": {
+				"picks": [
+					0,
+					1,
+					3,
+					4
+				],
+				"played": 31,
+				"won": 19
+			}
+		},
+		"hard": {
+			"played": 44,
+			"won": 19,
+			"results": [
+				3,
+				7,
+				4,
+				5,
+				25
+			],
+			"team": [
+				"Hatterene",
+				"Typhlosion-Hisui",
+				"Camerupt",
+				"Torkoal",
+				"Garganacl",
+				"Incineroar"
+			],
+			"picks": [
+				43,
+				9,
+				35,
+				44,
+				7,
+				38
+			],
+			"best": {
+				"picks": [
+					0,
+					1,
+					3,
+					5
+				],
+				"played": 4,
+				"won": 3
+			}
+		}
+	}
+}
