@@ -15,6 +15,8 @@ let puzzle: DailyPuzzle | null = null;
 let runner: BattleRunner | null = null;
 let pendingAI: string | null = null;
 let playerOrder: number[] = [];
+/** The player gave up: the battle counts as a loss with none of their four left standing. */
+let resigned = false;
 
 /** Hard-mode days flagged by calibration use a slightly looser AI so they stay winnable. */
 function aiConfig(): AIConfig {
@@ -70,6 +72,7 @@ function puzzleView(p: DailyPuzzle): PuzzleView {
 
 function aliveFlags(): boolean[] {
 	if (!runner || !puzzle) return [];
+	if (resigned) return playerOrder.map(() => false);
 	const side = runner.battle.sides[0];
 	return playerOrder.map(teamIndex => {
 		const species = puzzle!.playerTeam[teamIndex]?.species;
@@ -144,6 +147,7 @@ ctx.onmessage = (e: MessageEvent<ToWorker>) => {
 		case 'start': {
 			if (!puzzle) throw new Error('No puzzle');
 			playerOrder = msg.order.slice(0, 4);
+			resigned = false;
 			runner = new BattleRunner(
 				{ name: 'You', team: puzzle.playerTeam },
 				{ name: puzzle.opponent.trainer, team: puzzle.opponentTeam },
@@ -172,6 +176,15 @@ ctx.onmessage = (e: MessageEvent<ToWorker>) => {
 			advanceForcedOnly();
 			sendUpdate();
 			setTimeout(() => { advance(); if (!runner?.needsChoice(0) && !runner?.ended) sendUpdate(); }, 0);
+			break;
+		}
+		case 'resign': {
+			if (!runner || runner.ended) break;
+			resigned = true;
+			pendingAI = null;
+			runner.battle.add('message', 'You resigned.');
+			runner.battle.lose('p1');
+			sendUpdate();
 			break;
 		}
 		case 'resume': {

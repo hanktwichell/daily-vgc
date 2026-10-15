@@ -511,7 +511,7 @@ main { flex: 1; }
 
 /* Battle buttons share one look: a coloured face with a light rim and a soft shine on its upper
    half, on a darker lip it sinks into when pressed. Each one sets --face, --edge and --lip. */
-.fight-btn, .pkmn-btn, .back-btn, .move-btn, .target-btn, .switch-btn {
+.fight-btn, .pkmn-btn, .back-btn, .resign-btn, .move-btn, .target-btn, .switch-btn {
 	--shine: linear-gradient(rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.06) 48%, rgba(255, 255, 255, 0) 52%);
 	--rim: inset 0 0 0 2px rgba(255, 255, 255, 0.28), inset 0 -4px 0 rgba(0, 0, 0, 0.14);
 	border: 3px solid var(--edge);
@@ -519,7 +519,7 @@ main { flex: 1; }
 	box-shadow: var(--rim), 0 5px 0 var(--lip), 0 8px 10px rgba(0, 0, 0, 0.28);
 	transition: transform 0.06s, box-shadow 0.06s;
 }
-.fight-btn:active, .pkmn-btn:active:not(:disabled), .back-btn:active, .move-btn:active:not(:disabled),
+.fight-btn:active, .pkmn-btn:active:not(:disabled), .back-btn:active, .resign-btn:active, .move-btn:active:not(:disabled),
 .target-btn:active:not(:disabled), .target-btn.group-down:not(:disabled), .switch-btn:active {
 	transform: translateY(4px);
 	box-shadow: var(--rim), 0 1px 0 var(--lip), 0 2px 4px rgba(0, 0, 0, 0.28);
@@ -549,7 +549,7 @@ main { flex: 1; }
 	text-shadow: none;
 }
 .menu-row { display: flex; gap: 12px; }
-.pkmn-btn, .back-btn {
+.pkmn-btn, .back-btn, .resign-btn {
 	flex: 1; min-height: 58px;
 	border-radius: 16px;
 	font-size: 20px; font-weight: 700; letter-spacing: 1px; color: #fff;
@@ -557,6 +557,7 @@ main { flex: 1; }
 }
 .pkmn-btn { --face: linear-gradient(#5fd35f, #2f9a35); --edge: #17561b; --lip: #0f3d12; text-shadow: 2px 2px 0 #17561b; }
 .back-btn { --face: linear-gradient(#6ea2f6, #2f62c8); --edge: #173a7c; --lip: #0f2856; flex: 0 0 34%; text-shadow: 2px 2px 0 #173a7c; }
+.resign-btn { --face: linear-gradient(#8c96a8, #5b6578); --edge: #2e3542; --lip: #1d222b; flex: 0 0 34%; text-shadow: 2px 2px 0 #2e3542; }
 /* A small Poké Ball beside POKéMON, and an arrow beside BACK. */
 .pkmn-btn::before {
 	content: ''; flex: none; width: 18px; height: 18px; border-radius: 50%;
@@ -875,3 +876,8 @@ main { flex: 1; }
 .best-mon span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .best-four p { margin: 8px 0 0; }
 .recap-play { width: 100%; margin-top: 16px; }
+
+/* Resign confirmation */
+.resign-confirm p { margin: 0 0 16px; text-align: center; }
+.resign-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.resign-actions .btn { flex: 1; min-width: 120px; }

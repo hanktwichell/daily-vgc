@@ -323,6 +323,7 @@ function Game({ mode, archive, replayToday, date, number, settings, onSettings, 
 					speed={settings.speed}
 					onToggleSpeed={() => onSettings({ ...settings, speed: settings.speed === 'fast' ? 'normal' : 'fast' })}
 					onChoose={choice => send({ type: 'choose', choice })}
+					onResign={() => send({ type: 'resign' })}
 					onFinished={() => setPhase('results')} />
 			)}
 			{phase === 'results' && record && (
