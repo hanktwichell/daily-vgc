@@ -60,6 +60,8 @@ export type ToWorker =
 	| { type: 'init'; date: string; mode: Mode }
 	| { type: 'start'; order: number[] }
 	| { type: 'choose'; choice: string }
+	/** The player gives up: the battle ends as a loss. */
+	| { type: 'resign' }
 	| { type: 'resume'; date: string; mode: Mode; battle: string };
 
 export type FromWorker =

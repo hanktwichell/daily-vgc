@@ -24,6 +24,8 @@ interface Props {
 	error: string;
 	speed: 'normal' | 'fast';
 	onChoose: (choice: string) => void;
+	/** Gives up the battle; it ends as a loss. */
+	onResign: () => void;
 	onFinished: () => void;
 	onToggleSpeed: () => void;
 }
@@ -51,6 +53,7 @@ export function BattleScreen(props: Props) {
 	const [info, setInfo] = useState<InfoTab | null>(null);
 	const [field, setField] = useState<FieldEffect[]>([]);
 	const [prompt, setPrompt] = useState('');
+	const [confirmResign, setConfirmResign] = useState(false);
 	const log = useRef<string[]>([]);
 	const consumed = useRef(0);
 	const skip = useRef<(() => void) | null>(null);
@@ -178,6 +181,14 @@ export function BattleScreen(props: Props) {
 			list.find(v => mon.speciesId.startsWith(v.speciesId) || toID(v.species).startsWith(toID(mon.name)));
 	};
 
+	const resign = () => {
+		setConfirmResign(false);
+		setRequest(null);
+		setWaiting(true);
+		setMessage('');
+		props.onResign();
+	};
+
 	const submit = (choice: string) => {
 		setRequest(null);
 		setWaiting(true);
@@ -210,7 +221,8 @@ export function BattleScreen(props: Props) {
 			<div class="ds-screen bottom-screen">
 				{showControls ? (
 					<Controls key={JSON.stringify(request.side?.pokemon?.map((p: any) => p.condition)) + s.turn + (request.forceSwitch ? 'f' : '')}
-						request={request} scene={s} puzzle={puzzle} onSubmit={submit} viewFor={viewFor} onPrompt={setPrompt} />
+						request={request} scene={s} puzzle={puzzle} onSubmit={submit} viewFor={viewFor} onPrompt={setPrompt}
+						onResign={() => setConfirmResign(true)} />
 				) : (
 					<div class="idle-panel">
 						<FieldInfo scene={s} />
@@ -219,6 +231,17 @@ export function BattleScreen(props: Props) {
 					</div>
 				)}
 			</div>
+			{confirmResign && (
+				<Modal title="Resign?" onClose={() => setConfirmResign(false)}>
+					<div class="resign-confirm">
+						<p>Are you sure you want to resign? The battle will count as a loss.</p>
+						<div class="resign-actions">
+							<button class="btn ghost" onClick={() => setConfirmResign(false)}>Keep battling</button>
+							<button class="btn primary" onClick={resign}>Resign</button>
+						</div>
+					</div>
+				</Modal>
+			)}
 			{infoMon && (
 				<Modal title={infoMon.species} onClose={() => setInfoMon(null)}>
 					<LiveInfo mon={infoMon} view={viewFor(infoMon)} />
@@ -451,9 +474,10 @@ interface ControlsProps {
 	onSubmit: (choice: string) => void;
 	viewFor: (m: FieldMon) => MonView | undefined;
 	onPrompt: (text: string) => void;
+	onResign: () => void;
 }
 
-function Controls({ request, scene, puzzle, onSubmit, onPrompt }: ControlsProps) {
+function Controls({ request, scene, puzzle, onSubmit, onPrompt, onResign }: ControlsProps) {
 	const moveInfo = useMemo(() => Object.fromEntries(puzzle.player.flatMap(m => m.moves.map(mv => [mv.id, mv]))), [puzzle]);
 	const forced: boolean[] | undefined = request.forceSwitch;
 	const slots = forced ? forced.length : (request.active?.length ?? 0);
@@ -659,7 +683,8 @@ function Controls({ request, scene, puzzle, onSubmit, onPrompt }: ControlsProps)
 			</button>
 			<div class="menu-row">
 				<button class="pkmn-btn" disabled={active?.trapped || !switchTargets.length} onClick={() => setView('switch')}>POKéMON</button>
-				{canGoBack && <button class="back-btn" onClick={back}>BACK</button>}
+				{canGoBack ? <button class="back-btn" onClick={back}>BACK</button>
+					: <button class="resign-btn" onClick={onResign}>RESIGN</button>}
 			</div>
 		</div>
 	);
