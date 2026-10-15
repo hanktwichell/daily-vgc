@@ -1,0 +1,81 @@
+{
+	"puzzle": 2,
+	"date": "2026-10-14",
+	"final": true,
+	"modes": {
+		"normal": {
+			"played": 31,
+			"won": 20,
+			"results": [
+				0,
+				6,
+				8,
+				6,
+				11
+			],
+			"team": [
+				"Politoed",
+				"Tauros-Paldea-Aqua",
+				"Primarina",
+				"Gengar",
+				"Umbreon",
+				"Perrserker"
+			],
+			"picks": [
+				26,
+				13,
+				31,
+				28,
+				15,
+				11
+			],
+			"best": {
+				"picks": [
+					0,
+					1,
+					2,
+					3
+				],
+				"played": 10,
+				"won": 8
+			}
+		},
+		"hard": {
+			"played": 13,
+			"won": 6,
+			"results": [
+				0,
+				0,
+				2,
+				4,
+				7
+			],
+			"team": [
+				"Dragonite",
+				"Gholdengo",
+				"Incineroar",
+				"Hydreigon",
+				"Whimsicott",
+				"Kommo-o"
+			],
+			"picks": [
+				11,
+				13,
+				11,
+				7,
+				4,
+				6
+			],
+			"best": {
+				"picks": [
+					0,
+					1,
+					2,
+					4
+				],
+				"played": 3,
+				"won": 1
+			}
+		}
+	}
+}
