@@ -1,0 +1,81 @@
+{
+	"puzzle": 3,
+	"date": "2026-10-15",
+	"final": true,
+	"modes": {
+		"normal": {
+			"played": 36,
+			"won": 6,
+			"results": [
+				0,
+				0,
+				3,
+				3,
+				30
+			],
+			"team": [
+				"Skarmory",
+				"Alakazam",
+				"Arcanine",
+				"Gliscor",
+				"Pikachu",
+				"Polteageist"
+			],
+			"picks": [
+				26,
+				26,
+				35,
+				18,
+				22,
+				17
+			],
+			"best": {
+				"picks": [
+					0,
+					2,
+					4,
+					5
+				],
+				"played": 8,
+				"won": 3
+			}
+		},
+		"hard": {
+			"played": 9,
+			"won": 3,
+			"results": [
+				0,
+				0,
+				1,
+				2,
+				6
+			],
+			"team": [
+				"Ninetales-Alola",
+				"Baxcalibur",
+				"Beartic",
+				"Froslass",
+				"Rotom-Heat",
+				"Scizor"
+			],
+			"picks": [
+				9,
+				9,
+				1,
+				5,
+				8,
+				4
+			],
+			"best": {
+				"picks": [
+					0,
+					1,
+					4,
+					5
+				],
+				"played": 3,
+				"won": 1
+			}
+		}
+	}
+}
