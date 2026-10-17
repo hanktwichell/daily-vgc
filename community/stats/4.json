@@ -1,0 +1,72 @@
+{
+	"puzzle": 4,
+	"date": "2026-10-16",
+	"final": true,
+	"modes": {
+		"normal": {
+			"played": 33,
+			"won": 3,
+			"results": [
+				0,
+				0,
+				1,
+				2,
+				30
+			],
+			"team": [
+				"Trevenant",
+				"Goodra-Hisui",
+				"Garganacl",
+				"Indeedee-F",
+				"Conkeldurr",
+				"Aromatisse"
+			],
+			"picks": [
+				19,
+				25,
+				13,
+				15,
+				33,
+				27
+			],
+			"best": {
+				"picks": [
+					1,
+					3,
+					4,
+					5
+				],
+				"played": 6,
+				"won": 1
+			}
+		},
+		"hard": {
+			"played": 3,
+			"won": 0,
+			"results": [
+				0,
+				0,
+				0,
+				0,
+				3
+			],
+			"team": [
+				"Grimmsnarl",
+				"Kangaskhan",
+				"Toxtricity",
+				"Maushold",
+				"Arcanine",
+				"Rotom-Frost"
+			],
+			"picks": [
+				1,
+				3,
+				2,
+				2,
+				2,
+				2
+			],
+			"best": null
+		}
+	}
+}
