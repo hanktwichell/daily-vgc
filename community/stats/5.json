@@ -1,0 +1,63 @@
+{
+	"puzzle": 5,
+	"date": "2026-10-17",
+	"final": true,
+	"modes": {
+		"normal": {
+			"played": 5,
+			"won": 2,
+			"results": [
+				0,
+				0,
+				1,
+				1,
+				3
+			],
+			"team": [
+				"Talonflame",
+				"Pawmot",
+				"Archaludon",
+				"Aegislash",
+				"Krookodile",
+				"Zoroark-Hisui"
+			],
+			"picks": [
+				5,
+				0,
+				4,
+				3,
+				5,
+				3
+			],
+			"best": null
+		},
+		"hard": {
+			"played": 1,
+			"won": 0,
+			"results": [
+				0,
+				0,
+				0,
+				0,
+				1
+			],
+			"team": [
+				"Hydrapple",
+				"Flapple",
+				"Venusaur",
+				"Farigiraf",
+				"Incineroar",
+				"Tinkaton"
+			],
+			"picks": [
+				0,
+				0,
+				1,
+				1,
+				1,
+				1
+			],
+			"best": null
+		}
+	}
+}
