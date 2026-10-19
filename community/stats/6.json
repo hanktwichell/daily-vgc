@@ -1,0 +1,63 @@
+{
+	"puzzle": 6,
+	"date": "2026-10-18",
+	"final": true,
+	"modes": {
+		"normal": {
+			"played": 3,
+			"won": 1,
+			"results": [
+				0,
+				0,
+				0,
+				1,
+				2
+			],
+			"team": [
+				"Pelipper",
+				"Sableye",
+				"Archaludon",
+				"Castform",
+				"Tauros-Paldea-Aqua",
+				"Gengar"
+			],
+			"picks": [
+				3,
+				2,
+				3,
+				0,
+				2,
+				2
+			],
+			"best": null
+		},
+		"hard": {
+			"played": 1,
+			"won": 0,
+			"results": [
+				0,
+				0,
+				0,
+				0,
+				1
+			],
+			"team": [
+				"Alakazam",
+				"Grimmsnarl",
+				"Zoroark-Hisui",
+				"Mr. Rime",
+				"Gholdengo",
+				"Arcanine"
+			],
+			"picks": [
+				1,
+				1,
+				1,
+				0,
+				0,
+				1
+			],
+			"best": null
+		}
+	}
+}
