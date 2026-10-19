@@ -178,5 +178,90 @@
 		],
 		"archetype": "snow",
 		"hard": "salamence-tailwind"
+	},
+	"2026-10-27": {
+		"ids": [
+			"tyranitar-mega",
+			"excadrill",
+			"sinistcha",
+			"froslass",
+			"thievul",
+			"kommo-o"
+		],
+		"archetype": "sand",
+		"hard": "lucario-z",
+		"hardRelaxed": true
+	},
+	"2026-10-28": {
+		"ids": [
+			"charizard-mega-y",
+			"roserade",
+			"tauros-paldea-blaze",
+			"dedenne",
+			"sinistcha",
+			"furfrou"
+		],
+		"archetype": "sun",
+		"hard": "gengar-trap"
+	},
+	"2026-10-29": {
+		"ids": [
+			"charizard-mega-y",
+			"tauros-paldea-blaze",
+			"venusaur",
+			"squawkabilly",
+			"meowstic-m",
+			"passimian"
+		],
+		"archetype": "sun",
+		"hard": "blastoise-rillaboom"
+	},
+	"2026-10-30": {
+		"ids": [
+			"talonflame",
+			"chimecho-mega",
+			"overqwil",
+			"wigglytuff",
+			"pikachu",
+			"dragonite"
+		],
+		"archetype": "tw",
+		"hard": "blastoise-rillaboom"
+	},
+	"2026-10-31": {
+		"ids": [
+			"pidgeot-mega",
+			"sableye",
+			"kommo-o",
+			"alcremie",
+			"corviknight",
+			"passimian"
+		],
+		"archetype": "tw",
+		"hard": "dragonite-balance"
+	},
+	"2026-11-01": {
+		"ids": [
+			"tyranitar-mega",
+			"excadrill",
+			"wigglytuff",
+			"vivillon",
+			"luxray",
+			"polteageist"
+		],
+		"archetype": "sand",
+		"hard": "lucario-z"
+	},
+	"2026-11-02": {
+		"ids": [
+			"vanilluxe",
+			"skarmory-mega",
+			"aurorus",
+			"baxcalibur",
+			"luxray",
+			"annihilape"
+		],
+		"archetype": "snow",
+		"hard": "tyranitar-sand"
 	}
 }
