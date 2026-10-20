@@ -1,0 +1,63 @@
+{
+	"puzzle": 7,
+	"date": "2026-10-19",
+	"final": true,
+	"modes": {
+		"normal": {
+			"played": 4,
+			"won": 2,
+			"results": [
+				0,
+				0,
+				2,
+				0,
+				2
+			],
+			"team": [
+				"Froslass",
+				"Glaceon",
+				"Vanilluxe",
+				"Gyarados",
+				"Corviknight",
+				"Gengar"
+			],
+			"picks": [
+				3,
+				3,
+				1,
+				2,
+				4,
+				3
+			],
+			"best": null
+		},
+		"hard": {
+			"played": 1,
+			"won": 0,
+			"results": [
+				0,
+				0,
+				0,
+				0,
+				1
+			],
+			"team": [
+				"Clefable",
+				"Barbaracle",
+				"Polteageist",
+				"Golisopod",
+				"Garganacl",
+				"Araquanid"
+			],
+			"picks": [
+				1,
+				1,
+				0,
+				1,
+				1,
+				0
+			],
+			"best": null
+		}
+	}
+}
