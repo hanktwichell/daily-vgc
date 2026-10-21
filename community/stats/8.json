@@ -1,0 +1,63 @@
+{
+	"puzzle": 8,
+	"date": "2026-10-20",
+	"final": true,
+	"modes": {
+		"normal": {
+			"played": 7,
+			"won": 3,
+			"results": [
+				0,
+				2,
+				1,
+				0,
+				4
+			],
+			"team": [
+				"Houndoom",
+				"Ninetales",
+				"Arcanine",
+				"Lycanroc-Dusk",
+				"Mabosstiff",
+				"Houndstone"
+			],
+			"picks": [
+				7,
+				7,
+				3,
+				3,
+				3,
+				5
+			],
+			"best": null
+		},
+		"hard": {
+			"played": 5,
+			"won": 1,
+			"results": [
+				0,
+				1,
+				0,
+				0,
+				4
+			],
+			"team": [
+				"Abomasnow",
+				"Farigiraf",
+				"Mamoswine",
+				"Vanilluxe",
+				"Rotom-Heat",
+				"Conkeldurr"
+			],
+			"picks": [
+				3,
+				4,
+				4,
+				3,
+				2,
+				4
+			],
+			"best": null
+		}
+	}
+}
