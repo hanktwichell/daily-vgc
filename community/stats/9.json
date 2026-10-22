@@ -1,0 +1,35 @@
+{
+	"puzzle": 9,
+	"date": "2026-10-21",
+	"final": true,
+	"modes": {
+		"normal": {
+			"played": 5,
+			"won": 1,
+			"results": [
+				0,
+				1,
+				0,
+				0,
+				4
+			],
+			"team": [
+				"Skarmory",
+				"Arcanine-Hisui",
+				"Sirfetch’d",
+				"Armarouge",
+				"Clefable",
+				"Maushold"
+			],
+			"picks": [
+				3,
+				4,
+				3,
+				4,
+				3,
+				3
+			],
+			"best": null
+		}
+	}
+}
