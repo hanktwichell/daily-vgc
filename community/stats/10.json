@@ -1,0 +1,35 @@
+{
+	"puzzle": 10,
+	"date": "2026-10-22",
+	"final": true,
+	"modes": {
+		"normal": {
+			"played": 5,
+			"won": 0,
+			"results": [
+				0,
+				0,
+				0,
+				0,
+				5
+			],
+			"team": [
+				"Politoed",
+				"Raichu",
+				"Tauros-Paldea-Aqua",
+				"Golisopod",
+				"Gengar",
+				"Florges"
+			],
+			"picks": [
+				2,
+				5,
+				5,
+				3,
+				4,
+				1
+			],
+			"best": null
+		}
+	}
+}
