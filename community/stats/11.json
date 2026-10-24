@@ -1,0 +1,63 @@
+{
+	"puzzle": 11,
+	"date": "2026-10-23",
+	"final": true,
+	"modes": {
+		"normal": {
+			"played": 1,
+			"won": 1,
+			"results": [
+				0,
+				1,
+				0,
+				0,
+				0
+			],
+			"team": [
+				"Mabosstiff",
+				"Staraptor",
+				"Serperior",
+				"Basculegion",
+				"Grimmsnarl",
+				"Volcarona"
+			],
+			"picks": [
+				1,
+				1,
+				0,
+				1,
+				0,
+				1
+			],
+			"best": null
+		},
+		"hard": {
+			"played": 3,
+			"won": 1,
+			"results": [
+				0,
+				0,
+				1,
+				0,
+				2
+			],
+			"team": [
+				"Steelix",
+				"Cofagrigus",
+				"Mudsdale",
+				"Conkeldurr",
+				"Torkoal",
+				"Sinistcha"
+			],
+			"picks": [
+				3,
+				3,
+				2,
+				1,
+				1,
+				2
+			],
+			"best": null
+		}
+	}
+}
