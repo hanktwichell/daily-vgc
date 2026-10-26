@@ -263,5 +263,92 @@
 		],
 		"archetype": "snow",
 		"hard": "tyranitar-sand"
+	},
+	"2026-11-03": {
+		"ids": [
+			"tyranitar-mega",
+			"skarmory-mega",
+			"excadrill",
+			"pikachu",
+			"sandaconda",
+			"slurpuff"
+		],
+		"archetype": "sand",
+		"hard": "camerupt-tr"
+	},
+	"2026-11-04": {
+		"ids": [
+			"ninetales",
+			"typhlosion-hisui",
+			"venusaur",
+			"mabosstiff",
+			"corviknight",
+			"torterra"
+		],
+		"archetype": "sun",
+		"hard": "floette-fairy",
+		"hardRelaxed": true
+	},
+	"2026-11-05": {
+		"ids": [
+			"aerodactyl-mega",
+			"raichu-alola",
+			"milotic",
+			"umbreon",
+			"orthworm",
+			"espeon"
+		],
+		"archetype": "tw",
+		"hard": "kangaskhan-fakeout"
+	},
+	"2026-11-06": {
+		"ids": [
+			"slowking-galar",
+			"araquanid",
+			"chandelure",
+			"alcremie",
+			"mudsdale",
+			"kommo-o"
+		],
+		"archetype": "tr",
+		"hard": "swampert-rain"
+	},
+	"2026-11-07": {
+		"ids": [
+			"tyranitar",
+			"excadrill",
+			"wigglytuff",
+			"oranguru",
+			"heliolisk",
+			"annihilape"
+		],
+		"archetype": "sand",
+		"hard": "lucario-z",
+		"hardRelaxed": true
+	},
+	"2026-11-08": {
+		"ids": [
+			"ninetales",
+			"medicham-mega",
+			"glalie-mega",
+			"vileplume",
+			"heliolisk",
+			"noivern"
+		],
+		"archetype": "sun",
+		"hard": "lucario-z",
+		"hardRelaxed": true
+	},
+	"2026-11-09": {
+		"ids": [
+			"lopunny-mega",
+			"gengar",
+			"archaludon",
+			"slurpuff",
+			"corviknight",
+			"espathra"
+		],
+		"archetype": "balance",
+		"hard": "tyranitar-sand"
 	}
 }
