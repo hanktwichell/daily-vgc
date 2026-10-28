@@ -1,0 +1,35 @@
+{
+	"puzzle": 15,
+	"date": "2026-10-27",
+	"final": true,
+	"modes": {
+		"normal": {
+			"played": 2,
+			"won": 1,
+			"results": [
+				0,
+				0,
+				1,
+				0,
+				1
+			],
+			"team": [
+				"Tyranitar",
+				"Excadrill",
+				"Sinistcha",
+				"Froslass",
+				"Thievul",
+				"Kommo-o"
+			],
+			"picks": [
+				2,
+				2,
+				2,
+				0,
+				0,
+				2
+			],
+			"best": null
+		}
+	}
+}
