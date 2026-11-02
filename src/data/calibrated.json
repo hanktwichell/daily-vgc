@@ -350,5 +350,90 @@
 		],
 		"archetype": "balance",
 		"hard": "tyranitar-sand"
+	},
+	"2026-11-10": {
+		"ids": [
+			"pelipper",
+			"glimmora-mega",
+			"tauros-paldea-aqua",
+			"archaludon",
+			"araquanid",
+			"sylveon"
+		],
+		"archetype": "rain",
+		"hard": "dragonite-balance"
+	},
+	"2026-11-11": {
+		"ids": [
+			"skarmory-mega",
+			"metagross-mega",
+			"scrafty",
+			"alcremie",
+			"polteageist",
+			"vileplume"
+		],
+		"archetype": "tw",
+		"hard": "zard-y-sun"
+	},
+	"2026-11-12": {
+		"ids": [
+			"skarmory-mega",
+			"gardevoir-mega",
+			"scrafty",
+			"mr-rime",
+			"manectric",
+			"hydreigon"
+		],
+		"archetype": "tw",
+		"hard": "psyspam"
+	},
+	"2026-11-13": {
+		"ids": [
+			"mimikyu",
+			"camerupt-mega",
+			"grapploct",
+			"alcremie",
+			"hydrapple",
+			"slowking-galar"
+		],
+		"archetype": "tr",
+		"hard": "salamence-sand"
+	},
+	"2026-11-14": {
+		"ids": [
+			"skarmory-mega",
+			"pikachu",
+			"flapple",
+			"sneasler",
+			"castform",
+			"rotom-wash"
+		],
+		"archetype": "tw",
+		"hard": "hatterene-tr"
+	},
+	"2026-11-15": {
+		"ids": [
+			"politoed",
+			"tauros-paldea-aqua",
+			"castform",
+			"aerodactyl",
+			"grapploct",
+			"tinkaton"
+		],
+		"archetype": "rain",
+		"hard": "blastoise-rillaboom",
+		"hardRelaxed": true
+	},
+	"2026-11-16": {
+		"ids": [
+			"charizard-mega-y",
+			"venusaur",
+			"vileplume",
+			"mabosstiff",
+			"dedenne",
+			"samurott-hisui"
+		],
+		"archetype": "sun",
+		"hard": "blastoise-rillaboom"
 	}
 }
