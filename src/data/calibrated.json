@@ -435,5 +435,90 @@
 		],
 		"archetype": "sun",
 		"hard": "blastoise-rillaboom"
+	},
+	"2026-11-17": {
+		"ids": [
+			"tyranitar-mega",
+			"excadrill",
+			"furfrou",
+			"emolga",
+			"venusaur",
+			"houndstone"
+		],
+		"archetype": "sand",
+		"hard": "blastoise-rillaboom"
+	},
+	"2026-11-18": {
+		"ids": [
+			"glalie-mega",
+			"morpeko",
+			"gengar",
+			"barbaracle",
+			"tinkaton",
+			"azumarill"
+		],
+		"archetype": "balance",
+		"hard": "gardevoir-pixilate"
+	},
+	"2026-11-19": {
+		"ids": [
+			"pidgeot-mega",
+			"luxray",
+			"thievul",
+			"skeledirge",
+			"meowstic-m",
+			"castform"
+		],
+		"archetype": "balance",
+		"hard": "salamence-tailwind"
+	},
+	"2026-11-20": {
+		"ids": [
+			"charizard-mega-y",
+			"vileplume",
+			"heliolisk",
+			"luxray",
+			"staraptor",
+			"sylveon"
+		],
+		"archetype": "sun",
+		"hard": "tyranitar-sand"
+	},
+	"2026-11-21": {
+		"ids": [
+			"pelipper",
+			"absol-mega",
+			"castform",
+			"primarina",
+			"raichu-alola",
+			"annihilape"
+		],
+		"archetype": "rain",
+		"hard": "gardevoir-pixilate"
+	},
+	"2026-11-22": {
+		"ids": [
+			"sandaconda",
+			"pidgeot-mega",
+			"lucario-mega",
+			"excadrill",
+			"scrafty",
+			"meowstic-m"
+		],
+		"archetype": "sand",
+		"hard": "kangaskhan-fakeout"
+	},
+	"2026-11-23": {
+		"ids": [
+			"malamar-mega",
+			"overqwil",
+			"emolga",
+			"zoroark-hisui",
+			"sylveon",
+			"furfrou"
+		],
+		"archetype": "balance",
+		"hard": "gardevoir-pixilate",
+		"hardRelaxed": true
 	}
 }
