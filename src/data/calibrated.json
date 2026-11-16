@@ -520,5 +520,90 @@
 		"archetype": "balance",
 		"hard": "gardevoir-pixilate",
 		"hardRelaxed": true
+	},
+	"2026-11-24": {
+		"ids": [
+			"aromatisse",
+			"camerupt-mega",
+			"orthworm",
+			"gyarados",
+			"gourgeist-super",
+			"slurpuff"
+		],
+		"archetype": "tr",
+		"hard": "dragonite-balance"
+	},
+	"2026-11-25": {
+		"ids": [
+			"politoed",
+			"archaludon",
+			"primarina",
+			"sableye",
+			"manectric",
+			"passimian"
+		],
+		"archetype": "rain",
+		"hard": "dragonite-balance"
+	},
+	"2026-11-26": {
+		"ids": [
+			"abomasnow-mega",
+			"chandelure-mega",
+			"baxcalibur",
+			"beartic",
+			"luxray",
+			"squawkabilly"
+		],
+		"archetype": "snow",
+		"hard": "camerupt-tr",
+		"hardRelaxed": true
+	},
+	"2026-11-27": {
+		"ids": [
+			"sandaconda",
+			"excadrill",
+			"gyarados",
+			"squawkabilly",
+			"golisopod",
+			"appletun"
+		],
+		"archetype": "sand",
+		"hard": "blastoise-rillaboom"
+	},
+	"2026-11-28": {
+		"ids": [
+			"tyranitar",
+			"medicham-mega",
+			"garchomp-mega",
+			"excadrill",
+			"staraptor",
+			"wigglytuff"
+		],
+		"archetype": "sand",
+		"hard": "tyranitar-sand"
+	},
+	"2026-11-29": {
+		"ids": [
+			"pawmot",
+			"vivillon",
+			"glaceon",
+			"luxray",
+			"rampardos",
+			"zoroark-hisui"
+		],
+		"archetype": "balance",
+		"hard": "psyspam"
+	},
+	"2026-11-30": {
+		"ids": [
+			"froslass-mega",
+			"vanilluxe",
+			"glaceon",
+			"gyarados",
+			"manectric",
+			"dragapult"
+		],
+		"archetype": "snow",
+		"hard": "zard-y-sun"
 	}
 }
