@@ -605,5 +605,91 @@
 		],
 		"archetype": "snow",
 		"hard": "zard-y-sun"
+	},
+	"2026-12-01": {
+		"ids": [
+			"aerodactyl",
+			"venusaur-mega",
+			"alcremie",
+			"volcarona",
+			"milotic",
+			"meowstic-m"
+		],
+		"archetype": "tw",
+		"hard": "salamence-tailwind"
+	},
+	"2026-12-02": {
+		"ids": [
+			"tyranitar",
+			"excadrill",
+			"wigglytuff",
+			"squawkabilly",
+			"quaquaval",
+			"sneasler"
+		],
+		"archetype": "sand",
+		"hard": "swampert-rain"
+	},
+	"2026-12-03": {
+		"ids": [
+			"luxray",
+			"aerodactyl",
+			"mabosstiff",
+			"volcarona",
+			"sirfetchd",
+			"goodra-hisui"
+		],
+		"archetype": "balance",
+		"hard": "lucario-z",
+		"hardRelaxed": true
+	},
+	"2026-12-04": {
+		"ids": [
+			"runerigus",
+			"grapploct",
+			"clawitzer",
+			"arcanine",
+			"tinkaton",
+			"gourgeist-super"
+		],
+		"archetype": "tr",
+		"hard": "hatterene-tr"
+	},
+	"2026-12-05": {
+		"ids": [
+			"musharna",
+			"chesnaught-mega",
+			"rhyperior",
+			"incineroar",
+			"clawitzer",
+			"houndstone"
+		],
+		"archetype": "tr",
+		"hard": "blastoise-rillaboom"
+	},
+	"2026-12-06": {
+		"ids": [
+			"oranguru",
+			"mawile-mega",
+			"steelix-mega",
+			"cofagrigus",
+			"machamp",
+			"appletun"
+		],
+		"archetype": "tr",
+		"hard": "hatterene-tr",
+		"hardRelaxed": true
+	},
+	"2026-12-07": {
+		"ids": [
+			"ninetales",
+			"salamence-mega",
+			"vileplume",
+			"heliolisk",
+			"rotom-frost",
+			"spiritomb"
+		],
+		"archetype": "sun",
+		"hard": "chomp-z-raichu"
 	}
 }
